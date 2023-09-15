@@ -1,0 +1,14 @@
+_site
+.sass-cache
+.jekyll-cache/
+.jekyll-metadata
+.DS_Store
+.byebug_history
+.tmp.xml
+_documents
+_input/*.rxl
+_input/csd.yaml
+bib/
+bibcoll/
+csd/
+.vscode/
