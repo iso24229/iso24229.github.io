@@ -1,0 +1,135 @@
+---
+import NavItem from './NavItem.astro';
+
+interface Props {
+  currentPage: string;
+}
+
+const { currentPage } = Astro.props;
+
+---
+
+<header>
+  <div class="header-wrapper">
+    <h1>
+      <a href="/" title="Back to home">
+        <div class="logo-iso">
+          <img class="logo-iso" src="/assets/logos/iso-logo-blue-9,78,156.svg" />
+        </div>
+        <div class="title-text">
+          ISO 24229 <span class="text-gradient">Registry</span>
+        </div>
+      </a>
+    </h1>
+    <nav>
+      <menu>
+        <NavItem href="/">Home</NavItem>
+        <NavItem href="/registry">Registry</NavItem>
+        <NavItem href="/about">About</NavItem>
+      </menu>
+    </nav>
+  </div>
+</header>
+<style lang="scss">
+
+header {
+  /* padding: 1rem 0rem; */
+  padding: 1rem var(--main-padding-lr);
+  border-bottom: 2px solid black;
+  width: 100%;
+
+  .header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo-iso {
+    }
+
+    div {
+      display: inline-block;
+      vertical-align: middle;
+
+      + div {
+        padding-left: 1rem;
+      }
+    }
+
+    nav {
+      menu {
+        display: flex;
+        flex-direction: row;
+        list-style-type: none;
+      }
+    }
+  }
+}
+
+
+@media only screen
+  and (min-width: 1px)
+  and (max-width: 415px) {
+
+  header {
+    .header-wrapper {
+      display: grid;
+      h1, h2, h3, h4, h5, h6 {
+        text-align: left;
+      }
+
+      h1 {
+        font-size: max(2rem, min(3rem, 7vw));
+      }
+
+      .logo-iso {
+        display: none;
+      }
+
+      .title-text {
+        padding: 0;
+      }
+
+    }
+
+    nav {
+      /* background: yellow; */
+      menu {
+        padding: 0;
+        padding-top: 1rem;
+      }
+    }
+  }
+
+}
+
+@media only screen
+  and (min-width: 415px)
+  and (max-width: 830px) {
+
+  header {
+    .header-wrapper {
+      display: grid;
+
+      h1 {
+        font-size: max(2rem, min(3rem, 7vw));
+      }
+    }
+
+    nav {
+      /* background: yellow; */
+      menu {
+        padding: 1rem 0;
+        padding-left: calc(1rem + min(var(--default-logo-dimension), 14vw));
+      }
+    }
+
+    .logo-iso {
+      width: min(var(--default-logo-dimension), 14vw);
+      height: min(var(--default-logo-dimension), 14vw);
+    }
+
+  }
+
+}
+
+</style>

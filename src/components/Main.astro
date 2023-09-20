@@ -1,0 +1,72 @@
+---
+interface Props {
+}
+
+
+---
+
+<main>
+  <div class="main-wrapper">
+    <slot />
+  </div>
+</main>
+<style lang="scss" is:global>
+
+main {
+  flex: 1;
+  padding: 2rem var(--main-padding-lr);
+  width: 100%;
+  /* max-width: calc(100% - 2rem); */
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.main-wrapper {
+  h1, h2, h3, h4, h5, h6, p {
+    padding-bottom: 1rem;
+  }
+
+  * + h1, * + h2, * + h3, * + h4, * + h5, * + h6, * + p {
+    padding-top: 1rem;
+  }
+
+  p {
+    a {
+      &::before {
+        content: "";
+        position: absolute;
+        top: 100%;
+        width: 100%;
+        left: 0;
+        height: 3px;
+        border-radius: 2px;
+        background-image: var(--accent-gradient);
+      }
+    }
+  }
+}
+
+.attention-error {
+  main {
+    display: flex;
+  }
+  .main-wrapper {
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media only screen
+  and (min-width: 1px)
+  and (max-width: 415px) {
+
+  .main-wrapper {
+    h1, h2, h3, h4, h5, h6 {
+      text-align: left;
+    }
+  }
+
+}
+
+</style>

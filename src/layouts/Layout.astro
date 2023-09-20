@@ -1,52 +1,167 @@
 ---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import Main from "../components/Main.astro";
+
 interface Props {
 	title: string;
+	classes?: string;
 }
 
-const { title } = Astro.props;
+const siteTitle = "ISO 24229 Registry";
+
+let { title, classes } = Astro.props;
+
+// Append " | siteTitle" to the provided title
+title = title ?? Astro.props.frontmatter?.title ?? '';
+title = title == '' ? siteTitle : `${title} | ${siteTitle}`;
+
+classes = classes ?? Astro.props.frontmatter?.classes ?? '';
+
+const description = "This is the official registry for the ISO 24229 standard.";
+
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="robots" content="none" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="robots" content="none" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+  </head>
+  <body class={classes ?? ""}>
+    <Header/>
+    <Main>
+      <slot />
+    </Main>
+    <Footer/>
+  </body>
 </html>
-<style is:global>
-	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background: #13151a;
-		background-size: 224px;
-	}
-	code {
-		font-family:
-			Menlo,
-			Monaco,
-			Lucida Console,
-			Liberation Mono,
-			DejaVu Sans Mono,
-			Bitstream Vera Sans Mono,
-			Courier New,
-			monospace;
-	}
+<style lang="scss" is:global>
+:root {
+  --default-logo-dimension: 80px;
+  --content-width: 1200px;
+  --accent: 26, 208, 244;
+  --accent-light: 28, 248, 155;
+  --accent-dark: 94, 104, 101;
+  --accent-gradient: linear-gradient(
+    90deg,
+    rgb(var(--accent)),
+    rgb(var(--accent-light)) 60%,
+    rgb(var(--accent-light)) 95%
+    );
+  --accent-gradient-inverted: linear-gradient(
+    270deg,
+    rgb(var(--accent)),
+    rgb(var(--accent-light)) 60%,
+    rgb(var(--accent-light)) 95%
+    );
+  --main-padding-lr: max(1rem, calc((100% - var(--content-width))/2));
+}
+
+/* Use padding to space out the content */
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: system-ui, sans-serif;
+  background: #fff;
+  background-size: 224px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+code {
+  font-family:
+    Menlo,
+    Monaco,
+    Lucida Console,
+    Liberation Mono,
+    DejaVu Sans Mono,
+    Bitstream Vera Sans Mono,
+    Courier New,
+    monospace;
+}
+
+.text-gradient {
+  background-image: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 400%;
+  background-position: 0%;
+}
+
+h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+
+  a {
+    color: black;
+    display: inline-block;
+
+    &:visited {
+      color: black;
+    }
+  }
+}
+
+a {
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  color: black;
+
+  &:not([role=card]) {
+    &:hover, &:active {
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-position: 0%;
+
+      span.text-gradient {
+        background: black;
+        -webkit-background-clip: text;
+      }
+    }
+
+    &:hover {
+      background-image: var(--accent-gradient);
+    }
+
+    &:active {
+      background-image: var(--accent-gradient-inverted);
+    }
+  }
+}
+
+
+.logo-iso {
+  /* background-color: #094e9c; */
+  width: var(--default-logo-dimension);
+  /* Setting the height prevents flash of layout change when loading page */
+  height: var(--default-logo-dimension);
+}
+
+/* div.logo-iso { */
+/*   background-image: url("/iso-logo-blue-9,78,156.svg"); */
+/*   background-size: 80px; */
+/*   background-repeat: no-repeat; */
+/*   background-position: center; */
+/* } */
+
+h1, h2, h3, h4, h5, h6 {
+  cursor: default;
+}
+
+
 </style>

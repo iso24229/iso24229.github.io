@@ -1,0 +1,24 @@
+---
+
+interface Props {
+  href: string;
+  selected: bool;
+}
+
+const { href, selected = false } = Astro.props;
+
+---
+<li class={selected ? 'active' : ''}><a href={href}><slot /></a></li>
+<style lang="scss">
+li + li {
+  padding-left: 1rem;
+}
+a {
+  font-weight: 600;
+}
+
+li.active a {
+  border-bottom: 2px solid black;
+}
+
+</style>
