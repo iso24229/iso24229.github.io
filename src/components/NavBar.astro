@@ -1,0 +1,40 @@
+---
+import NavItem from './NavItem.astro';
+
+---
+<nav>
+  <menu>
+    <NavItem href="/">Home</NavItem>
+    <NavItem href="/registry">Registry</NavItem>
+    <NavItem href="/about">About</NavItem>
+  </menu>
+</nav>
+<style lang="scss">
+
+menu {
+  display: flex;
+  flex-direction: row;
+  list-style-type: none;
+}
+
+@media only screen
+  and (min-width: 1px)
+  and (max-width: 415px) {
+
+  menu {
+    padding: 0;
+    padding-top: 1rem;
+  }
+}
+
+@media only screen
+  and (min-width: 415px)
+  and (max-width: 830px) {
+
+  menu {
+    padding: 1rem 0;
+    padding-left: calc(1rem + min(var(--default-logo-dimension), 14vw));
+  }
+}
+
+</style>

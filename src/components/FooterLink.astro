@@ -1,0 +1,20 @@
+---
+interface Props {
+  href: string;
+  isExternal?: boolean;
+}
+
+const { href, isExternal = false } = Astro.props;
+const aProps = isExternal ? { target: '_blank' } : { rel: 'prefetch-intent' };
+---
+<li>
+  <a href={href} {...aProps}>
+    <slot />
+  </a>
+</li>
+
+<style lang="scss">
+li {
+  padding-top: 0.5rem;
+}
+</style>
