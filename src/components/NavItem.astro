@@ -8,7 +8,7 @@ interface Props {
 const { href, selected = false } = Astro.props;
 
 ---
-<li class={selected ? 'active' : ''}><a href={href}><slot /></a></li>
+<li class={selected ? 'active' : ''}><a rel="prefetch-intent" href={href}><slot /></a></li>
 <style lang="scss">
 li + li {
   padding-left: 1rem;
