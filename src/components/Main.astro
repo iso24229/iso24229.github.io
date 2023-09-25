@@ -1,5 +1,7 @@
 ---
-type Props = Record<string, never>;
+interface Props {
+  children?: any;
+}
 ---
 <main transition:animate="fade">
   <div class="main-wrapper">

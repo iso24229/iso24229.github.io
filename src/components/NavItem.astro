@@ -7,7 +7,7 @@ const { href } = Astro.props;
 
 // Remove trailing slash before comparing.
 const currentPath = Astro.url.pathname.replace(/(.)\/$/, '$1');
-const isSelected = ((href: string): bool => currentPath === href);
+const isSelected = ((href: string): boolean => currentPath === href);
 const li_props = isSelected(href) ? { class: 'active' } : {};
 ---
 <li {...li_props}><a {...Astro.props}><slot /></a></li>

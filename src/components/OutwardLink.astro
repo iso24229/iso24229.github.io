@@ -7,7 +7,11 @@ interface Props {
   iconSrc?: string;
 }
 
-const { href, icon, iconSrc } = Astro.props;
+const {
+  href,
+  icon,
+  // iconSrc,
+} = Astro.props;
 ---
 <Fl href={href} isExternal={true}>
   {
