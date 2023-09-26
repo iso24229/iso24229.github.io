@@ -53,16 +53,16 @@ const description = "This is the official registry for the ISO 24229 standard.";
   --text-color--dark: #aaa;
   --background-color--dark: #121212;
 
-  --text-color: var(--text-color--normal);
-  --background-color: var(--background-color--normal);
+  --text-color: var(--text-color--dark);
+  --background-color: var(--background-color--dark);
 
   --default-logo-dimension: 80px;
   --content-width: 1200px;
   --main-padding-lr: max(1rem, calc((100% - var(--content-width))/2));
 
-  --accent: var(--accent--normal);
-  --accent-light: var(--accent-light--normal);
-  --accent-dark: var(--accent-dark--normal);
+  --accent: var(--accent--dark);
+  --accent-light: var(--accent-light--dark);
+  --accent-dark: var(--accent-dark--dark);
 
   --accent--normal: 26, 208, 244;
   --accent-light--normal: 28, 248, 155;
@@ -187,19 +187,19 @@ h1, h2, h3, h4, h5, h6 {
   cursor: default;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   html[data-theme="default"] {
-    --background-color: var(--background-color--dark);
-    --text-color: var(--text-color--dark);
+    --background-color: var(--background-color--normal);
+    --text-color: var(--text-color--normal);
     // --accent: var(--accent--dark);
     // --accent-light: var(--accent-light--dark);
     // --accent-dark: var(--accent-dark--dark);
   }
 }
 
-html[data-theme="dark"] {
-  --background-color: var(--background-color--dark);
-  --text-color: var(--text-color--dark);
+html[data-theme="light"] {
+  --background-color: var(--background-color--normal);
+  --text-color: var(--text-color--normal);
   // --accent: var(--accent--dark);
   // --accent-light: var(--accent-light--dark);
   // --accent-dark: var(--accent-dark--dark);
