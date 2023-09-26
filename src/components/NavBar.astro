@@ -13,17 +13,17 @@ import NavItem from './NavItem.astro';
 
 menu {
   display: flex;
+  padding: 0;
+  padding-top: 1rem;
   flex-direction: row;
   list-style-type: none;
 }
 
 @media only screen
-  and (min-width: 1px)
   and (max-width: 415px) {
 
   menu {
-    padding: 0;
-    padding-top: 1rem;
+    // padding: 0;
   }
 }
 
@@ -32,8 +32,7 @@ menu {
   and (max-width: 830px) {
 
   menu {
-    padding: 1rem 0;
-    padding-left: calc(1rem + min(var(--default-logo-dimension), 14vw));
+    // padding: 1rem 0;
   }
 }
 

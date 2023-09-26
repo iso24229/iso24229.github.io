@@ -24,6 +24,7 @@ type Props = Record<string, never>;
 header {
   /* padding: 1rem 0rem; */
   padding: 1rem var(--main-padding-lr);
+  padding-bottom: 0;
   border-bottom: 2px solid black;
   width: 100%;
 }
@@ -85,6 +86,13 @@ div {
     height: min(var(--default-logo-dimension), 14vw);
   }
 
+}
+
+@media only screen
+  and (min-width: 960px) {
+  h1 {
+    padding-bottom: 1rem;
+  }
 }
 
 </style>
