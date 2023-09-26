@@ -1,0 +1,173 @@
+---
+// See:
+// https://dev.to/hr21don/enable-dark-mode-for-your-astro-website-via-css-variables-ohe
+// https://css-tricks.com/a-complete-guide-to-dark-mode-on-the-web/#aa-using-custom-properties
+
+import Ri from './RadioItem.astro';
+interface Props {
+  elementId: string;
+}
+
+const { elementId } = Astro.props;
+const themes = [
+  {
+    icon: "◑",
+    value: "default",
+    description: "OS Default",
+  },
+  {
+    icon: "☀️",
+    value: "light",
+    description: "Light",
+  },
+  {
+    icon: "🌙",
+    value: "dark",
+    description: "Dark",
+  },
+];
+
+---
+<theme-control id={elementId} data-themes={JSON.stringify(themes)}>
+  <div class="current-theme-display" title="Change theme">
+      {themes[2].icon}
+  </div>
+  <menu>
+  {
+    themes.map((theme) => (
+      <Ri name="theme" elementId={ `${elementId}-theme-control-${theme.value}` } {...theme}></Ri>
+    ))
+  }
+  </menu>
+</theme-control>
+<script>
+
+const defaultTheme = 'default';
+
+class ThemeControl extends HTMLElement {
+  get currentThemeDisplay() {
+    return this.querySelector('.current-theme-display');
+  }
+
+  get themeMenu() {
+    return this.querySelector('menu');
+  }
+
+  get themes() {
+    return JSON.parse(this.dataset.themes);
+  }
+
+  get currentTheme() {
+    const localTheme = localStorage.getItem('theme');
+    return this.sanitizeTheme(localTheme);
+  }
+
+  set currentTheme(theme) {
+    const sanitizedTheme = this.sanitizeTheme(theme);
+
+    // Set the body data-theme attribute to match the local storage item
+    this.documentTheme = sanitizedTheme;
+    localStorage.setItem('theme', sanitizedTheme);
+    this.renderCurrentTheme();
+  }
+
+  set documentTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+
+  sanitizeTheme(other) {
+    return this.themes.find((theme) => theme.value == other) ? other : defaultTheme;
+  }
+
+  renderCurrentTheme() {
+    this.documentTheme = this.currentTheme;
+    this.currentThemeDisplay.innerHTML = this.themes.find((theme) => theme.value === this.currentTheme).icon;
+  }
+
+  constructor() {
+    super();
+    this.renderCurrentTheme();
+    this.currentThemeDisplay.addEventListener('click', this.toggleMenu.bind(this), false);
+    this.themeMenu.addEventListener('click', this.switchTheme.bind(this), false);
+  }
+
+  closeMenu() {
+    this.themeMenu.style.display = 'none';
+  }
+
+  toggleMenu(e) {
+    this.themeMenu.style.display = this.themeMenu.style.display === 'block' ? 'none' : 'block';
+  }
+
+  switchTheme(e) {
+    if (e.target.matches('input')) {
+      this.currentTheme = e.target.value;
+      this.closeMenu();
+    }
+  }
+
+}
+customElements.define("theme-control", ThemeControl);
+</script>
+<style lang="scss">
+:root {
+  --theme-control-dimension: 2.1rem;
+}
+
+theme-control {
+  line-height: var(--theme-control-dimension);
+  height: var(--theme-control-dimension);
+  box-sizing: border-box;
+  padding-left: 1rem;
+  user-select: none;
+}
+
+.current-theme-display {
+  box-sizing: border-box;
+  cursor: pointer;
+  &:hover {
+    border: 1px solid rgb(var(--accent));
+  }
+  border: 1px solid #999;
+  border-radius: 5px;
+  text-align: center;
+  font-size: calc(var(--theme-control-dimension) / 2);
+  width: var(--theme-control-dimension);
+  line-height: var(--theme-control-dimension);
+}
+
+menu {
+  position: absolute;
+  background: var(--background-color);
+  width: 10rem;
+  right: 1rem;
+  padding: 0;
+  z-index: 999;
+  border: 1px solid #999;
+  border-radius: 5px;
+  display: none;
+}
+
+@media only screen
+  and (max-width: 615px) {
+
+  .current-theme-display {
+    // position: static;
+    // background: yellow;
+  }
+
+}
+
+@media only screen
+  and (min-width: 615px)
+  and (max-width: 960px) {
+
+  theme-control {
+    position: fixed;
+    top: 2rem;
+    right: 1rem;
+  }
+
+}
+
+</style>

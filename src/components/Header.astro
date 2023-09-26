@@ -1,5 +1,6 @@
 ---
 import NavBar from './NavBar.astro';
+import ThemeControl from './ThemeControl.astro';
 
 type Props = Record<string, never>;
 
@@ -16,7 +17,10 @@ type Props = Record<string, never>;
         </div>
       </a>
     </h1>
-    <NavBar />
+    <div class="header-controls">
+      <NavBar />
+      <ThemeControl elementId="header-theme"/>
+    </div>
   </div>
 </header>
 <style lang="scss">
@@ -44,13 +48,22 @@ div {
   }
 }
 
+.header-controls {
+  display: flex;
+  // padding-left: calc(1rem + min(var(--default-logo-dimension), 14vw));
+  // justify-content: space-between;
+  align-items: center;
+}
+
 @media only screen
   and (max-width: 415px) {
 
   .header-wrapper {
     display: grid;
+    width: 100%;
     h1, h2, h3, h4, h5, h6 {
       text-align: left;
+      width: 100%;
     }
 
     h1 {
@@ -67,14 +80,32 @@ div {
 
   }
 
+  .header-controls {
+    padding-left: 0;
+  }
+
+}
+
+@media only screen
+  and (max-width: 615px) {
+
+  .header-controls {
+    justify-content: space-between;
+  }
+
 }
 
 @media only screen
   and (min-width: 415px)
-  and (max-width: 830px) {
+  and (max-width: 960px) {
 
   .header-wrapper {
     display: grid;
+  }
+
+  .header-controls {
+    padding-left: calc(1rem + min(var(--default-logo-dimension), 14vw));
+    justify-content: space-between;
   }
 
   h1 {

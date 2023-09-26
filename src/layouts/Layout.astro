@@ -46,24 +46,50 @@ const description = "This is the official registry for the ISO 24229 standard.";
 </html>
 <style lang="scss" is:global>
 :root {
+
+  --text-color--normal: #000;
+  --background-color--normal: #fff;
+
+  --text-color--dark: #aaa;
+  --background-color--dark: #121212;
+
+  --text-color: var(--text-color--normal);
+  --background-color: var(--background-color--normal);
+
   --default-logo-dimension: 80px;
   --content-width: 1200px;
-  --accent: 26, 208, 244;
-  --accent-light: 28, 248, 155;
-  --accent-dark: 94, 104, 101;
+  --main-padding-lr: max(1rem, calc((100% - var(--content-width))/2));
+
+  --accent: var(--accent--normal);
+  --accent-light: var(--accent-light--normal);
+  --accent-dark: var(--accent-dark--normal);
+
+  --accent--normal: 26, 208, 244;
+  --accent-light--normal: 28, 248, 155;
+  --accent-dark--normal: 94, 104, 101;
+
+  // Leave dark mode accents unchanged for now, they look OK:
+  --accent--dark: var(--accent--normal);
+  --accent-light--dark: var(--accent-light--normal);
+  --accent-dark--dark: var(--accent-dark--normal);
+
+  // --accent--dark: 26, 208, 244;
+  // --accent-light--dark: 28, 248, 155;
+  // --accent-dark--dark: 94, 104, 101;
+
   --accent-gradient: linear-gradient(
     90deg,
     rgb(var(--accent)),
     rgb(var(--accent-light)) 60%,
     rgb(var(--accent-light)) 95%
     );
+
   --accent-gradient-inverted: linear-gradient(
     270deg,
     rgb(var(--accent)),
     rgb(var(--accent-light)) 60%,
     rgb(var(--accent-light)) 95%
     );
-  --main-padding-lr: max(1rem, calc((100% - var(--content-width))/2));
 }
 
 /* Use padding to space out the content */
@@ -74,8 +100,10 @@ const description = "This is the official registry for the ISO 24229 standard.";
 
 html {
   font-family: system-ui, sans-serif;
-  background: #fff;
+  background: var(--background-color);
   background-size: 224px;
+  color: var(--text-color);
+  transition: background-color 0.2s ease;
 }
 
 body {
@@ -110,11 +138,11 @@ h1 {
   line-height: 1;
 
   a {
-    color: black;
+    color: var(--text-color);
     display: inline-block;
 
     &:visited {
-      color: black;
+      color: var(--text-color);
     }
   }
 }
@@ -123,7 +151,7 @@ a {
   text-decoration: none;
   position: relative;
   display: inline-block;
-  color: black;
+  color: var(--text-color);
 
   &:not([role=link]) {
     &:hover, &:active {
@@ -132,7 +160,7 @@ a {
       background-position: 0%;
 
       span.text-gradient {
-        background: black;
+        background: var(--text-color);
         -webkit-background-clip: text;
       }
     }
@@ -159,5 +187,22 @@ h1, h2, h3, h4, h5, h6 {
   cursor: default;
 }
 
+@media (prefers-color-scheme: dark) {
+  html[data-theme="default"] {
+    --background-color: var(--background-color--dark);
+    --text-color: var(--text-color--dark);
+    // --accent: var(--accent--dark);
+    // --accent-light: var(--accent-light--dark);
+    // --accent-dark: var(--accent-dark--dark);
+  }
+}
+
+html[data-theme="dark"] {
+  --background-color: var(--background-color--dark);
+  --text-color: var(--text-color--dark);
+  // --accent: var(--accent--dark);
+  // --accent-light: var(--accent-light--dark);
+  // --accent-dark: var(--accent-dark--dark);
+}
 
 </style>
