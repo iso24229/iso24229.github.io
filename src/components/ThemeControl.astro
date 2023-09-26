@@ -4,6 +4,7 @@
 // https://css-tricks.com/a-complete-guide-to-dark-mode-on-the-web/#aa-using-custom-properties
 
 import Ri from './RadioItem.astro';
+
 interface Props {
   elementId: string;
 }
@@ -42,66 +43,93 @@ const themes = [
 </theme-control>
 <script>
 
-const defaultTheme = 'default';
+type Theme = 'default' | 'light' | 'dark';
+const defaultTheme: Theme = 'default';
+
+interface ThemeObject {
+  value: Theme;
+  icon: string;
+  description: string;
+}
 
 class ThemeControl extends HTMLElement {
-  get currentThemeDisplay() {
+  get currentThemeDisplay(): HTMLElement | null {
     return this.querySelector('.current-theme-display');
   }
 
-  get themeMenu() {
+  get themeMenu(): HTMLMenuElement | null {
     return this.querySelector('menu');
   }
 
-  get themes() {
-    return JSON.parse(this.dataset.themes);
+  get themes(): ThemeObject[] {
+    return this.dataset.themes !== undefined ? JSON.parse(this.dataset.themes) : [];
   }
 
-  get currentTheme() {
-    const localTheme = localStorage.getItem('theme');
-    return this.sanitizeTheme(localTheme);
+  get currentTheme(): Theme {
+    const localTheme = localStorage.getItem('theme') ?? defaultTheme;
+    return this.sanitizeTheme(localTheme as Theme);
   }
 
-  set currentTheme(theme) {
+  set currentTheme(theme: string) {
     const sanitizedTheme = this.sanitizeTheme(theme);
 
     // Set the body data-theme attribute to match the local storage item
+    console.debug('rendering current theme');
     this.documentTheme = sanitizedTheme;
     localStorage.setItem('theme', sanitizedTheme);
     this.renderCurrentTheme();
   }
 
-  set documentTheme(theme) {
+  set documentTheme(theme: Theme) {
     document.documentElement.setAttribute('data-theme', theme);
   }
 
-  sanitizeTheme(other) {
-    return this.themes.find((theme) => theme.value == other) ? other : defaultTheme;
+  sanitizeTheme(other: string): Theme {
+    return this.themes.find((theme: ThemeObject) => theme.value == other) ?
+      other as Theme :
+      defaultTheme;
+  }
+
+  get currentThemeObject(): ThemeObject {
+    return this.themes.find((theme: ThemeObject) => theme.value === this.currentTheme) ?? this.themes[0];
   }
 
   renderCurrentTheme() {
     this.documentTheme = this.currentTheme;
-    this.currentThemeDisplay.innerHTML = this.themes.find((theme) => theme.value === this.currentTheme).icon;
+    if (this.currentThemeDisplay !== null) {
+      this.currentThemeDisplay.innerHTML = this.currentThemeObject.icon;
+    }
   }
 
   constructor() {
     super();
     this.renderCurrentTheme();
-    this.currentThemeDisplay.addEventListener('click', this.toggleMenu.bind(this), false);
-    this.themeMenu.addEventListener('click', this.switchTheme.bind(this), false);
+
+    if (this.currentThemeDisplay !== null) {
+      this.currentThemeDisplay.addEventListener('click', this.toggleMenu.bind(this), false);
+    }
+
+    if (this.themeMenu !== null) {
+      this.themeMenu.addEventListener('click', this.switchTheme.bind(this), false);
+    }
   }
 
   closeMenu() {
-    this.themeMenu.style.display = 'none';
+    if (this.themeMenu !== null) {
+      this.themeMenu.style.display = 'none';
+    }
   }
 
-  toggleMenu(e) {
-    this.themeMenu.style.display = this.themeMenu.style.display === 'block' ? 'none' : 'block';
+  toggleMenu() {
+    if (this.themeMenu !== null) {
+      this.themeMenu.style.display = this.themeMenu.style.display === 'block' ? 'none' : 'block';
+    }
   }
 
-  switchTheme(e) {
-    if (e.target.matches('input')) {
-      this.currentTheme = e.target.value;
+  switchTheme(e: Event) {
+    const target = e.target as HTMLElement;
+    if (target.matches('input')) {
+      this.currentTheme = (target as HTMLInputElement).value;
       this.closeMenu();
     }
   }
