@@ -9,22 +9,18 @@ interface Props {
 
 const { name, elementId, description, icon, value } = Astro.props;
 ---
-<li><label for={elementId}>
-  <input name={name} type="radio" id={elementId} value={value}>
+<li><button data-value={value}>
   {
     icon &&
     <span class="icon">{icon}</span>
   }
   <span class="description">{description}</span>
-</label></li>
+</button></li>
 <style lang="scss">
 
 li {
   width: 100%;
   list-style-type: none;
-  &:hover {
-    color: rgb(var(--accent));
-  }
   cursor: pointer;
   * {
     cursor: pointer;
@@ -32,35 +28,27 @@ li {
 }
 
 .icon {
-  width: 1rem;
-  height: 1rem;
-  padding-right: 0.5rem;
+  --size: 1.7rem;
+  display: inline-block;
+  text-align: center;
+  font-size: calc(var(--size) / 2);
+  width: var(--size);
+  height: var(--size);
+  line-height: var(--size);
+  margin-right: 0.5rem;
 }
 
-label {
+button {
   width: 100%;
   display: block;
   padding: 0.25rem 1rem;
-}
-
-input {
-  display: none;
-}
-
-@media only screen
-  and (max-width: 415px) {
-
-  // .icon + .description {
-  //   display: none;
-  // }
-
-}
-
-@media only screen
-  and (min-width: 415px)
-  and (max-width: 830px) {
-
-
+  background: transparent;
+  color: var(--text-color);
+  border: none;
+  text-align: left;
+  &:hover {
+    color: rgb(var(--accent));
+  }
 }
 
 </style>

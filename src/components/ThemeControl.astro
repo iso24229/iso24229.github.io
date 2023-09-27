@@ -29,14 +29,14 @@ const themes = [
 ];
 
 ---
-<theme-control id={elementId} data-themes={JSON.stringify(themes)}>
+<theme-control id={elementId} data-themes={JSON.stringify(themes)} aria-haspopup="true" tabindex=0 transition:persist>
   <div class="current-theme-display" title="Change theme">
-      {themes[2].icon}
+    {themes[0].icon}
   </div>
-  <menu>
+  <menu tabindex=1>
   {
-    themes.map((theme) => (
-      <Ri name="theme" elementId={ `${elementId}-theme-control-${theme.value}` } {...theme}></Ri>
+    themes.map((theme, idx) => (
+      <Ri name="theme" tabindex={idx + 1} elementId={ `${elementId}-theme-control-${theme.value}` } {...theme}></Ri>
     ))
   }
   </menu>
@@ -105,31 +105,19 @@ class ThemeControl extends HTMLElement {
     super();
     this.renderCurrentTheme();
 
-    if (this.currentThemeDisplay !== null) {
-      this.currentThemeDisplay.addEventListener('click', this.toggleMenu.bind(this), false);
-    }
-
     if (this.themeMenu !== null) {
       this.themeMenu.addEventListener('click', this.switchTheme.bind(this), false);
     }
   }
 
   closeMenu() {
-    if (this.themeMenu !== null) {
-      this.themeMenu.style.display = 'none';
-    }
-  }
-
-  toggleMenu() {
-    if (this.themeMenu !== null) {
-      this.themeMenu.style.display = this.themeMenu.style.display === 'block' ? 'none' : 'block';
-    }
+    this.blur();
   }
 
   switchTheme(e: Event) {
     const target = e.target as HTMLElement;
-    if (target.matches('input')) {
-      this.currentTheme = (target as HTMLInputElement).value;
+    if (target.matches('button')) {
+      this.currentTheme = target.dataset.value;
       this.closeMenu();
     }
   }
@@ -146,16 +134,33 @@ theme-control {
   line-height: var(--theme-control-dimension);
   height: var(--theme-control-dimension);
   box-sizing: border-box;
-  padding-left: 1rem;
+  margin-left: 1rem;
   user-select: none;
+  position: relative;
+  &:focus-within,
+  &:focus {
+    .current-theme-display {
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
+      border-bottom: none;
+      z-index: 2;
+      background: var(--background-color);
+    }
+    menu {
+      visibility: visible;
+    }
+  }
 }
 
 .current-theme-display {
   box-sizing: border-box;
   cursor: pointer;
+  position: relative;
+
   &:hover {
     border: 1px solid rgb(var(--accent));
   }
+
   border: 1px solid #999;
   border-radius: 5px;
   text-align: center;
@@ -165,15 +170,16 @@ theme-control {
 }
 
 menu {
+  visibility: hidden;
   position: absolute;
   background: var(--background-color);
   width: 10rem;
-  right: 1rem;
+  right: 0;
+  margin-top: -1px; // for border
   padding: 0;
-  z-index: 999;
+  z-index: 1;
   border: 1px solid #999;
-  border-radius: 5px;
-  display: none;
+  border-radius: 5px 0 5px 5px;
 }
 
 @media only screen
