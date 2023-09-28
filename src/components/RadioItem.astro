@@ -1,15 +1,14 @@
 ---
 interface Props {
-  elementId: string;
   description: string;
   icon?: string;
   value: string;
-  name: string;
+  tabindex?: number;
 }
 
-const { name, elementId, description, icon, value } = Astro.props;
+const { description, icon, value, tabindex } = Astro.props;
 ---
-<li><button data-value={value}>
+<li tabindex={tabindex ?? 0}><button data-value={value}>
   {
     icon &&
     <span class="icon">{icon}</span>

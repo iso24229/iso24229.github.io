@@ -6,10 +6,10 @@
 import Ri from './RadioItem.astro';
 
 interface Props {
-  elementId: string;
+  tabindex?: number;
 }
 
-const { elementId } = Astro.props;
+const { tabindex } = Astro.props;
 const themes = [
   {
     icon: "◑",
@@ -29,14 +29,14 @@ const themes = [
 ];
 
 ---
-<theme-control id={elementId} data-themes={JSON.stringify(themes)} aria-haspopup="true" tabindex=0 transition:persist>
+<theme-control data-themes={JSON.stringify(themes)} aria-haspopup="true" tabindex={tabindex ?? 0} transition:persist>
   <div class="current-theme-display" title="Change theme">
     {themes[0].icon}
   </div>
   <menu tabindex=1>
   {
     themes.map((theme, idx) => (
-      <Ri name="theme" tabindex={idx + 1} elementId={ `${elementId}-theme-control-${theme.value}` } {...theme}></Ri>
+      <Ri tabindex={idx + 1} {...theme}></Ri>
     ))
   }
   </menu>
