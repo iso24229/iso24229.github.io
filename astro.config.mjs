@@ -5,8 +5,6 @@ import prefetch from "@astrojs/prefetch";
 import mdx from '@astrojs/mdx';
 import serviceWorker from "astrojs-service-worker";
 
-const githubUsername = import.meta.env.GITHUB_REPOSITORY_OWNER || 'INSERT_GITHUB_USERNAME_HERE';
-
 
 // https://astro.build/config
 export default defineConfig({
@@ -25,5 +23,5 @@ export default defineConfig({
     }),
     prefetch(),
   ],
-  site: `https://${githubUsername}.github.io`
+  site: `https://www.iso24229.org`
 });
