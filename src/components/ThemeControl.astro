@@ -115,11 +115,12 @@ class ThemeControl extends HTMLElement {
   }
 
   switchTheme(e: Event) {
-    const target = e.target as HTMLElement;
-    if (target.matches('button')) {
-      this.currentTheme = target.dataset.value;
-      this.closeMenu();
+    let target = e.target as HTMLElement;
+    if (!target.matches('button')) {
+      target = target.closest('button') as HTMLButtonElement;
     }
+    this.currentTheme = target.dataset.value ?? defaultTheme;
+    this.closeMenu();
   }
 
 }
