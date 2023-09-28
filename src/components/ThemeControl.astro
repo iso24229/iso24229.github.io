@@ -74,7 +74,6 @@ class ThemeControl extends HTMLElement {
     const sanitizedTheme = this.sanitizeTheme(theme);
 
     // Set the body data-theme attribute to match the local storage item
-    console.debug('rendering current theme');
     this.documentTheme = sanitizedTheme;
     localStorage.setItem('theme', sanitizedTheme);
     this.renderCurrentTheme();
