@@ -29,6 +29,7 @@ const description = "This is the official registry for the ISO 24229 standard.";
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark light">
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="robots" content="none" />
@@ -46,6 +47,11 @@ const description = "This is the official registry for the ISO 24229 standard.";
 </html>
 <style lang="scss" is:global>
 :root {
+  /**
+   * See:
+   * https://css-tricks.com/a-complete-guide-to-dark-mode-on-the-web
+   */
+  color-scheme: light dark; /* both supported */
 
   --text-color--normal: #000;
   --background-color--normal: #fff;
@@ -90,12 +96,30 @@ const description = "This is the official registry for the ISO 24229 standard.";
     rgb(var(--accent-light)) 60%,
     rgb(var(--accent-light)) 95%
     );
+
+  --selection-color--normal: var(--text-color);
+  --selection-background-color--normal: rgb(var(--accent));
+
+  --selection-color--dark: var(--text-color--normal);
+  --selection-background-color--dark: rgb(var(--accent-dark));
+
+  --selection-color: var(--selection-color--dark);
+  --selection-background-color: var(--selection-background-color--dark);
 }
 
 /* Use padding to space out the content */
 * {
   margin: 0;
   box-sizing: border-box;
+}
+
+::selection {
+  color: var(--selection-color);
+  background: var(--selection-background-color);
+}
+
+img {
+  transition: filter 0.2s ease;
 }
 
 html {
@@ -187,22 +211,52 @@ h1, h2, h3, h4, h5, h6 {
   cursor: default;
 }
 
+@media (prefers-color-scheme: dark) {
+  html[data-theme="default"] {
+    --background-color: var(--background-color--dark);
+    --text-color: var(--text-color--dark);
+    --selection-color: var(--selection-color--dark);
+    --selection-background-color: var(--selection-background-color--dark);
+
+    img {
+      filter: brightness(80%);
+    }
+  }
+}
+
+html[data-theme="dark"] {
+  --background-color: var(--background-color--dark);
+  --text-color: var(--text-color--dark);
+  --selection-color: var(--selection-color--dark);
+  --selection-background-color: var(--selection-background-color--dark);
+
+  img {
+    filter: brightness(80%);
+  }
+}
+
 @media (prefers-color-scheme: light) {
   html[data-theme="default"] {
     --background-color: var(--background-color--normal);
     --text-color: var(--text-color--normal);
-    // --accent: var(--accent--dark);
-    // --accent-light: var(--accent-light--dark);
-    // --accent-dark: var(--accent-dark--dark);
+    --selection-color: var(--selection-color--normal);
+    --selection-background-color: var(--selection-background-color--normal);
+
+    img {
+      filter: brightness(1);
+    }
   }
 }
 
 html[data-theme="light"] {
   --background-color: var(--background-color--normal);
   --text-color: var(--text-color--normal);
-  // --accent: var(--accent--dark);
-  // --accent-light: var(--accent-light--dark);
-  // --accent-dark: var(--accent-dark--dark);
+  --selection-color: var(--selection-color--normal);
+  --selection-background-color: var(--selection-background-color--normal);
+
+  img {
+    filter: brightness(1);
+  }
 }
 
 </style>

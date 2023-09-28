@@ -14,14 +14,16 @@ const {
 } = Astro.props;
 ---
 <Fl href={href} isExternal={true}>
-  {
-  icon &&
-    <div {...{ class: `icon-social ${icon}`}}>
-      {/* <img {...{ src: iconSrc ?? `/assets/icons/${icon}.svg`} } /> */}
-    </div>
+  <div>
+    {
+    icon &&
+      <div {...{ class: `icon-social ${icon}`}}>
+        {/* <img {...{ src: iconSrc ?? `/assets/icons/${icon}.svg`} } /> */}
+      </div>
 
-  }
-  <slot />
+    }
+    <slot />
+  </div>
 </Fl>
 
 <style lang="scss">
@@ -37,24 +39,48 @@ const {
   }
 
   &.github {
-    background: url("/assets/icons/github.svg");
+    background-image: url("/assets/icons/github.svg");
   }
 
   &.linkedin {
-    background: url("/assets/icons/linkedin.svg");
+    background-image: url("/assets/icons/linkedin.svg");
   }
 
   &.facebook {
-    background: url("/assets/icons/facebook.svg");
+    background-image: url("/assets/icons/facebook.svg");
   }
 
   &.instagram {
-    background: url("/assets/icons/instagram.svg");
+    background-image: url("/assets/icons/instagram.svg");
   }
 
   &.x-twitter {
-    background: url("/assets/icons/x-twitter.svg");
+    background-image: url("/assets/icons/x-twitter.svg");
   }
 
+  &:hover {
+    filter: invert(1) brightness(70%);
+  }
 }
+
+div:hover {
+  .icon-social {
+    filter: invert(1) brightness(.6) sepia(1) saturate(5) hue-rotate(150deg);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="default"] {
+    .icon-social {
+      filter: invert(1) brightness(.7);
+    }
+  }
+}
+
+html[data-theme="dark"] {
+  .icon-social {
+    filter: invert(1) brightness(.7);
+  }
+}
+
 </style>
