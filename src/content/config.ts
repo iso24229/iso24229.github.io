@@ -1,5 +1,9 @@
 import { z, reference, defineCollection } from 'astro:content';
 
+const uuidentifiable = {
+  uuid: z.string(),
+};
+
 const remarkable = {
   remarks: z.string(),
 };
@@ -10,6 +14,7 @@ const timestampable = {
 };
 
 const commonTraits = {
+  ...uuidentifiable,
   ...remarkable,
   ...timestampable,
 };
