@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import { getCollection } from 'astro:content';
+
+import { collections } from "@/content/config";
+
+---
+
+<Layout title="Registry">
+  <section>
+    <nav>
+      <menu>
+      {
+        Object.entries(collections).map(
+          ([itemClass, classMeta]) =>
+            <Card
+              href={`/item-classes/${itemClass}`}
+              title={classMeta.title}
+              body={classMeta.description ?? ''}
+            >
+              <!--div class="meta">
+                <p>entries: N/A</p>
+              </div-->
+            </Card>
+        )
+      }
+      </menu>
+    </nav>
+  </section>
+</Layout>
+
+<style lang="scss">
+p {
+  padding: 0;
+}
+
+.meta {
+  font-size: smaller;
+}
+</style>
