@@ -9,39 +9,42 @@ const timestampable = {
   updatedAt: z.string().transform((val: string) => new Date(val)),
 };
 
-const authorityCollection = defineCollection({
+const commonTraits = {
+  ...remarkable,
+  ...timestampable,
+};
+
+const def = ({ schema } : { schema: z.ZodType<any, z.ZodTypeDef, any> }) => defineCollection({
   type: 'data',
+  schema,
+});
+
+const authorityCollection = def({
   schema: z.object({
     authorityIdentifier: z.string(),
     name: z.string(),
-    ...remarkable,
-    ...timestampable,
+    ...commonTraits,
   }),
 });
 
-const codeStatusCollection = defineCollection({
-  type: 'data',
+const codeStatusCollection = def({
   schema: z.object({
     codeStatus: z.string(),
-    ...remarkable,
-    ...timestampable,
+    ...commonTraits,
   }),
 });
 
-const spellingSystemCollection = defineCollection({
-  type: 'data',
+const spellingSystemCollection = def({
   schema: z.object({
     languageCode: z.string().optional(),
     scriptCode: z.string(),
     countryCode: z.string().optional(),
     extension: z.string(),
-    ...remarkable,
-    ...timestampable,
+    ...commonTraits,
   }),
 });
 
-const systemCodeCollection = defineCollection({
-  type: 'data',
+const systemCodeCollection = def({
   schema: z.object({
     code: z.string(),
     name: z.string(),
@@ -52,36 +55,29 @@ const systemCodeCollection = defineCollection({
     relations: z.array(reference('system-relation')),
     codeStatus: reference('code-status'),
     systemStatus: reference('system-status'),
-    ...remarkable,
-    ...timestampable,
+    ...commonTraits,
   }),
 });
 
-const systemRelationCollection = defineCollection({
-  type: 'data',
+const systemRelationCollection = def({
   schema: z.object({
     type: z.string(),
     targetSystem: reference('system-code'),
-    ...remarkable,
-    ...timestampable,
+    ...commonTraits,
   }),
 });
 
-const systemRelationTypeCollection = defineCollection({
-  type: 'data',
+const systemRelationTypeCollection = def({
   schema: z.object({
     systemRelationType: z.string(),
-    ...remarkable,
-    ...timestampable,
+    ...commonTraits,
   }),
 });
 
-const systemStatusCollection = defineCollection({
-  type: 'data',
+const systemStatusCollection = def({
   schema: z.object({
     systemStatus: z.string(),
-    ...remarkable,
-    ...timestampable,
+    ...commonTraits,
   }),
 });
 
