@@ -1,0 +1,13 @@
+---
+import { itemClasses } from "@/content/config";
+
+export async function getStaticPaths() {
+  const res = itemClasses.reduce((paths, itemClass) => {
+    paths.push({ params: { itemClass } });
+    return paths;
+  }, []);
+  return res;
+}
+const { itemClass } = Astro.params;
+return Astro.redirect(`/item-classes/${itemClass}/p/1`);
+---

@@ -1,0 +1,44 @@
+---
+import ItemClass from "@/layouts/ItemClass.astro";
+import { getCollection } from 'astro:content';
+
+import { itemClasses } from "@/content/config";
+
+export async function getStaticPaths({ paginate }) {
+
+  const entries = await itemClasses.reduce(async (acc, itemClass) => {
+    console.log('acc', acc);
+    const entries = await getCollection(itemClass) ?? [];
+    console.log('entries', entries);
+
+    const mappedEntries = entries.map(entry => ({
+      params: { itemClass, slug: `${itemClass}/i/${entry.data.uuid}` },
+      props: { entry, itemClass },
+    }));
+
+    (await acc).concat(mappedEntries);
+    return acc;
+  }, []);
+  // return entries;
+
+  const paginatedEntries = paginate(entries, {
+    pageSize: 10,
+  });
+  return paginatedEntries;
+}
+
+const {
+  itemClass,
+  page,
+} = Astro.props;
+
+console.log('what is itemClass', itemClass);
+---
+<ItemClass title="hello">
+  <h1>{itemClass}: Page {page.currentPage}</h1>
+  <ul>
+    {page.data.map(({ uuid }: { uuid: string }) => <li>{uuid}</li>)}
+  </ul>
+  {page.url.prev ? <a href={page.url.prev}>Previous</a> : null}
+  {page.url.next ? <a href={page.url.next}>Next</a> : null}
+</ItemClass>
