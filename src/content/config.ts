@@ -82,11 +82,35 @@ const systemStatusCollection = def({
 });
 
 export const collections = {
-  'authority': authorityCollection,
-  'code-status': codeStatusCollection,
-  'spelling-system': spellingSystemCollection,
-  'system-code': systemCodeCollection,
-  'system-relation': systemRelationCollection,
-  'system-relation-type': systemRelationTypeCollection,
-  'system-status': systemStatusCollection,
+  'authority': {
+    collection: authorityCollection,
+    title: 'Authority',
+    // description: 'lorem ipsum dolor sit amet consectetur adipiscing elit. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+  },
+  'code-status': {
+    collection: codeStatusCollection,
+    title: 'Code Status',
+  },
+  'spelling-system': {
+    collection: spellingSystemCollection,
+    title: 'Spelling System',
+  },
+  'system-code': {
+    collection: systemCodeCollection,
+    title: 'System Code',
+  },
+  'system-relation': {
+    collection: systemRelationCollection,
+    title: 'System Relation',
+  },
+  'system-relation-type': {
+    collection: systemRelationTypeCollection,
+    title: 'System Relation Type',
+  },
+  'system-status': {
+    collection: systemStatusCollection,
+    title: 'System Status',
+  },
 };
+
+export const itemClasses = Object.keys(collections);
