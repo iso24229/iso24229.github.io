@@ -11,18 +11,18 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.2.1",
-    "@astrojs/mdx": "^1.1.2",
-    "@astrojs/partytown": "^2.0.1",
+    "@astrojs/check": "^0.7.0",
+    "@astrojs/mdx": "^3.0.0",
+    "@astrojs/partytown": "^2.1.0",
     "@astrojs/prefetch": "^0.4.1",
-    "astro": "^3.3.2",
-    "astrojs-service-worker": "^1.1.0",
-    "typescript": "^5.2.2"
+    "astro": "^4.8.6",
+    "astrojs-service-worker": "^2.0.0",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
-    "@astrojs/ts-plugin": "^1.2.0",
+    "@astrojs/ts-plugin": "^1.8.0",
     "astro-adoc": "^0.3.0",
     "astro-robots-txt": "^1.0.0",
-    "sass": "^1.69.4"
+    "sass": "^1.77.2"
   }
 }
