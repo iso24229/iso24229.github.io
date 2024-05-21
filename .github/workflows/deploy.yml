@@ -28,7 +28,7 @@ jobs:
         with:
           # path: . # The root location of your Astro project inside the repository. (optional)
           node-version: 20 # Defaults to 16
-          package-manager: pnpm@8
+          package-manager: pnpm@7
 
   deploy:
     needs: build
