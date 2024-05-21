@@ -1,0 +1,89 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import {
+  getCollection,
+} from 'astro:content';
+
+import type {
+  InferGetStaticPropsType,
+  InferGetStaticParamsType,
+  GetStaticPaths,
+} from "astro";
+
+interface C {
+  id: string;
+  data: any;
+}
+
+import {
+  itemClasses,
+  schemaWithRichData,
+  mapSchema,
+  primitiveTypeOf,
+  titleOf,
+} from "@/content/config";
+
+import type {
+  ItemClass,
+} from "@/content/config";
+
+export const getStaticPaths = (async () => {
+  const res = [];
+
+  /**
+    * sequentially map data
+    */
+  for (const itemClass of itemClasses) {
+     let collection = await (getCollection(itemClass)) ?? [];
+     res.push({
+        itemClass,
+        collection
+      });
+   }
+
+  return res.flatMap(({ itemClass, collection, }) => {
+
+    return collection.map((_c) => {
+      const c = _c as C;
+      return {
+        params: {
+          itemClass,
+          uuid: c.id ?? 'no UUID available',
+          slug: `${itemClass}/i/${c.id}`,
+        },
+          props: { entry: c.data  ?? {}},
+      }
+    })
+  });
+
+}) satisfies GetStaticPaths;
+
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+
+const {
+  entry,
+} = Astro.props as Props;
+
+const {
+  uuid,
+  itemClass,
+} = Astro.params as Params;
+
+const {
+  title: itemClassTitle,
+  schema: itemClassSchema,
+} = schemaWithRichData[itemClass as ItemClass];
+
+---
+<Layout title={uuid ?? 'no UUID available'}>
+  <h1><a href={`/item-classes/${itemClass}`}>{itemClassTitle}</a> : {uuid}</h1>
+  <ul>
+    {
+
+    mapSchema(itemClassSchema, ([ k, type ]) => {
+      return <li>{titleOf(k, type)}: {primitiveTypeOf(type)} = {entry[k]}</li>;})
+    }
+  </ul>
+</Layout>

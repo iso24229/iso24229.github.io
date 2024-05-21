@@ -2,10 +2,9 @@
 import { itemClasses } from "@/content/config";
 
 export async function getStaticPaths() {
-  const res = itemClasses.reduce((paths, itemClass) => {
-    paths.push({ params: { itemClass } });
-    return paths;
-  }, []);
+  const res: { params: { itemClass: string } }[] = itemClasses.reduce((paths, itemClass) => {
+    return [ ...paths, { params: { itemClass } } ];
+  }, [] as { params: { itemClass: string } }[]);
   return res;
 }
 const { itemClass } = Astro.params;

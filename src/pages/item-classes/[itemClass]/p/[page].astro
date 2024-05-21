@@ -1,44 +1,140 @@
 ---
-import ItemClass from "@/layouts/ItemClass.astro";
-import { getCollection } from 'astro:content';
+import ItemClassLayout from "@/layouts/ItemClass.astro";
 
-import { itemClasses } from "@/content/config";
+import {
+  getCollection,
+  // z,
+} from 'astro:content';
 
-export async function getStaticPaths({ paginate }) {
+import type {
+  CollectionEntry,
+  CollectionKey,
+} from 'astro:content';
 
-  const entries = await itemClasses.reduce(async (acc, itemClass) => {
-    console.log('acc', acc);
-    const entries = await getCollection(itemClass) ?? [];
-    console.log('entries', entries);
+import type {
+  InferGetStaticPropsType,
+  InferGetStaticParamsType,
+  GetStaticPaths,
+  PaginateFunction,
+} from "astro";
 
-    const mappedEntries = entries.map(entry => ({
-      params: { itemClass, slug: `${itemClass}/i/${entry.data.uuid}` },
-      props: { entry, itemClass },
-    }));
+import {
+  itemClasses,
+  // collections,
+  zodCollectionsWithRichData,
+} from "@/content/config";
 
-    (await acc).concat(mappedEntries);
-    return acc;
-  }, []);
-  // return entries;
+import type {
+  ItemClass,
+} from "@/content/config";
 
-  const paginatedEntries = paginate(entries, {
-    pageSize: 10,
-  });
-  return paginatedEntries;
+interface C {
+  id: string;
+  data: any;
 }
+
+export const getStaticPaths = (async ({ paginate }: { paginate: PaginateFunction }) => {
+  const res: { itemClass: ItemClass, collection: CollectionEntry<CollectionKey>[] }[] = [];
+
+  /**
+    * sequentially map data
+    */
+  for (const itemClass of itemClasses) {
+    let collection: CollectionEntry<CollectionKey>[] = (await (getCollection(itemClass)) ?? [] as CollectionEntry<CollectionKey>[]);
+    res.push({
+      itemClass,
+      collection
+    });
+  }
+
+  // return [];
+  return res.flatMap(({ itemClass, collection, }) => {
+    return paginate(collection.map((_c) => {
+      const c = _c as C;
+      return {
+        params: {
+          itemClass,
+          uuid: c.id ?? 'no UUID available',
+          slug: `${itemClass}/i/${c.id}`,
+        },
+        props: { entry: c.data  ?? {}},
+      };
+    }), {
+        pageSize: 10,
+        params: { itemClass }
+      });
+  });
+
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
 
 const {
   itemClass,
+} = Astro.params as Params;
+
+const {
   page,
-} = Astro.props;
+} = Astro.props as Props;
+
 
 console.log('what is itemClass', itemClass);
+console.log('what is page', page.data);
+
+page.data.forEach(({ props }: any) => {
+  console.log('what is props', props);
+});
+const entryNum = page.data.length;
+const itemClassTitle = zodCollectionsWithRichData[itemClass as ItemClass].title;
+
 ---
-<ItemClass title="hello">
-  <h1>{itemClass}: Page {page.currentPage}</h1>
-  <ul>
-    {page.data.map(({ uuid }: { uuid: string }) => <li>{uuid}</li>)}
-  </ul>
-  {page.url.prev ? <a href={page.url.prev}>Previous</a> : null}
-  {page.url.next ? <a href={page.url.next}>Next</a> : null}
-</ItemClass>
+<ItemClassLayout title={`${itemClassTitle} | page ${page.currentPage}`}>
+  <div class="page-wrapper">
+  <h1>{itemClassTitle}</h1>
+  {
+    entryNum == 0 ? (
+      <p>No entries found</p>
+    ) : (
+        <>
+          <ul>
+            {
+              page.data.map(
+                ({ props }) =>
+                    <li>
+                      <a href={`/item-classes/${itemClass}/i/${props.entry?.uuid}`}>
+                        {props.entry?.uuid ?? 'no UUID'}: {props.entry?.name ?? 'No name'}
+                      </a>
+                    </li>
+              )
+            }
+          </ul>
+
+          <nav class="pagination">
+            Page {page.currentPage}
+            {page.url.prev ? <a href={page.url.prev}>Previous</a> : null}
+            {page.url.next ? <a href={page.url.next}>Next</a> : null}
+          </nav>
+        </>
+      )
+  }
+  </div>
+</ItemClassLayout>
+<style lang="scss">
+div.page-wrapper {
+  dislay: flex;
+  flex-grow: 1;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-color--normal);
+  text-decoration: none;
+
+}
+</style>

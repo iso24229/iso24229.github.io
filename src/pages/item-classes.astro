@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 import { getCollection } from 'astro:content';
 
-import { collections } from "@/content/config";
+import { zodCollectionsWithRichData } from "@/content/config";
 
 ---
 
@@ -12,7 +12,7 @@ import { collections } from "@/content/config";
     <nav>
       <menu>
       {
-        Object.entries(collections).map(
+        Object.entries(zodCollectionsWithRichData).map(
           ([itemClass, classMeta]) =>
             <Card
               href={`/item-classes/${itemClass}`}
