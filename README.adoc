@@ -1,5 +1,7 @@
 = ISO 24229 Registry Website
 
+image:https://github.com/iso24229/iso24229.github.io/actions/workflows/deploy.yml/badge.svg[alt="Deploy to GitHub Pages",link="https://github.com/iso24229/iso24229.github.io/actions/workflows/deploy.yml"]
+
 == Introduction
 
 This is the official repository for https://www.iso24229.org[the ISO 24229 Registry public website].
