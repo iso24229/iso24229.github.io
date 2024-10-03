@@ -35,3 +35,8 @@ check:
 .PHONY: clean
 clean:
 	rm -rf dist
+
+.PHONY: update-flakes
+## Update all flakes
+update-flakes:
+	nix flake update
