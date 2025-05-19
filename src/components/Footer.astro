@@ -3,6 +3,8 @@ import Li from "./OutwardLink.astro";
 import Fl from "./FooterLink.astro";
 
 export type Props = Record<string, never>;
+
+const currentYear = new Date().getFullYear();
 ---
 <footer>
   <div class="footer-wrapper">
@@ -71,7 +73,7 @@ export type Props = Record<string, never>;
         <a href="https://www.iso.org" target="_blank"><img class="logo-iso" src="/assets/logos/iso-logo-black.svg" /></a>
       </div>
       <div class="copyright-notice">
-        © All Rights Reserved
+        © {currentYear} All Rights Reserved
       </div>
       <div class="working-group-text">
         <a href="https://www.iso.org" target="_blank">ISO</a> / <a href="https://www.iso.org/committee/48750.html" target="_blank">TC 46</a> / WG 3
