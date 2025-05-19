@@ -8,5 +8,7 @@ export async function getStaticPaths() {
   return res;
 }
 const { itemClass } = Astro.params;
-return Astro.redirect(`/item-classes/${itemClass}/p/1`);
+const redirectPath = `/item-classes/${itemClass}/p/1`;
+
+Astro.redirect(redirectPath);
 ---

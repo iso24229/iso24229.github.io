@@ -53,13 +53,13 @@ const ref = (
   };
 }
 
-const isReferenceSchemaType = (s: any): s is SchemaReferenceType =>
+export const isReferenceSchemaType = (s: any): s is SchemaReferenceType =>
   typeof s === 'object' && 'ref' in s && 'optional' in s;
 
-const isDescriptiveSchemaType = (s: SchemaType): s is DescriptiveSchemaType =>
+export const isDescriptiveSchemaType = (s: SchemaType): s is DescriptiveSchemaType =>
   typeof s === 'object' && 'type' in s;
 
-const isPrimitiveSchemaType = (s: SchemaType): s is PrimitiveSchemaType =>
+export const isPrimitiveSchemaType = (s: SchemaType): s is PrimitiveSchemaType =>
   ! isReferenceSchemaType(s) && ! isDescriptiveSchemaType(s);
 
 type SchemaArrayType = Array<SchemaType>;

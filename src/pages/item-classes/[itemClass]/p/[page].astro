@@ -28,7 +28,7 @@ import type {
   ItemClass,
 } from "@/content/config";
 
-interface C {
+export interface C {
   id: string;
   data: any;
 }
@@ -67,8 +67,8 @@ export const getStaticPaths = (async ({ paginate }: { paginate: PaginateFunction
 
 }) satisfies GetStaticPaths;
 
-type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+export type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+export type Params = InferGetStaticParamsType<typeof getStaticPaths>;
 
 const {
   itemClass,

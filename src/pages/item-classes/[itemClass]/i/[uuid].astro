@@ -10,7 +10,7 @@ import type {
   GetStaticPaths,
 } from "astro";
 
-interface C {
+export interface C {
   id: string;
   data: any;
 }
@@ -59,8 +59,8 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 
-type Props = InferGetStaticPropsType<typeof getStaticPaths>;
-type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+export type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+export type Params = InferGetStaticParamsType<typeof getStaticPaths>;
 
 const {
   entry,

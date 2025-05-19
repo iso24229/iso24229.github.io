@@ -1,10 +1,10 @@
 ---
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import Main from "../components/Main.astro";
-import { ViewTransitions } from 'astro:transitions';
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+import Main from "@components/Main.astro";
+import { ClientRouter } from 'astro:transitions';
 
-import GoogleAnalytics from '../components/GoogleAnalytics.astro';
+import GoogleAnalytics from '@components/GoogleAnalytics.astro';
 
 export interface Props {
   title: string;
@@ -38,7 +38,7 @@ const description = "This is the official registry for the ISO 24229 standard.";
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <GoogleAnalytics />
-    <ViewTransitions />
+    <ClientRouter />
   </head>
   <body class={classes ?? ""}>
     <Header/>

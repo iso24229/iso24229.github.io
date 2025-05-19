@@ -5,7 +5,7 @@
 
 import Ri from './RadioItem.astro';
 
-interface Props {
+export interface Props {
   tabindex?: number;
 }
 
@@ -125,6 +125,7 @@ class ThemeControl extends HTMLElement {
 }
 customElements.define("theme-control", ThemeControl);
 </script>
+
 <style lang="scss">
 :root {
   --theme-control-dimension: 2.1rem;

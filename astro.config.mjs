@@ -11,7 +11,7 @@ export default defineConfig({
   integrations: [
     serviceWorker(),
     mdx(),
-    // partytown(),
+    partytown(),
     robotsTxt({
       sitemap: false,
       policy: [

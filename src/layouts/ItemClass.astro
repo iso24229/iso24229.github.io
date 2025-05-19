@@ -1,16 +1,20 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import { zodCollectionsWithRichData } from "@/content/config";
+import Layout from "@layouts/Layout.astro";
+// import { zodCollectionsWithRichData } from "@/content/config";
 
-interface Props {
+export interface Props {
   title: string;
   classes?: string;
   frontmatter?: any;
   page?: any;
 }
 
-let { title, classes, } = Astro.props;
-let { page, itemClass } = Astro.params;
+let {
+  title,
+  // classes,
+} = Astro.props;
+
+// let { page, itemClass } = Astro.params;
 
 ---
 <Layout title={title}>
