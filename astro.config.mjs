@@ -1,13 +1,15 @@
 import { defineConfig } from 'astro/config';
 import partytown from "@astrojs/partytown";
 import robotsTxt from "astro-robots-txt";
-import prefetch from "@astrojs/prefetch";
 import mdx from '@astrojs/mdx';
 import serviceWorker from "astrojs-service-worker";
 import { siteUrl } from "./src/config";
 
 // https://astro.build/config
 export default defineConfig({
+  prefetch: {
+    prefetchAll: true
+  },
   integrations: [
     serviceWorker(),
     mdx(),
@@ -21,7 +23,6 @@ export default defineConfig({
         }
       ],
     }),
-    prefetch(),
   ],
   site: siteUrl,
 });
