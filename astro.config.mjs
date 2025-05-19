@@ -4,7 +4,7 @@ import robotsTxt from "astro-robots-txt";
 import prefetch from "@astrojs/prefetch";
 import mdx from '@astrojs/mdx';
 import serviceWorker from "astrojs-service-worker";
-
+import { siteUrl } from "./src/config";
 
 // https://astro.build/config
 export default defineConfig({
@@ -23,5 +23,5 @@ export default defineConfig({
     }),
     prefetch(),
   ],
-  site: `https://www.iso24229.org`
+  site: siteUrl,
 });
