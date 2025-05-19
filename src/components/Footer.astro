@@ -5,6 +5,55 @@ import Fl from "./FooterLink.astro";
 export type Props = Record<string, never>;
 
 const currentYear = new Date().getFullYear();
+
+const poweredBys = [
+  {
+    name: "CalConnect",
+    url: "https://www.calconnect.org",
+  },
+  {
+    name: "Ribose Inc",
+    url: "https://open.ribose.com",
+  },
+];
+
+const sourceCodes = [
+  {
+    name: "This website",
+    url: "https://github.com/iso24229/iso24229.github.io",
+  },
+  {
+    name: "Registry data",
+    url: "https://github.com/iso24229/iso24229-registry",
+  },
+];
+
+const relatedProjects = [
+  {
+    name: "Interscript",
+    url: "https://interscript.org",
+  },
+  {
+    name: "Extension for Paneron",
+    url: "https://extensions.paneron.org/e/@paneron/extension-wlcs-registry/",
+  },
+  {
+    name: "Paneron Register (Ruby Gem)",
+    url: "https://github.com/paneron/ruby-paneron-register",
+  },
+];
+
+const legals = [
+  {
+    name: "Privacy Policy",
+    url: "/privacy",
+  },
+  {
+    name: "Terms of Service",
+    url: "/tos",
+  },
+];
+
 ---
 <footer>
   <div class="footer-wrapper">
@@ -13,12 +62,11 @@ const currentYear = new Date().getFullYear();
         Powered by
       </h2>
       <ul>
-        <Li href="https://www.calconnect.org/">
-          CalConnect
-        </Li>
-        <Li href="https://open.ribose.com">
-          Ribose Inc
-        </Li>
+        {
+        poweredBys.map((item) => (
+          <Li href={item.url}>{item.name}</Li>
+        ))
+        }
       </ul>
     </section>
 
@@ -26,24 +74,22 @@ const currentYear = new Date().getFullYear();
       <li>
         <menu>
           <h2>Source code</h2>
-          <Li href="https://github.com/iso24229/iso24229.github.io" icon="github">
-            This website
-          </Li>
-          <Li href="https://github.com/iso24229/iso24229-registry" icon="github">
-            Registry data
-          </Li>
+          {
+          sourceCodes.map((item) => (
+            <Li href={item.url} icon="github">{item.name}</Li>
+          ))
+          }
         </menu>
       </li>
 
       <li>
         <menu>
           <h2>Related projects</h2>
-          <Li href="https://interscript.org">
-            Interscript
-          </Li>
-          <Li href="https://extensions.paneron.org/e/@paneron/extension-wlcs-registry/">
-            Extension for Paneron
-          </Li>
+          {
+          relatedProjects.map((item) => (
+            <Li href={item.url}>{item.name}</Li>
+          ))
+          }
         </menu>
       </li>
     </menu>
@@ -60,12 +106,11 @@ const currentYear = new Date().getFullYear();
 
     <menu class="legal-links">
       <h2>Legal</h2>
-      <Fl href="/privacy">
-        Privacy Policy
-      </Fl>
-      <Fl href="/tos">
-        Terms of Service
-      </Fl>
+      {
+      legals.map((item) => (
+        <Fl href={item.url}>{item.name}</Fl>
+      ))
+      }
     </menu>
 
     <section class="official-affiliation-notice">
