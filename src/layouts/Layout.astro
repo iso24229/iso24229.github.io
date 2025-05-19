@@ -12,8 +12,6 @@ export interface Props {
   frontmatter?: any;
 }
 
-const siteTitle = "ISO 24229 Registry";
-
 let { title, classes } = Astro.props;
 
 // Append " | siteTitle" to the provided title
@@ -22,7 +20,7 @@ title = title == '' ? siteTitle : `${title} | ${siteTitle}`;
 
 classes = classes ?? Astro.props.frontmatter?.classes ?? '';
 
-const description = "This is the official registry for the ISO 24229 standard.";
+import { siteTitle, siteDescription } from "@/config";
 
 ---
 
@@ -30,7 +28,7 @@ const description = "This is the official registry for the ISO 24229 standard.";
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
+    <meta name="description" content={siteDescription} />
     <meta name="color-scheme" content="dark light">
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
