@@ -48,6 +48,7 @@ const description = "This is the official registry for the ISO 24229 standard.";
     <Footer/>
   </body>
 </html>
+
 <style lang="scss" is:global>
 :root {
   /**
@@ -81,6 +82,14 @@ const description = "This is the official registry for the ISO 24229 standard.";
   --accent--dark: var(--accent--normal);
   --accent-light--dark: var(--accent-light--normal);
   --accent-dark--dark: var(--accent-dark--normal);
+
+  --card-bg-color--light: #eee;
+  --card-fg-color--light: var(--text-color--normal);
+  --card-border-color--light: var(--text-color--normal);
+
+  --card-bg-color--dark: #111;
+  --card-fg-color--dark: var(--text-color--dark);
+  --card-border-color--dark: var(--text-color--dark);
 
   // --accent--dark: 26, 208, 244;
   // --accent-light--dark: 28, 248, 155;
@@ -220,52 +229,53 @@ a {
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  html[data-theme="default"] {
-    --background-color: var(--background-color--dark);
-    --text-color: var(--text-color--dark);
-    --selection-color: var(--selection-color--dark);
-    --selection-background-color: var(--selection-background-color--dark);
-
-    img {
-      filter: brightness(80%);
-    }
-  }
-}
-
-html[data-theme="dark"] {
+@mixin dark-mode {
   --background-color: var(--background-color--dark);
   --text-color: var(--text-color--dark);
   --selection-color: var(--selection-color--dark);
   --selection-background-color: var(--selection-background-color--dark);
+  --card-bg-color: var(--card-bg-color--dark);
+  --card-fg-color: var(--card-fg-color--dark);
+  --card-border-color: var(--card-border-color--dark);
 
   img {
     filter: brightness(80%);
   }
 }
 
-@media (prefers-color-scheme: light) {
-  html[data-theme="default"] {
-    --background-color: var(--background-color--normal);
-    --text-color: var(--text-color--normal);
-    --selection-color: var(--selection-color--normal);
-    --selection-background-color: var(--selection-background-color--normal);
-
-    img {
-      filter: brightness(1);
-    }
-  }
-}
-
-html[data-theme="light"] {
+@mixin light-mode {
   --background-color: var(--background-color--normal);
   --text-color: var(--text-color--normal);
   --selection-color: var(--selection-color--normal);
   --selection-background-color: var(--selection-background-color--normal);
+  --card-bg-color: var(--card-bg-color--light);
+  --card-fg-color: var(--card-fg-color--light);
+  --card-border-color: var(--card-border-color--light);
 
   img {
     filter: brightness(1);
   }
+}
+
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="default"] {
+    @include dark-mode;
+  }
+}
+
+html[data-theme="dark"] {
+  @include dark-mode;
+}
+
+@media (prefers-color-scheme: light) {
+  html[data-theme="default"] {
+    @include light-mode;
+  }
+}
+
+html[data-theme="light"] {
+  @include light-mode;
 }
 
 </style>
