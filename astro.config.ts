@@ -13,7 +13,12 @@ export default defineConfig({
   integrations: [
     serviceWorker(),
     mdx(),
-    partytown(),
+    // https://partytown.qwik.dev/google-tag-manager/
+    partytown({
+      config: {
+        forward: ['dataLayer.push'],
+      },
+    }),
     robotsTxt({
       sitemap: false,
       policy: [
