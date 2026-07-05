@@ -1,4 +1,6 @@
-import { z, reference, defineCollection } from 'astro:content';
+import { reference, defineCollection } from 'astro:content';
+import { z } from 'astro/zod';
+import { glob } from 'astro/loaders';
 
 const uuidentifiable = {
   uuid: {
@@ -120,7 +122,7 @@ export const titleOf = (k: string, s: SchemaType): string => {
 }
 
 export const transformSchemaToZodSchema = (s: SchemaObjectType): z.ZodRawShape => {
-  const zodSchema: z.ZodRawShape = {};
+  const zodSchema: Record<string, z.ZodType> = {};
   Object.entries(s).forEach(([key, value]) => {
     zodSchema[key] = transformPrimitiveSchemaToZodSchema(primitiveTypeOf(value));
   });
@@ -170,9 +172,9 @@ const commonTraits = {
   ...timestampable,
 };
 
-const def = (schema: z.ZodType) => defineCollection({
+const def = (schema: z.ZodType, itemClass: string) => defineCollection({
   schema,
-  type: 'data',
+  loader: glob({ pattern: '*.{json,yaml,yml}', base: `./src/content/${itemClass}` }),
 });
 
 export const itemClasses = [
@@ -290,7 +292,7 @@ export const zodSchemas = Object.entries(schemas).reduce((acc, [k, v]) => {
 }, {} as Record<ItemClass, z.ZodType>);
 
 export const collections = Object.entries(zodSchemas).reduce((acc, [k, v]) => {
-  acc[k] = def(v);
+  acc[k] = def(v, k);
   return acc;
 }, {} as Record<string, ReturnType<typeof def>>);
 

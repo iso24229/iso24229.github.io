@@ -1,5 +1,5 @@
 ---
-import { itemClasses } from "@/content/config";
+import { itemClasses } from "@/content.config";
 
 export async function getStaticPaths() {
   const res: { params: { itemClass: string } }[] = itemClasses.reduce((paths, itemClass) => {
