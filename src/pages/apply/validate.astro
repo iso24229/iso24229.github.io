@@ -1,0 +1,200 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { ReferenceDataIndex } from '../../domain/reference/ReferenceDataIndex';
+
+const idx = ReferenceDataIndex.load();
+const iso639Count = idx.iso639Count;
+const iso15924Count = idx.iso15924Count;
+
+// Inline the manifest as JSON for the client-side validator to use without
+// a network roundtrip. ~600KB compressed for all 639 parts; acceptable
+// for a single-page tool.
+const iso639Codes = Array.from({ length: 0 } as string[]);
+const iso15924Codes = Array.from({ length: 0 } as string[]);
+// Build manifests lazily — we expose only the codes (not full data) to keep
+// the page weight low.
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+for (const part of ['639-1', '639-2', '639-3', '639-5'] as const) {
+  try {
+    for (const f of readdirSync(join('external/iso639-data', part))) {
+      if (f.endsWith('.yaml')) iso639Codes.push(f.replace(/\.yaml$/, ''));
+    }
+  } catch {}
+}
+try {
+  for (const f of readdirSync('external/iso15924-data/codes')) {
+    if (f.endsWith('.yaml')) iso15924Codes.push(f.replace(/\.yaml$/, ''));
+  }
+} catch {}
+---
+
+<Layout title="Validate codes">
+  <p class="text-sm text-ink-subtle"><a href="/apply">← Apply</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Validate codes</h1>
+
+  <p class="text-ink-muted max-w-2xl mb-8">
+    Check your ISO 639 language code and ISO 15924 script code against our
+    reference datasets before submitting. We currently hold
+    <strong>{iso639Count.toLocaleString()}</strong> ISO 639 codes and
+    <strong>{iso15924Count.toLocaleString()}</strong> ISO 15924 codes.
+  </p>
+
+  <div class="grid gap-6 md:grid-cols-2 max-w-3xl">
+    <label class="block">
+      <span class="block text-sm font-medium mb-2">Source language (ISO 639)</span>
+      <input
+        type="text"
+        id="src-lang"
+        class="w-full px-4 py-2 border border-line rounded font-mono bg-surface"
+        placeholder="e.g. zho, eng, ara"
+        autocomplete="off"
+      />
+      <span id="src-lang-status" class="block text-xs mt-1 h-4"></span>
+    </label>
+
+    <label class="block">
+      <span class="block text-sm font-medium mb-2">Source script (ISO 15924)</span>
+      <input
+        type="text"
+        id="src-script"
+        class="w-full px-4 py-2 border border-line rounded font-mono bg-surface"
+        placeholder="e.g. Hani, Latn, Arab"
+        autocomplete="off"
+      />
+      <span id="src-script-status" class="block text-xs mt-1 h-4"></span>
+    </label>
+
+    <label class="block">
+      <span class="block text-sm font-medium mb-2">Target language (optional)</span>
+      <input
+        type="text"
+        id="tgt-lang"
+        class="w-full px-4 py-2 border border-line rounded font-mono bg-surface"
+        placeholder="leave blank if script-only target"
+        autocomplete="off"
+      />
+      <span id="tgt-lang-status" class="block text-xs mt-1 h-4"></span>
+    </label>
+
+    <label class="block">
+      <span class="block text-sm font-medium mb-2">Target script (ISO 15924)</span>
+      <input
+        type="text"
+        id="tgt-script"
+        class="w-full px-4 py-2 border border-line rounded font-mono bg-surface"
+        placeholder="e.g. Latn"
+        autocomplete="off"
+      />
+      <span id="tgt-script-status" class="block text-xs mt-1 h-4"></span>
+    </label>
+
+    <label class="block md:col-span-2">
+      <span class="block text-sm font-medium mb-2">Identifying segment</span>
+      <input
+        type="text"
+        id="ident"
+        class="w-full px-4 py-2 border border-line rounded font-mono bg-surface"
+        placeholder="e.g. 2017, 9-1995"
+        autocomplete="off"
+      />
+    </label>
+  </div>
+
+  <div class="mt-8 max-w-3xl">
+    <p class="text-sm font-medium mb-2">Generated code</p>
+    <code id="generated-code" class="block p-4 bg-surface-raised border border-line rounded font-mono text-lg break-all text-ink-subtle">
+      —
+    </code>
+    <p id="generated-status" class="text-xs mt-2 h-4"></p>
+  </div>
+
+  <div class="mt-6 max-w-3xl">
+    <a
+      id="issue-link"
+      href="#"
+      class="hidden inline-flex items-center gap-2 px-6 py-3 bg-accent text-surface rounded font-medium hover:bg-accent-dark transition-colors"
+    >
+      Open registration issue with these values
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
+</Layout>
+
+<script is:inline define:vars={{ iso639Codes, iso15924Codes }}>
+  const iso639 = new Set(iso639Codes);
+  const iso15924 = new Set(iso15924Codes);
+
+  const fields = {
+    'src-lang': { set: iso639, statusKey: 'src-lang-status', optional: false },
+    'src-script': { set: iso15924, statusKey: 'src-script-status', optional: false },
+    'tgt-lang': { set: iso639, statusKey: 'tgt-lang-status', optional: true },
+    'tgt-script': { set: iso15924, statusKey: 'tgt-script-status', optional: false },
+  };
+
+  function setStatus(key, msg, ok) {
+    const el = document.getElementById(key);
+    if (!el) return;
+    el.textContent = msg;
+    el.className = 'block text-xs mt-1 h-4 ' + (ok ? 'text-green-600 dark:text-green-400' : msg ? 'text-red-600 dark:text-red-400' : '');
+  }
+
+  function checkField(id) {
+    const cfg = fields[id];
+    const el = document.getElementById(id);
+    const v = el.value.trim();
+    if (!v) {
+      if (cfg.optional) {
+        setStatus(cfg.statusKey, '', true);
+        return true;
+      }
+      setStatus(cfg.statusKey, 'required', false);
+      return false;
+    }
+    if (cfg.set.has(v)) {
+      setStatus(cfg.statusKey, '✓ valid', true);
+      return true;
+    }
+    setStatus(cfg.statusKey, `✗ "${v}" not found`, false);
+    return false;
+  }
+
+  function update() {
+    let allOk = true;
+    for (const id of Object.keys(fields)) {
+      if (!checkField(id)) allOk = false;
+    }
+
+    const ident = document.getElementById('ident').value.trim();
+    const identOk = ident.length > 0;
+    setStatus('generated-status', identOk ? '' : 'identifying segment required', identOk);
+    if (!identOk) allOk = false;
+
+    const src = document.getElementById('src-lang').value.trim();
+    const srcS = document.getElementById('src-script').value.trim();
+    const tgt = document.getElementById('tgt-lang').value.trim();
+    const tgtS = document.getElementById('tgt-script').value.trim();
+
+    const srcSeg = [src, srcS].filter(Boolean).join('-') || '…';
+    const tgtSeg = [tgt, tgtS].filter(Boolean).join('-') || '…';
+    const code = `<authority>:${srcSeg}:${tgtSeg}:${ident || '…'}`;
+    const codeEl = document.getElementById('generated-code');
+    codeEl.textContent = code;
+    codeEl.classList.toggle('text-ink-subtle', !allOk);
+    codeEl.classList.toggle('text-ink', allOk);
+
+    const link = document.getElementById('issue-link');
+    if (allOk) {
+      link.href = `https://github.com/iso24229/iso24229-register/issues/new?template=register-new-system.yml&labels=system-code&title=${encodeURIComponent('New system: ' + code)}`;
+      link.classList.remove('hidden');
+    } else {
+      link.classList.add('hidden');
+    }
+  }
+
+  for (const id of Object.keys(fields)) {
+    document.getElementById(id).addEventListener('input', update);
+  }
+  document.getElementById('ident').addEventListener('input', update);
+  update();
+</script>
