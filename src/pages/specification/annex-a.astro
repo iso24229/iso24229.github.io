@@ -1,0 +1,103 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { externalLinks } from '../../config';
+---
+
+<Layout title="Annex A — Terms of Reference">
+  <p class="text-sm text-ink-subtle"><a href="/specification">← Specification</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-2">Annex A — Terms of Reference</h1>
+  <p class="text-sm text-ink-subtle mb-8">
+    Plain-language rewriting of ISO 24229 Annex A. The canonical source is
+    the <a href={externalLinks.iso24229Standard} class="underline">published standard</a>.
+  </p>
+
+  <section id="scope" class="border-t border-line py-8">
+    <h2 class="text-2xl font-semibold mb-3">A.1 Scope</h2>
+    <p>
+      The Registration Authority (RA) is the body responsible for maintaining
+      the public register of conversion-system codes on behalf of ISO/TC 46/WG 3.
+      Its scope covers assignment of new codes, processing of deprecation
+      requests, and publication of the authoritative register.
+    </p>
+  </section>
+
+  <section id="organisation" class="border-t border-line py-8">
+    <h2 class="text-2xl font-semibold mb-3">A.2 Organisation</h2>
+    <p>
+      The RA is operated jointly by CalConnect and Ribose Inc., under the
+      oversight of an Advisory Group (AG) designated by ISO/TC 46/WG 3.
+      The AG is convened by Mr. Peeter Päll of Estonia.
+    </p>
+    <p class="mt-3">
+      The AG meets bimonthly to review submissions and deprecations.
+      Decisions require a simple majority of voting members.
+    </p>
+  </section>
+
+  <section id="responsibilities" class="border-t border-line py-8">
+    <h2 class="text-2xl font-semibold mb-3">A.3 Responsibilities</h2>
+    <ul class="list-disc pl-6 space-y-2">
+      <li>Maintain the public register at <a href="https://www.iso24229.org" class="underline">www.iso24229.org</a>.</li>
+      <li>Validate that each submission meets the eligibility criteria in §5 of the standard.</li>
+      <li>Assign code elements in accordance with the structure defined in §4.</li>
+      <li>Process deprecation requests and reserve deprecated codes for backwards compatibility.</li>
+      <li>Publish meeting minutes and decisions of the AG.</li>
+      <li>Liaise with the ISO 639 RA and the ISO 15924 maintainer on cross-standard issues.</li>
+    </ul>
+  </section>
+
+  <section id="authorities" class="border-t border-line py-8">
+    <h2 class="text-2xl font-semibold mb-3">A.4 Conversion system authorities</h2>
+    <p>
+      Authorities recognised by the AG maintain their own conversion systems.
+      Each authority must designate two authorised persons who can submit
+      changes on its behalf. The register publishes the authority's name,
+      address, and the names of its authorised persons (contact details
+      are not published without consent).
+    </p>
+    <p class="mt-3">
+      See <a href="/register/authority" class="underline">the authority directory</a>
+      for the current list.
+    </p>
+  </section>
+
+  <section id="submissions" class="border-t border-line py-8">
+    <h2 class="text-2xl font-semibold mb-3">A.5 Submissions</h2>
+    <p>
+      Submissions are made via structured GitHub issues against the
+      <a href="https://github.com/iso24229/iso24229-register" class="underline">register data repository</a>.
+      Every submission must include:
+    </p>
+    <ul class="list-disc pl-6 space-y-2 mt-3">
+      <li>The proposed code, decomposed into its four segments.</li>
+      <li>ISO 639 and ISO 15924 codes for source and target (validated against reference data).</li>
+      <li>A specification document (PDF or canonical URL).</li>
+      <li>Evidence of real-world use (at least one URL).</li>
+      <li>A Unicode-style justification (200+ words).</li>
+    </ul>
+    <p class="mt-3">
+      See <a href="/apply" class="underline">Apply</a> for the entry points.
+    </p>
+  </section>
+
+  <section id="lifecycle" class="border-t border-line py-8">
+    <h2 class="text-2xl font-semibold mb-3">A.6 Lifecycle</h2>
+    <p>
+      Each system-code moves through the following states:
+    </p>
+    <ol class="list-decimal pl-6 space-y-2 mt-3">
+      <li><strong>proposed</strong> — submitted, awaiting AG review at the next bimonthly meeting.</li>
+      <li><strong>stable</strong> — approved by the AG; the code is reserved.</li>
+      <li><strong>deprecated</strong> — superseded or no longer recommended; code reserved for backwards compatibility.</li>
+      <li><strong>withdrawn</strong> — removed from active use; code never reused.</li>
+    </ol>
+  </section>
+
+  <section id="review" class="border-t border-line py-8">
+    <h2 class="text-2xl font-semibold mb-3">A.7 Review</h2>
+    <p>
+      These Terms of Reference are reviewed annually by the AG. Material
+      changes are forwarded to ISO/TC 46/WG 3 for ratification.
+    </p>
+  </section>
+</Layout>

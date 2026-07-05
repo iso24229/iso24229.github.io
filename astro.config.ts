@@ -1,17 +1,16 @@
 import { defineConfig } from 'astro/config';
+import tailwindcss from '@tailwindcss/vite';
 import partytown from "@astrojs/partytown";
 import robotsTxt from "astro-robots-txt";
 import mdx from '@astrojs/mdx';
 import { siteUrl } from "./src/config";
 
-// https://astro.build/config
 export default defineConfig({
   prefetch: {
     prefetchAll: true
   },
   integrations: [
     mdx(),
-    // https://partytown.qwik.dev/google-tag-manager/
     partytown({
       config: {
         forward: ['dataLayer.push'],
@@ -27,5 +26,8 @@ export default defineConfig({
       ],
     }),
   ],
+  vite: {
+    plugins: [tailwindcss()],
+  },
   site: siteUrl,
 });

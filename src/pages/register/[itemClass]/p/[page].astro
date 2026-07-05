@@ -1,0 +1,96 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import type { ItemClassSlug } from '../../../../domain/items/RegisterItem';
+import {
+  itemClassSlugs,
+} from '../../../../domain/registry/ItemClassRegistry';
+import { schemaWithRichData } from '../../../../content.config';
+import type { InferGetStaticPropsType, InferGetStaticParamsType, GetStaticPaths, PaginateFunction } from 'astro';
+
+interface EntryLike {
+  id: string;
+  data: Record<string, unknown>;
+}
+
+export const getStaticPaths = (({ paginate }: { paginate: PaginateFunction }) => {
+  return Promise.all(
+    itemClassSlugs.map(async (itemClass) => {
+      const collection = await getCollection(itemClass);
+      return {
+        itemClass,
+        entries: collection.map((c) => ({
+          id: c.id,
+          data: c.data as Record<string, unknown>,
+        })),
+      };
+    }),
+  ).then((all) =>
+    all.flatMap(({ itemClass, entries }) =>
+      paginate(entries as EntryLike[], {
+        pageSize: 20,
+        params: { itemClass },
+      }),
+    ),
+  );
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+
+const { itemClass } = Astro.params as Params;
+const { page } = Astro.props as Props;
+
+const title = schemaWithRichData[itemClass as ItemClassSlug].title;
+const entries: EntryLike[] = page.data;
+---
+
+<Layout title={title}>
+  <p class="text-sm text-ink-subtle mb-2">
+    <a href="/register">← Register</a>
+  </p>
+  <div class="flex items-baseline justify-between mb-6">
+    <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+    <p class="text-sm text-ink-muted">{page.total} entries</p>
+  </div>
+
+  {
+    entries.length === 0 ? (
+      <p class="text-ink-muted">No entries yet.</p>
+    ) : (
+      <ul class="divide-y divide-line border-y border-line">
+        {entries.map((entry) => (
+          <li>
+            <a
+              href={`/register/${itemClass}/i/${entry.id}`}
+              class="flex items-baseline justify-between py-3 hover:text-accent"
+            >
+              <span class="font-mono">{entry.data.uuid ?? entry.id}</span>
+              <span class="text-ink-muted text-sm ml-4 truncate">
+                {entry.data.name ?? entry.data.code ?? entry.data.codeStatus ?? ''}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    (page.url.prev || page.url.next) && (
+      <nav class="flex justify-between mt-8 text-sm">
+        {page.url.prev ? (
+          <a href={page.url.prev} class="underline">← Previous</a>
+        ) : (
+          <span />
+        )}
+        <span class="text-ink-muted">Page {page.currentPage} of {page.lastPage}</span>
+        {page.url.next ? (
+          <a href={page.url.next} class="underline">Next →</a>
+        ) : (
+          <span />
+        )}
+      </nav>
+    )
+  }
+</Layout>

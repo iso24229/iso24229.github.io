@@ -1,0 +1,64 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const example = 'BGN-PCGN:chn-Hans:Latn:1979';
+const segments = example.split(':');
+const [titular, source, target, identifying] = segments;
+---
+
+<Layout title="Anatomy of a code">
+  <article class="prose max-w-none">
+    <p class="text-sm text-ink-subtle"><a href="/learn">← Learn</a></p>
+    <h1 class="text-4xl font-semibold tracking-tight mb-6">Anatomy of a code</h1>
+
+    <p class="text-lg text-ink-muted mb-10">
+      Every conversion system in the register has a unique code made up of
+      four segments separated by colons.
+    </p>
+
+    <div class="my-10 p-8 bg-surface-raised rounded">
+      <p class="font-mono text-2xl md:text-3xl mb-6 break-all">
+        <span class="text-iso-red">{titular}</span><span class="text-ink-subtle">:</span><span class="text-accent">{source}</span><span class="text-ink-subtle">:</span><span class="text-accent-light">{target}</span><span class="text-ink-subtle">:</span><span class="text-ink">{identifying}</span>
+      </p>
+      <div class="grid gap-4 md:grid-cols-4 text-sm">
+        <div>
+          <p class="font-mono text-xs uppercase text-iso-red mb-1">Titular</p>
+          <p class="text-ink-muted">Authority identifier (e.g. <code>BGN-PCGN</code>) or country code.</p>
+        </div>
+        <div>
+          <p class="font-mono text-xs uppercase text-accent mb-1">Source spelling</p>
+          <p class="text-ink-muted">Language + script (+ optional country, extension).</p>
+        </div>
+        <div>
+          <p class="font-mono text-xs uppercase text-accent-light mb-1">Target spelling</p>
+          <p class="text-ink-muted">Same shape as source.</p>
+        </div>
+        <div>
+          <p class="font-mono text-xs uppercase text-ink mb-1">Identifying</p>
+          <p class="text-ink-muted">Year, version, or document number.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="text-2xl font-semibold mt-12 mb-4">Element separators within a segment</h2>
+    <p>
+      Within a segment, elements are joined by hyphens. For example,
+      <code>ara-Arab</code> means "Arabic language in Arabic script".
+      Some authorities also permit internal hyphens in identifier strings
+      (e.g. <code>9-1995</code> referring to ISO 9:1995).
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-12 mb-4">Permitted characters</h2>
+    <ul class="list-disc pl-6 space-y-1">
+      <li>Digits <code>0–9</code></li>
+      <li>Latin uppercase <code>A–Z</code></li>
+      <li>Latin lowercase <code>a–z</code></li>
+      <li>Colon <code>:</code> — segment separator</li>
+      <li>Hyphen-minus <code>-</code> — element separator</li>
+    </ul>
+
+    <p class="mt-8 text-ink-muted">
+      Next: <a href="/learn/examples" class="underline">Worked examples →</a>
+    </p>
+  </article>
+</Layout>

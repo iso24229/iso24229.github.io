@@ -1,0 +1,53 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const useCases = [
+  {
+    title: 'Library systems',
+    body: 'MARC records cite conversion systems when cataloguing materials in non-Latin scripts. ISO 24229 codes give every catalogue a shared vocabulary.',
+  },
+  {
+    title: 'Geographical names',
+    body: 'Gazetteers run by national mapping agencies convert endonymic names into Latin script for international use. Each system gets its own code.',
+  },
+  {
+    title: 'Linguistic research',
+    body: 'Corpora that span multiple scripts need to record which conversion system was used to produce a particular normalized form.',
+  },
+  {
+    title: 'Internationalisation',
+    body: 'Software localisation pipelines transliterate user-facing strings when a locale lacks a native script form. ISO 24229 codes make the choice explicit.',
+  },
+  {
+    title: 'Government & diplomacy',
+    body: 'Passports, visas, and treaty texts must render personal and place names consistently across scripts. The register tells you which system was applied.',
+  },
+];
+---
+
+<Layout title="Use cases">
+  <article>
+    <p class="text-sm text-ink-subtle"><a href="/learn">← Learn</a></p>
+    <h1 class="text-4xl font-semibold tracking-tight mb-6">Use cases</h1>
+
+    <p class="text-lg text-ink-muted mb-10 max-w-2xl">
+      Written-language conversion shows up in more places than you might expect.
+      Here are the most common.
+    </p>
+
+    <div class="space-y-6">
+      {
+        useCases.map((uc) => (
+          <section class="border-t border-line pt-6">
+            <h2 class="text-xl font-semibold mb-2">{uc.title}</h2>
+            <p class="text-ink-muted">{uc.body}</p>
+          </section>
+        ))
+      }
+    </div>
+
+    <p class="mt-12">
+      <a href="/register" class="underline">Browse the register →</a>
+    </p>
+  </article>
+</Layout>

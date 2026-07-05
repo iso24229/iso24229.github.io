@@ -1,282 +1,42 @@
 ---
-import Header from "@components/Header.astro";
-import Footer from "@components/Footer.astro";
-import Main from "@components/Main.astro";
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import { ClientRouter } from 'astro:transitions';
-
-import GoogleAnalytics from '@components/GoogleAnalytics.astro';
+import GoogleAnalytics from '../components/GoogleAnalytics.astro';
+import { siteTitle, siteDescription } from '../config';
 
 export interface Props {
-  title: string;
-  classes?: string;
-  frontmatter?: any;
+  title?: string;
+  description?: string;
+  /** Render the page in a constrained content column (default true). */
+  constrained?: boolean;
 }
 
-let { title, classes } = Astro.props;
+const { title = '', description = siteDescription, constrained = true } = Astro.props;
 
-// Append " | siteTitle" to the provided title
-title = title ?? Astro.props.frontmatter?.title ?? '';
-title = title == '' ? siteTitle : `${title} | ${siteTitle}`;
-
-classes = classes ?? Astro.props.frontmatter?.classes ?? '';
-
-import { siteTitle, siteDescription } from "@/config";
-
+const pageTitle = title === '' ? siteTitle : `${title} | ${siteTitle}`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={siteDescription} />
-    <meta name="color-scheme" content="dark light">
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark light" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/assets/logos/iso-red.svg" />
     <meta name="robots" content="none" />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <title>{pageTitle}</title>
     <GoogleAnalytics />
     <ClientRouter />
   </head>
-  <body class={classes ?? ""}>
-    <Header/>
-    <Main>
+  <body class="min-h-screen flex flex-col bg-surface text-ink antialiased">
+    <Header />
+    <main class={constrained ? 'container-page flex-1 py-10' : 'flex-1'}>
       <slot />
-    </Main>
-    <Footer/>
+    </main>
+    <Footer />
   </body>
 </html>
-
-<style lang="scss" is:global>
-:root {
-  /**
-   * See:
-   * https://css-tricks.com/a-complete-guide-to-dark-mode-on-the-web
-   */
-  color-scheme: light dark; /* both supported */
-
-  --text-color--normal: #000;
-  --background-color--normal: #fff;
-
-  --text-color--dark: #aaa;
-  --background-color--dark: #121212;
-
-  --text-color: var(--text-color--dark);
-  --background-color: var(--background-color--dark);
-
-  --default-logo-dimension: 80px;
-  --content-width: 1200px;
-  --main-padding-lr: max(1rem, calc((100% - var(--content-width))/2));
-
-  --accent: var(--accent--dark);
-  --accent-light: var(--accent-light--dark);
-  --accent-dark: var(--accent-dark--dark);
-
-  --accent--normal: 26, 208, 244;
-  --accent-light--normal: 28, 248, 155;
-  --accent-dark--normal: 94, 104, 101;
-
-  // Leave dark mode accents unchanged for now, they look OK:
-  --accent--dark: var(--accent--normal);
-  --accent-light--dark: var(--accent-light--normal);
-  --accent-dark--dark: var(--accent-dark--normal);
-
-  --card-bg-color--light: #eee;
-  --card-fg-color--light: var(--text-color--normal);
-  --card-border-color--light: var(--text-color--normal);
-
-  --card-bg-color--dark: #111;
-  --card-fg-color--dark: var(--text-color--dark);
-  --card-border-color--dark: var(--text-color--dark);
-
-  // --accent--dark: 26, 208, 244;
-  // --accent-light--dark: 28, 248, 155;
-  // --accent-dark--dark: 94, 104, 101;
-
-  --accent-gradient: linear-gradient(
-    90deg,
-    rgb(var(--accent)),
-    rgb(var(--accent-light)) 60%,
-    rgb(var(--accent-light)) 95%
-    );
-
-  --accent-gradient-inverted: linear-gradient(
-    270deg,
-    rgb(var(--accent)),
-    rgb(var(--accent-light)) 60%,
-    rgb(var(--accent-light)) 95%
-    );
-
-  --selection-color--normal: var(--text-color);
-  --selection-background-color--normal: rgb(var(--accent));
-
-  --selection-color--dark: var(--text-color--normal);
-  --selection-background-color--dark: rgb(var(--accent-dark));
-
-  --selection-color: var(--selection-color--dark);
-  --selection-background-color: var(--selection-background-color--dark);
-}
-
-/* Use padding to space out the content */
-* {
-  margin: 0;
-  box-sizing: border-box;
-}
-
-::selection {
-  color: var(--selection-color);
-  background: var(--selection-background-color);
-}
-
-img {
-  transition: filter 0.2s ease;
-}
-
-html {
-  font-family: system-ui, sans-serif;
-  background: var(--background-color);
-  background-size: 224px;
-  color: var(--text-color);
-  transition: background-color 0.2s ease;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-code {
-  font-family:
-    Menlo,
-    Monaco,
-    Lucida Console,
-    Liberation Mono,
-    DejaVu Sans Mono,
-    Bitstream Vera Sans Mono,
-    Courier New,
-    monospace;
-}
-
-.text-gradient {
-  background-image: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 400%;
-  background-position: 0%;
-}
-
-h1 {
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1;
-
-  a {
-    color: var(--text-color);
-    display: inline-block;
-
-    &:visited {
-      color: var(--text-color);
-    }
-  }
-}
-
-a {
-  text-decoration: none;
-  position: relative;
-  display: inline-block;
-  color: var(--text-color);
-
-  &:not([role=link]) {
-    &:hover, &:active {
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-position: 0%;
-
-      span.text-gradient {
-        background: var(--text-color);
-        -webkit-background-clip: text;
-      }
-    }
-
-    &:hover {
-      background-image: var(--accent-gradient);
-    }
-
-    &:active {
-      background-image: var(--accent-gradient-inverted);
-    }
-  }
-}
-
-
-.logo-iso {
-  /* background-color: #094e9c; */
-  width: var(--default-logo-dimension);
-  /* Setting the height prevents flash of layout change when loading page */
-  height: var(--default-logo-dimension);
-}
-
-h1, h2, h3, h4, h5, h6 {
-  cursor: default;
-}
-
-a {
-  h1, h2, h3, h4, h5, h6 {
-    cursor: pointer;
-  }
-}
-
-@mixin dark-mode {
-  --background-color: var(--background-color--dark);
-  --text-color: var(--text-color--dark);
-  --selection-color: var(--selection-color--dark);
-  --selection-background-color: var(--selection-background-color--dark);
-  --card-bg-color: var(--card-bg-color--dark);
-  --card-fg-color: var(--card-fg-color--dark);
-  --card-border-color: var(--card-border-color--dark);
-  --card-fg-color--hover: var(--card-bg-color--dark);
-
-  img {
-    filter: brightness(80%);
-  }
-}
-
-@mixin light-mode {
-  --background-color: var(--background-color--normal);
-  --text-color: var(--text-color--normal);
-  --selection-color: var(--selection-color--normal);
-  --selection-background-color: var(--selection-background-color--normal);
-  --card-bg-color: var(--card-bg-color--light);
-  --card-fg-color: var(--card-fg-color--light);
-  --card-border-color: var(--card-border-color--light);
-  /* --card-fg-color--hover: rgb(var(--accent-light)); */
-  --card-fg-color--hover: var(--card-fg-color--light);
-
-  img {
-    filter: brightness(1);
-  }
-}
-
-
-@media (prefers-color-scheme: dark) {
-  html[data-theme="default"] {
-    @include dark-mode;
-  }
-}
-
-html[data-theme="dark"] {
-  @include dark-mode;
-}
-
-@media (prefers-color-scheme: light) {
-  html[data-theme="default"] {
-    @include light-mode;
-  }
-}
-
-html[data-theme="light"] {
-  @include light-mode;
-}
-
-</style>

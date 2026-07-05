@@ -8,7 +8,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -20,9 +22,12 @@
   },
   "devDependencies": {
     "@astrojs/ts-plugin": "^1.10.10",
+    "@tailwindcss/vite": "^4.3.2",
     "astro-adoc": "^0.3.0",
     "astro-robots-txt": "^1.0.0",
-    "sass": "^1.101.0"
+    "sass": "^1.101.0",
+    "tailwindcss": "^4.3.2",
+    "vitest": "^4.1.9"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

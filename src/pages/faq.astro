@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+
+const faqs = [
+  {
+    q: "Why does ISO 24229 exist?",
+    a: "To give every written-language conversion system — a romanization, a transliteration, a transcription — a single unambiguous identifier so that data can flow between library catalogues, gazetteers, linguistic corpora, and software localisation pipelines without loss.",
+  },
+  {
+    q: "How is this different from ISO 639 or ISO 15924?",
+    a: "ISO 639 identifies languages. ISO 15924 identifies scripts. ISO 24229 identifies the systems that convert text from one (language, script) pair into another. The three standards are designed to compose: a single ISO 24229 code cites ISO 639 and ISO 15924 codes for its source and target.",
+  },
+  {
+    q: "Who maintains the register?",
+    a: "CalConnect and Ribose Inc. operate the Registration Authority on behalf of ISO/TC 46/WG 3. An Advisory Group convened by Mr. Peeter Päll (Estonia) reviews all submissions.",
+  },
+  {
+    q: "Is use of the register free?",
+    a: "Yes. The register data is published under an open licence. The standard itself (ISO 24229) is sold by ISO in the usual way.",
+  },
+  {
+    q: "How do I find a transliteration system?",
+    a: "Browse the register from the top nav, or filter by authority, source language, or script. Each system-code page shows the source and target spelling, the authority, the lifecycle status, and any related systems.",
+  },
+  {
+    q: "What does a code like `UN:ara-Arab:Latn:2017` mean?",
+    a: "Four colon-separated segments. `UN` is the titular segment (the United Nations). `ara-Arab` is the source spelling — Arabic language in Arabic script. `Latn` is the target — Latin script (with no specific language). `2017` is the identifying segment — the year of adoption.",
+  },
+  {
+    q: "Can I rely on `proposed` codes in production?",
+    a: "Proposed codes have been submitted but not yet reviewed by the Advisory Group. They may be renamed, restructured, or rejected. Stable codes are safe to depend on; their identifiers are reserved forever.",
+  },
+  {
+    q: "How do I cite a register entry?",
+    a: "Cite the system-code's UUID (which is also its URL path on this site) and the version date of the register. Example: `acadsin:zho-Hani:Latn:2002, ISO 24229 Registry, accessed YYYY-MM-DD`.",
+  },
+  {
+    q: "How do I add a new system to my authority?",
+    a: "Open a registration issue from the Apply section. You'll need the source/target ISO 639 and ISO 15924 codes, a specification document, real-world usage evidence, and a 200+ word justification.",
+  },
+  {
+    q: "My authority is not listed. How do we join?",
+    a: "Apply via the New authority path under Apply. You'll need authority name and address, two named authorised persons, and evidence of competence (an institutional track record in managing conversion systems).",
+  },
+  {
+    q: "How long does approval take?",
+    a: "Submissions are batched onto the agenda of the next bimonthly AG meeting. You'll typically hear back within 8–10 weeks of submission.",
+  },
+];
+---
+
+<Layout title="FAQ">
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">FAQ</h1>
+
+  <div class="space-y-6 max-w-3xl">
+    {
+      faqs.map((item) => (
+        <details class="group border-b border-line py-4">
+          <summary class="flex items-baseline justify-between gap-4 cursor-pointer list-none">
+            <h2 class="text-lg font-medium">{item.q}</h2>
+            <span class="text-ink-subtle group-open:rotate-45 transition-transform">+</span>
+          </summary>
+          <p class="mt-4 text-ink-muted">{item.a}</p>
+        </details>
+      ))
+    }
+  </div>
+</Layout>

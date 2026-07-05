@@ -1,208 +1,36 @@
 ---
-// See:
-// https://dev.to/hr21don/enable-dark-mode-for-your-astro-website-via-css-variables-ohe
-// https://css-tricks.com/a-complete-guide-to-dark-mode-on-the-web/#aa-using-custom-properties
-
-import Ri from './RadioItem.astro';
-
-export interface Props {
-  tabindex?: number;
-}
-
-const { tabindex } = Astro.props;
-const themes = [
-  {
-    icon: "◑",
-    value: "default",
-    description: "OS Default",
-  },
-  {
-    icon: "☀️",
-    value: "light",
-    description: "Light",
-  },
-  {
-    icon: "🌙",
-    value: "dark",
-    description: "Dark",
-  },
-];
-
+// Theme toggle. Toggles the `dark` class on <html>.
 ---
-<theme-control data-themes={JSON.stringify(themes)} aria-haspopup="true" tabindex={tabindex ?? 0} transition:persist>
-  <div class="current-theme-display" title="Change theme">
-    {themes[0].icon}
-  </div>
-  <menu tabindex=1>
-  {
-    themes.map((theme, idx) => (
-      <Ri tabindex={idx + 1} {...theme}></Ri>
-    ))
-  }
-  </menu>
-</theme-control>
-<script>
 
-type Theme = 'default' | 'light' | 'dark';
-const defaultTheme: Theme = 'default';
+<button
+  id="theme-control"
+  type="button"
+  aria-label="Toggle dark mode"
+  class="p-2 rounded text-ink-muted hover:text-ink hover:bg-surface-raised transition-colors"
+>
+  <svg class="dark:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="4" />
+    <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5" />
+  </svg>
+  <svg class="hidden dark:block" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
+  </svg>
+</button>
 
-interface ThemeObject {
-  value: Theme;
-  icon: string;
-  description: string;
-}
+<script is:inline>
+  (function () {
+    const root = document.documentElement;
+    const stored = localStorage.getItem('theme');
+    const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = stored ?? (prefersDark ? 'dark' : 'light');
+    root.classList.toggle('dark', theme === 'dark');
+    root.dataset.theme = theme;
 
-class ThemeControl extends HTMLElement {
-  get currentThemeDisplay(): HTMLElement | null {
-    return this.querySelector('.current-theme-display');
-  }
-
-  get themeMenu(): HTMLMenuElement | null {
-    return this.querySelector('menu');
-  }
-
-  get themes(): ThemeObject[] {
-    return this.dataset.themes !== undefined ? JSON.parse(this.dataset.themes) : [];
-  }
-
-  get currentTheme(): Theme {
-    const localTheme = localStorage.getItem('theme') ?? defaultTheme;
-    return this.sanitizeTheme(localTheme as Theme);
-  }
-
-  set currentTheme(theme: string) {
-    const sanitizedTheme = this.sanitizeTheme(theme);
-
-    // Set the body data-theme attribute to match the local storage item
-    this.documentTheme = sanitizedTheme;
-    localStorage.setItem('theme', sanitizedTheme);
-    this.renderCurrentTheme();
-  }
-
-  set documentTheme(theme: Theme) {
-    document.documentElement.setAttribute('data-theme', theme);
-  }
-
-  sanitizeTheme(other: string): Theme {
-    return this.themes.find((theme: ThemeObject) => theme.value == other) ?
-      other as Theme :
-      defaultTheme;
-  }
-
-  get currentThemeObject(): ThemeObject {
-    return this.themes.find((theme: ThemeObject) => theme.value === this.currentTheme) ?? this.themes[0];
-  }
-
-  renderCurrentTheme() {
-    this.documentTheme = this.currentTheme;
-    if (this.currentThemeDisplay !== null) {
-      this.currentThemeDisplay.innerHTML = this.currentThemeObject.icon;
-    }
-  }
-
-  constructor() {
-    super();
-    this.renderCurrentTheme();
-
-    if (this.themeMenu !== null) {
-      this.themeMenu.addEventListener('click', this.switchTheme.bind(this), false);
-    }
-  }
-
-  closeMenu() {
-    this.blur();
-  }
-
-  switchTheme(e: Event) {
-    let target = e.target as HTMLElement;
-    if (!target.matches('button')) {
-      target = target.closest('button') as HTMLButtonElement;
-    }
-    this.currentTheme = target.dataset.value ?? defaultTheme;
-    this.closeMenu();
-  }
-
-}
-customElements.define("theme-control", ThemeControl);
+    document.getElementById('theme-control')?.addEventListener('click', () => {
+      const next = root.classList.contains('dark') ? 'light' : 'dark';
+      root.classList.toggle('dark', next === 'dark');
+      root.dataset.theme = next;
+      localStorage.setItem('theme', next);
+    });
+  })();
 </script>
-
-<style lang="scss">
-:root {
-  --theme-control-dimension: 2.1rem;
-}
-
-theme-control {
-  line-height: var(--theme-control-dimension);
-  height: var(--theme-control-dimension);
-  box-sizing: border-box;
-  margin-left: 1rem;
-  user-select: none;
-  position: relative;
-  &:focus-within,
-  &:focus {
-    .current-theme-display {
-      border-bottom-right-radius: 0;
-      border-bottom-left-radius: 0;
-      border-bottom: none;
-      z-index: 2;
-      background: var(--background-color);
-    }
-    menu {
-      visibility: visible;
-    }
-  }
-}
-
-.current-theme-display {
-  box-sizing: border-box;
-  cursor: pointer;
-  position: relative;
-
-  &:hover {
-    border: 1px solid rgb(var(--accent));
-  }
-
-  border: 1px solid #999;
-  border-radius: 5px;
-  text-align: center;
-  font-size: calc(var(--theme-control-dimension) / 2);
-  width: var(--theme-control-dimension);
-  line-height: var(--theme-control-dimension);
-}
-
-menu {
-  visibility: hidden;
-  position: absolute;
-  background: var(--background-color);
-  width: 10rem;
-  right: 0;
-  margin-top: -1px; // for border
-  padding: 0;
-  z-index: 1;
-  border: 1px solid #999;
-  border-radius: 5px 0 5px 5px;
-}
-
-@media only screen
-  and (max-width: 615px) {
-
-  .current-theme-display {
-    // position: static;
-    // background: yellow;
-  }
-
-}
-
-@media only screen
-  and (min-width: 615px)
-  and (max-width: 960px) {
-
-  theme-control {
-    position: fixed;
-    top: 2rem;
-    right: 1rem;
-  }
-
-}
-
-</style>

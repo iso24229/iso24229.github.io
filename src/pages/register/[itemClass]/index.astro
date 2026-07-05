@@ -1,0 +1,10 @@
+---
+import { itemClassSlugs } from '../../../domain/registry/ItemClassRegistry';
+
+export async function getStaticPaths() {
+  return itemClassSlugs.map((slug) => ({ params: { itemClass: slug } }));
+}
+
+const { itemClass } = Astro.params;
+return Astro.redirect(`/register/${itemClass}/p/1`);
+---

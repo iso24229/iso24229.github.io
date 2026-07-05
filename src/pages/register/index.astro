@@ -1,0 +1,34 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+import { getCollection } from 'astro:content';
+import { itemClassSlugs } from '../../domain/registry/ItemClassRegistry';
+import { schemaWithRichData } from '../../content.config';
+
+const counts = await Promise.all(
+  itemClassSlugs.map(async (slug) => ({
+    slug,
+    count: (await getCollection(slug)).length,
+  })),
+);
+---
+
+<Layout title="Register">
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Register</h1>
+  <p class="text-ink-muted max-w-2xl mb-10">
+    The register is organised into item classes per the ISO 24229 data model.
+    Click any class to browse its entries.
+  </p>
+
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    {
+      counts.map(({ slug, count }) => (
+        <Card
+          href={`/register/${slug}/p/1`}
+          title={schemaWithRichData[slug].title}
+          body={count === 0 ? 'No entries yet.' : `${count} ${count === 1 ? 'entry' : 'entries'}.`}
+        />
+      ))
+    }
+  </div>
+</Layout>

@@ -1,128 +1,32 @@
 ---
 import NavBar from './NavBar.astro';
 import ThemeControl from './ThemeControl.astro';
-
-export type Props = Record<string, never>;
-
+import { siteTitle } from '../config';
 ---
-<header>
-  <div class="header-wrapper">
-    <h1 transition:persist>
-      <a href="/" rel="prefetch-intent" title="Back to home">
-        <div class="logo-iso">
-          <img class="logo-iso" src="/assets/logos/iso-logo-blue-9,78,156.svg" />
-        </div><div class="title-text">ISO 24229 <span class="text-gradient">Registry</span>
-        </div>
-      </a>
-    </h1>
-    <div class="header-controls">
+
+<header class="border-b border-line bg-surface/95 backdrop-blur sticky top-0 z-40">
+  <div class="container-page flex items-center justify-between h-[var(--header-height)] gap-6">
+    <a href="/" rel="prefetch-intent" class="flex items-center gap-3 group" title="Back to home">
+      <img
+        src="/assets/logos/iso-red.svg"
+        alt="ISO"
+        width="40"
+        height="40"
+        class="block"
+      />
+      <div class="flex flex-col leading-tight">
+        <span class="font-semibold text-lg tracking-tight">
+          ISO 24229
+          <span class="text-ink-subtle font-normal">Registry</span>
+        </span>
+        <span class="text-xs text-ink-subtle">
+          {siteTitle}
+        </span>
+      </div>
+    </a>
+    <div class="flex items-center gap-2">
       <NavBar />
       <ThemeControl />
     </div>
   </div>
 </header>
-
-<style lang="scss">
-
-header {
-  /* padding: 1rem 0rem; */
-  padding: 1rem var(--main-padding-lr);
-  padding-bottom: 0;
-  border-bottom: 2px solid var(--text-color);
-  width: 100%;
-}
-
-.header-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-div {
-  display: inline-block;
-  vertical-align: middle;
-
-  + div {
-    padding-left: 1rem;
-  }
-}
-
-.header-controls {
-  display: flex;
-  // padding-left: calc(1rem + min(var(--default-logo-dimension), 14vw));
-  // justify-content: space-between;
-  align-items: center;
-}
-
-@media only screen
-  and (max-width: 415px) {
-
-  .header-wrapper {
-    display: grid;
-    width: 100%;
-    h1, h2, h3, h4, h5, h6 {
-      text-align: left;
-      width: 100%;
-    }
-
-    h1 {
-      font-size: max(2rem, min(3rem, 7vw));
-    }
-
-    .logo-iso {
-      display: none;
-    }
-
-    div.title-text {
-      padding: 0;
-    }
-
-  }
-
-  .header-controls {
-    padding-left: 0;
-  }
-
-}
-
-@media only screen
-  and (max-width: 615px) {
-
-  .header-controls {
-    justify-content: space-between;
-  }
-
-}
-
-@media only screen
-  and (min-width: 415px)
-  and (max-width: 960px) {
-
-  .header-wrapper {
-    display: grid;
-  }
-
-  .header-controls {
-    padding-left: calc(1rem + min(var(--default-logo-dimension), 14vw));
-    justify-content: space-between;
-  }
-
-  h1 {
-    font-size: max(2rem, min(3rem, 7vw));
-  }
-
-  .logo-iso {
-    width: min(var(--default-logo-dimension), 14vw);
-    height: min(var(--default-logo-dimension), 14vw);
-  }
-
-}
-
-@media only screen
-  and (min-width: 960px) {
-  h1 {
-    padding-bottom: 1rem;
-  }
-}
-
-</style>
