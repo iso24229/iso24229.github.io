@@ -1,0 +1,42 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const examples = [
+  { code: 'UN:ara-Arab:Latn:2017', desc: 'United Nations system for the romanization of Arabic, approved 2017.' },
+  { code: 'UN:mon-Mong-CN:Latn:1977', desc: 'UN system for romanization of Mongolian in China, 1977.' },
+  { code: 'BGN-PCGN:chn-Hans:Latn:1979', desc: 'BGN/PCGN 1979 Agreement — Romanization of Chinese.' },
+  { code: 'ALA-LC:mal-Mlym:Latn:2012', desc: 'ALA-LC romanization of Malayalam from Malayalam script to Latin, 2012.' },
+  { code: 'ISO:Cyrl:Latn:9-1995', desc: 'ISO 9:1995 — transliteration of Cyrillic into Latin.' },
+  { code: 'ICAO:Arab:Latn:2015', desc: 'ICAO rules for rendering Arabic-script names in Latin letters (2015).' },
+  { code: 'DIN:bel-Cyrl:Latn:1460-1982', desc: 'DIN 1460 (1982) — transliteration of Belarusian Cyrillic into Latin.' },
+  { code: 'ESKT:udm-Cyrl:est-Latn:2021', desc: 'Estonian Language Committee rules for Udmurt names in Estonian (2021).' },
+];
+---
+
+<Layout title="Worked examples">
+  <article>
+    <p class="text-sm text-ink-subtle"><a href="/learn">← Learn</a></p>
+    <h1 class="text-4xl font-semibold tracking-tight mb-6">Worked examples</h1>
+
+    <p class="text-lg text-ink-muted mb-10 max-w-2xl">
+      Each example below is a real-world conversion system. The four-segment
+      structure lets you unambiguously identify the system regardless of how
+      the source refers to it.
+    </p>
+
+    <ul class="space-y-6">
+      {
+        examples.map((ex) => (
+          <li class="border-l-2 border-accent pl-6">
+            <p class="font-mono text-lg md:text-xl break-all">{ex.code}</p>
+            <p class="text-ink-muted mt-2">{ex.desc}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="mt-12 text-ink-muted">
+      Next: <a href="/learn/use-cases" class="underline">Use cases →</a>
+    </p>
+  </article>
+</Layout>

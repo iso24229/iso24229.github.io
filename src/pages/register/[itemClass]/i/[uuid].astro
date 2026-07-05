@@ -1,0 +1,62 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import type { ItemClassSlug } from '../../../../domain/items/RegisterItem';
+import { itemClassSlugs } from '../../../../domain/registry/ItemClassRegistry';
+import { schemaWithRichData, mapSchema, primitiveTypeOf, titleOf } from '../../../../content.config';
+import type { GetStaticPaths, InferGetStaticParamsType, InferGetStaticPropsType } from 'astro';
+
+interface EntryLike {
+  id: string;
+  data: Record<string, unknown>;
+}
+
+export const getStaticPaths = (async () => {
+  const all = await Promise.all(
+    itemClassSlugs.map(async (itemClass) => {
+      const collection = await getCollection(itemClass);
+      return {
+        itemClass,
+        entries: collection.map((c) => ({
+          id: c.id,
+          data: c.data as Record<string, unknown>,
+        })),
+      };
+    }),
+  );
+  return all.flatMap(({ itemClass, entries }) =>
+    (entries as EntryLike[]).map((entry) => ({
+      params: { itemClass, uuid: entry.id },
+      props: { entry },
+    })),
+  );
+}) satisfies GetStaticPaths;
+
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { itemClass, uuid } = Astro.params as Params;
+const { entry } = Astro.props as Props;
+
+const title = schemaWithRichData[itemClass as ItemClassSlug].title;
+const schema = schemaWithRichData[itemClass as ItemClassSlug].schema;
+const fields = mapSchema(schema, ([k, t]) => ({ key: k, title: titleOf(k, t), type: primitiveTypeOf(t) }));
+---
+
+<Layout title={`${title} — ${uuid}`}>
+  <p class="text-sm text-ink-subtle mb-2">
+    <a href={`/register/${itemClass}`}>{title}</a> →
+  </p>
+  <h1 class="text-3xl font-semibold tracking-tight font-mono mb-6">{uuid}</h1>
+
+  <dl class="grid gap-x-8 gap-y-4 max-w-3xl">
+    {
+      fields.map((field) => (
+        <div class="border-b border-line pb-3">
+          <dt class="text-xs font-mono uppercase text-ink-subtle">{field.title}</dt>
+          <dd class="mt-1 font-mono">{String(entry.data[field.key] ?? '—')}</dd>
+        </div>
+      ))
+    }
+  </dl>
+</Layout>

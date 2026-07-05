@@ -1,82 +1,13 @@
 ---
-import Fl from "./FooterLink.astro";
-
 export interface Props {
   href: string;
-  icon?: string;
-  iconSrc?: string;
+  title?: string;
 }
-
-const {
-  href,
-  icon,
-  // iconSrc,
-} = Astro.props;
+const { href, title } = Astro.props;
 ---
-<Fl href={href} isExternal={true}>
-  <div>
-    {
-    icon &&
-      <div {...{ class: `icon-social ${icon}`}}>
-        {/* <img {...{ src: iconSrc ?? `/assets/icons/${icon}.svg`} } /> */}
-      </div>
-
-    }
-    <slot />
-  </div>
-</Fl>
-
-<style lang="scss">
-.icon-social {
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  vertical-align: bottom;
-  background-repeat: no-repeat;
-
-  &.github {
-    background-image: url("/assets/icons/github.svg");
-  }
-
-  &.linkedin {
-    background-image: url("/assets/icons/linkedin.svg");
-  }
-
-  &.facebook {
-    background-image: url("/assets/icons/facebook.svg");
-  }
-
-  &.instagram {
-    background-image: url("/assets/icons/instagram.svg");
-  }
-
-  &.x-twitter {
-    background-image: url("/assets/icons/x-twitter.svg");
-  }
-
-  &:hover {
-    filter: invert(1) brightness(70%);
-  }
-}
-
-div:hover {
-  .icon-social {
-    filter: invert(1) brightness(.6) sepia(1) saturate(5) hue-rotate(150deg);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  html[data-theme="default"] {
-    .icon-social {
-      filter: invert(1) brightness(.7);
-    }
-  }
-}
-
-html[data-theme="dark"] {
-  .icon-social {
-    filter: invert(1) brightness(.7);
-  }
-}
-
-</style>
+<a href={href} target="_blank" rel="noopener" title={title} class="inline-flex items-center gap-1 underline hover:text-accent">
+  <slot />
+  <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" class="opacity-70">
+    <path d="M3 1h6v6M9 1L3 7M1 3v6h6" stroke="currentColor" stroke-width="1.4" fill="none" />
+  </svg>
+</a>

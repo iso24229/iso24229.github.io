@@ -1,185 +1,68 @@
 ---
-import Li from "./OutwardLink.astro";
-import Fl from "./FooterLink.astro";
-
-export type Props = Record<string, never>;
-
-const currentYear = new Date().getFullYear();
-
-const poweredBys = [
-  {
-    name: "CalConnect",
-    url: "https://www.calconnect.org",
-  },
-  {
-    name: "Ribose Inc",
-    url: "https://open.ribose.com",
-  },
-];
-
-const sourceCodes = [
-  {
-    name: "This website",
-    url: "https://github.com/iso24229/iso24229.github.io",
-  },
-  {
-    name: "Register data",
-    url: "https://github.com/iso24229/iso24229-register",
-  },
-];
-
-const relatedProjects = [
-  {
-    name: "Interscript",
-    url: "https://interscript.org",
-  },
-  {
-    name: "Extension for Paneron",
-    url: "https://extensions.paneron.org/e/@paneron/extension-wlcs-registry/",
-  },
-  {
-    name: "Paneron Register (Ruby Gem)",
-    url: "https://github.com/paneron/ruby-paneron-register",
-  },
-];
-
-const legals = [
-  {
-    name: "Privacy Policy",
-    url: "/privacy",
-  },
-  {
-    name: "Terms of Service",
-    url: "/tos",
-  },
-];
-
+import { operatingAuthorities, repoUrls, externalLinks, siteTitle } from '../config';
+import OutwardLink from './OutwardLink.astro';
+const year = new Date().getFullYear();
 ---
-<footer>
-  <div class="footer-wrapper">
-    <section class="created-by">
-      <h2 class="created-by-text">
-        Powered by
-      </h2>
-      <ul>
+
+<footer class="border-t border-line bg-surface-raised mt-16">
+  <div class="container-page py-12 grid gap-10 md:grid-cols-[2fr_1fr_1fr]">
+    <div>
+      <p class="text-sm font-semibold mb-2">{siteTitle}</p>
+      <p class="text-sm text-ink-muted max-w-md">
+        Designated under
+        <a href={externalLinks.iso24229Standard} class="underline" rel="noopener">ISO 24229</a>
+        by ISO/TC 46/WG 3. Operated as an
+        <a href={externalLinks.iso19135Standard} class="underline" rel="noopener">ISO 19135</a>
+        register.
+      </p>
+      <p class="text-xs text-ink-subtle mt-4">
+        © {year} International Organization for Standardization. All rights reserved.
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-ink-subtle mb-3">Operated by</p>
+      <ul class="space-y-3">
         {
-        poweredBys.map((item) => (
-          <Li href={item.url}>{item.name}</Li>
-        ))
+          operatingAuthorities.map((org) => (
+            <li>
+              <a
+                href={org.href}
+                target="_blank"
+                rel="noopener"
+                class="flex items-start gap-3 group"
+                title={`${org.name} — ${org.role}`}
+              >
+                <img
+                  src={org.logo.light}
+                  alt={`${org.name} logo`}
+                  class="hidden dark:block h-8 w-auto"
+                  width="120"
+                  height="32"
+                />
+                <img
+                  src={org.logo.dark}
+                  alt={`${org.name} logo`}
+                  class="block dark:hidden h-8 w-auto"
+                  width="120"
+                  height="32"
+                />
+                <span class="text-xs text-ink-muted leading-tight">{org.role}</span>
+              </a>
+            </li>
+          ))
         }
       </ul>
-    </section>
+    </div>
 
-    <menu class="source-code-and-related">
-      <li>
-        <menu>
-          <h2>Source code</h2>
-          {
-          sourceCodes.map((item) => (
-            <Li href={item.url} icon="github">{item.name}</Li>
-          ))
-          }
-        </menu>
-      </li>
-
-      <li>
-        <menu>
-          <h2>Related projects</h2>
-          {
-          relatedProjects.map((item) => (
-            <Li href={item.url}>{item.name}</Li>
-          ))
-          }
-        </menu>
-      </li>
-    </menu>
-
-    <menu class="social-links">
-      <h2>Social</h2>
-      <Li href="https://𝕏.com/isostandards">
-        𝕏.com (Twitter)
-      </Li>
-      <Li href="https://www.linkedin.com/company/isostandards" icon="linkedin">
-        LinkedIn
-      </Li>
-    </menu>
-
-    <menu class="legal-links">
-      <h2>Legal</h2>
-      {
-      legals.map((item) => (
-        <Fl href={item.url}>{item.name}</Fl>
-      ))
-      }
-    </menu>
-
-    <section class="official-affiliation-notice">
-      <div class="logo-iso">
-        <a href="https://www.iso.org" target="_blank"><img class="logo-iso" src="/assets/logos/iso-logo-black.svg" /></a>
-      </div>
-      <div class="copyright-notice">
-        © {currentYear} All Rights Reserved
-      </div>
-      <div class="working-group-text">
-        <a href="https://www.iso.org" target="_blank">ISO</a> / <a href="https://www.iso.org/committee/48750.html" target="_blank">TC 46</a> / WG 3
-      </div>
-    </section>
-
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-wide text-ink-subtle mb-3">Source</p>
+      <ul class="space-y-1.5 text-sm">
+        <li><OutwardLink href={repoUrls.website}>Website source</OutwardLink></li>
+        <li><OutwardLink href={repoUrls.register}>Register data</OutwardLink></li>
+        <li><OutwardLink href={repoUrls.iso639Data}>ISO 639 reference</OutwardLink></li>
+        <li><OutwardLink href={repoUrls.iso15924Data}>ISO 15924 reference</OutwardLink></li>
+      </ul>
+    </div>
   </div>
 </footer>
-<style lang="scss">
-
-footer {
-  padding: 2rem var(--main-padding-lr);
-
-  border-top: 2px solid var(--text-color);
-  width: 100%;
-}
-
-.footer-wrapper {
-  display: flex;
-  justify-content: space-between;
-}
-
-ul, menu {
-  padding: 0;
-  list-style-type: none;
-}
-
-li + li {
-  padding-top: 1.5rem;
-}
-
-h2 {
-  font-size: 0.9rem;
-}
-
-.created-by-text {
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  padding-bottom: 0.1rem;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  padding-bottom: 0.2rem;
-}
-
-.official-affiliation-notice {
-  display: flex;
-  flex-direction: column;
-}
-
-// TODO: re-enable when TOS / privacy pages are up
-.legal-links {
-  display: none;
-}
-
-@media only screen
-and (max-width: 710px) {
-  .footer-wrapper {
-    display: grid;
-    gap: 2.5rem;
-  }
-}
-
-</style>

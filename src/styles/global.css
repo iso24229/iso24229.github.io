@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-iso-red: #e3000f;
+  --color-iso-blue: #0061ad;
+
+  --color-accent: #0061ad;
+  --color-accent-light: #3385d6;
+  --color-accent-dark: #003f73;
+
+  --color-ink: #0a0a0a;
+  --color-ink-muted: #4a4a4a;
+  --color-ink-subtle: #7a7a7a;
+
+  --color-surface: #ffffff;
+  --color-surface-raised: #f5f5f5;
+  --color-surface-sunken: #ededed;
+
+  --color-line: #d4d4d4;
+
+  /* Fonts */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --font-serif: 'Source Serif Pro', Georgia, serif;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-DEFAULT: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  /* Layout */
+  --content-width: 1200px;
+  --header-height: 80px;
+}
+
+/* Dark-mode tokens (applied via .dark on <html>) */
+.dark {
+  --color-ink: #e0e0e0;
+  --color-ink-muted: #a0a0a0;
+  --color-ink-subtle: #707070;
+
+  --color-surface: #0e0e0e;
+  --color-surface-raised: #1a1a1a;
+  --color-surface-sunken: #050505;
+
+  --color-line: #2a2a2a;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--color-iso-red);
+  color: var(--color-surface);
+}
+
+/* Base typography */
+html {
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  transition: background-color 0.2s ease;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+/* Link treatment: editorial New-York-style arrow on hover */
+a {
+  color: inherit;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--color-accent);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.05; }
+h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.1; }
+h3 { font-size: 1.5rem; line-height: 1.2; }
+
+/* Reusable component classes */
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: var(--content-width);
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 5vw, 3rem);
+  }
+
+  .card-link {
+    display: block;
+    padding: 1.5rem;
+    background-color: var(--color-surface-raised);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-DEFAULT);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .card-link:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-1px);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.625rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: var(--color-surface-sunken);
+    color: var(--color-ink-muted);
+  }
+
+  .badge-proposed {
+    background-color: rgb(255 200 0 / 0.15);
+    color: rgb(180 130 0);
+  }
+
+  .badge-stable {
+    background-color: rgb(0 180 0 / 0.15);
+    color: rgb(0 130 0);
+  }
+
+  .badge-withdrawn {
+    background-color: rgb(255 0 0 / 0.15);
+    color: rgb(180 0 0);
+  }
+
+  .dark .badge-proposed {
+    background-color: rgb(255 200 0 / 0.2);
+    color: rgb(255 220 100);
+  }
+
+  .dark .badge-stable {
+    background-color: rgb(0 180 0 / 0.2);
+    color: rgb(120 255 120);
+  }
+}

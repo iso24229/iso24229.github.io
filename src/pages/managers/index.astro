@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+---
+
+<Layout title="Managers">
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Managers</h1>
+
+  <p class="text-lg text-ink-muted max-w-2xl mb-10">
+    The register is governed by the Advisory Group (AG) of
+    ISO/TC 46/WG 3. The AG meets bimonthly to review submissions,
+    deprecations, and authority applications.
+  </p>
+
+  <div class="grid gap-4 md:grid-cols-3 mt-8">
+    <Card href="/managers/composition" title="AG composition" body="Current members and their terms." />
+    <Card href="/managers/meetings" title="Meetings" body="Bimonthly cadence, agenda, and minutes." />
+    <Card href="/managers/tor" title="Terms of Reference" body="The Annex A ToR in our own words." />
+  </div>
+</Layout>

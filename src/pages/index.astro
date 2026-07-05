@@ -1,25 +1,55 @@
 ---
-import Layout from '@layouts/Layout.astro';
-import Card from '@components/Card.astro';
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import { externalLinks } from '../config';
 ---
-<Layout title="Home">
-  <p class="instructions">
-    This is the official registry for the <a href="https://www.iso.org/standard/78143.html" target="_blank">ISO 24229 standard</a>.
-  </p>
-  <ul role="list" class="link-card-grid">
-    <Card
-      href="/item-classes"
-      title="Go to Register"
-      body="View the register data"
-    />
-  </ul>
-</Layout>
 
-<style>
-.link-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-  gap: 2rem;
-  padding: 0;
-}
-</style>
+<Layout>
+  <section class="mb-16">
+    <p class="text-sm font-medium text-accent uppercase tracking-wide mb-4">
+      ISO 24229 · Written-language conversion systems
+    </p>
+    <h1 class="text-5xl md:text-6xl font-semibold tracking-tight max-w-4xl leading-[1.05]">
+      The official register of
+      <span class="text-ink-subtle">transliteration and romanization systems</span>.
+    </h1>
+    <p class="mt-6 text-lg text-ink-muted max-w-2xl">
+      Operated by CalConnect and Ribose as Registration Authority under
+      <a href={externalLinks.iso24229Standard} class="underline">ISO 24229</a>,
+      designated by ISO/TC 46/WG 3. Built on
+      <a href={externalLinks.iso639Standard} class="underline">ISO 639</a> (language)
+      and <a href={externalLinks.iso15924Standard} class="underline">ISO 15924</a> (script).
+    </p>
+  </section>
+
+  <section class="mb-20">
+    <h2 class="text-sm uppercase tracking-wide text-ink-subtle mb-6">Who are you?</h2>
+    <div class="grid gap-4 md:grid-cols-3">
+      <Card
+        href="/register"
+        title="I'm looking up a system"
+        body="Find a transliteration system by authority, source language, or code."
+        audience="Users"
+      />
+      <Card
+        href="/apply"
+        title="I represent an authority"
+        body="Add a new system to your authority, or apply to register a new authority."
+        audience="Authorities"
+      />
+      <Card
+        href="/managers"
+        title="I'm on the Advisory Group"
+        body="ISO/TC 46/AG materials: composition, Terms of Reference, meetings."
+        audience="Managers"
+      />
+    </div>
+  </section>
+
+  <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <Card href="/learn" title="Learn" body="What ISO 24229 is and how codes work." />
+    <Card href="/specification" title="Specification" body="Register specification (Annex A ToR) and ISO 19135 compliance." />
+    <Card href="/faq" title="FAQ" body="Answers to common questions." />
+    <Card href="/register" title="Browse register" body="Authorities, systems, spelling systems." />
+  </section>
+</Layout>

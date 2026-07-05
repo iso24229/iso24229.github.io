@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { externalLinks } from '../../config';
+---
+
+<Layout title="What is ISO 24229?">
+  <article class="prose max-w-none">
+    <p class="text-sm text-ink-subtle"><a href="/learn">← Learn</a></p>
+    <h1 class="text-4xl font-semibold tracking-tight mb-6">What is ISO 24229?</h1>
+
+    <p class="text-lg text-ink-muted mb-8">
+      ISO 24229 completes a trio of standards that together identify any
+      <em>written form</em> of any language — the language itself, the script
+      it's written in, and the system used to convert it to another script.
+    </p>
+
+    <section class="grid gap-6 md:grid-cols-3 my-10">
+      <div class="p-6 border border-line rounded">
+        <p class="text-xs font-mono text-ink-subtle mb-2">STEP 1</p>
+        <h2 class="text-xl font-semibold mb-1">
+          <a href={externalLinks.iso639Standard} class="underline">ISO 639</a>
+        </h2>
+        <p class="text-sm text-ink-muted">Identifies the <em>language</em>.</p>
+        <p class="mt-3 font-mono text-accent">zho — Chinese</p>
+      </div>
+      <div class="p-6 border border-line rounded">
+        <p class="text-xs font-mono text-ink-subtle mb-2">STEP 2</p>
+        <h2 class="text-xl font-semibold mb-1">
+          <a href={externalLinks.iso15924Standard} class="underline">ISO 15924</a>
+        </h2>
+        <p class="text-sm text-ink-muted">Identifies the <em>script</em>.</p>
+        <p class="mt-3 font-mono text-accent">Hani — Han (Hanzi, Kanji, Hanja)</p>
+      </div>
+      <div class="p-6 border border-line rounded bg-surface-raised">
+        <p class="text-xs font-mono text-ink-subtle mb-2">STEP 3</p>
+        <h2 class="text-xl font-semibold mb-1">
+          <a href={externalLinks.iso24229Standard} class="underline">ISO 24229</a>
+        </h2>
+        <p class="text-sm text-ink-muted">Identifies the <em>conversion system</em>.</p>
+        <p class="mt-3 font-mono text-accent">acadsin:zho-Hani:Latn:2002</p>
+      </div>
+    </section>
+
+    <h2 class="text-2xl font-semibold mt-12 mb-4">The problem ISO 24229 solves</h2>
+    <p>
+      A library catalogue record in Tokyo, a government gazetteer in Canberra,
+      and a linguistic corpus in Berkeley might all reference the
+      same Chinese romanization system — but each calls it something
+      different. ISO 24229 gives every system a single, unambiguous,
+      machine-readable identifier so data can flow between them without
+      loss.
+    </p>
+
+    <h2 class="text-2xl font-semibold mt-12 mb-4">Where the register sits</h2>
+    <p>
+      The standard itself defines the rules. The <em>register</em> —
+      this website — is the authoritative list of every system that has
+      been assigned a code. The register is operated under
+      <a href={externalLinks.iso19135Standard} class="underline">ISO 19135</a>
+      (procedures for registration of items of geographic information).
+    </p>
+
+    <p class="mt-8 text-ink-muted">
+      Next: <a href="/learn/code-structure" class="underline">Anatomy of a code →</a>
+    </p>
+  </article>
+</Layout>

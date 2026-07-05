@@ -1,39 +1,26 @@
 ---
-import NavItem from './NavItem.astro';
+import { navigation } from '../config';
 
+const currentPath = Astro.url.pathname;
+const isActive = (href: string): boolean =>
+  currentPath === href || currentPath.startsWith(`${href}/`);
 ---
-<nav>
-  <menu>
-    <NavItem href="/">Home</NavItem>
-    <NavItem href="/item-classes">Register</NavItem>
-    <NavItem href="/about">About</NavItem>
-  </menu>
+
+<nav aria-label="Primary" class="hidden md:flex items-center gap-1">
+  {
+    navigation.map((item) => (
+      <a
+        href={item.href}
+        title={item.description}
+        class:list={[
+          'px-3 py-2 text-sm font-medium rounded transition-colors',
+          isActive(item.href)
+            ? 'text-accent bg-surface-raised'
+            : 'text-ink-muted hover:text-ink hover:bg-surface-raised/60',
+        ]}
+      >
+        {item.label}
+      </a>
+    ))
+  }
 </nav>
-<style lang="scss">
-
-menu {
-  display: flex;
-  padding: 0;
-  padding-top: 1rem;
-  flex-direction: row;
-  list-style-type: none;
-}
-
-@media only screen
-  and (max-width: 415px) {
-
-  menu {
-    // padding: 0;
-  }
-}
-
-@media only screen
-  and (min-width: 415px)
-  and (max-width: 830px) {
-
-  menu {
-    // padding: 1rem 0;
-  }
-}
-
-</style>

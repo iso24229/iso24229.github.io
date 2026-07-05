@@ -1,0 +1,56 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { externalLinks } from '../../config';
+---
+
+<Layout title="ISO 19135 compliance">
+  <p class="text-sm text-ink-subtle"><a href="/specification">← Specification</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">ISO 19135 compliance</h1>
+
+  <p class="text-lg text-ink-muted max-w-2xl mb-8">
+    The ISO 24229 register is operated as an
+    <a href={externalLinks.iso19135Standard} class="underline">ISO 19135</a>
+    register. Each concept in the ISO 19135 register model maps to a concrete
+    artefact in this repository.
+  </p>
+
+  <table class="w-full text-sm border-collapse">
+    <thead>
+      <tr class="border-b border-line text-left">
+        <th class="py-3 pr-4 font-semibold">ISO 19135 concept</th>
+        <th class="py-3 pr-4 font-semibold">How we implement it</th>
+      </tr>
+    </thead>
+    <tbody class="align-top">
+      <tr class="border-b border-line">
+        <td class="py-3 pr-4 font-mono">RE_Register</td>
+        <td class="py-3 pr-4">This website; the canonical copy of the data lives in <code>iso24229/iso24229-register</code>.</td>
+      </tr>
+      <tr class="border-b border-line">
+        <td class="py-3 pr-4 font-mono">RE_RegisterItem</td>
+        <td class="py-3 pr-4">The base class <code>RegisterItem</code> in <code>src/domain/items/RegisterItem.ts</code>.</td>
+      </tr>
+      <tr class="border-b border-line">
+        <td class="py-3 pr-4 font-mono">RE_SubmittingOrganization</td>
+        <td class="py-3 pr-4">The <code>authority</code> item class.</td>
+      </tr>
+      <tr class="border-b border-line">
+        <td class="py-3 pr-4 font-mono">RE_ProposalManagementInformation</td>
+        <td class="py-3 pr-4">The <code>codeStatus</code> + <code>systemStatus</code> fields, plus timestamps.</td>
+      </tr>
+      <tr class="border-b border-line">
+        <td class="py-3 pr-4 font-mono">RE_DecisionStatus</td>
+        <td class="py-3 pr-4">Lifecycle values: <code>proposed</code> / <code>stable</code> / <code>deprecated</code> / <code>withdrawn</code>.</td>
+      </tr>
+      <tr>
+        <td class="py-3 pr-4 font-mono">RE_ReferenceSource</td>
+        <td class="py-3 pr-4">ISO 639 and ISO 15924 reference data, in <code>iso24229/iso639-data</code> and <code>iso24229/iso15924-data</code>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="mt-10 text-ink-muted">
+    See also <a href={externalLinks.ferin} class="underline">FERIN</a>,
+    a sibling ISO 19135 register operated by the same team.
+  </p>
+</Layout>
