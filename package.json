@@ -23,6 +23,7 @@
   "devDependencies": {
     "@astrojs/ts-plugin": "^1.10.10",
     "@tailwindcss/vite": "^4.3.2",
+    "@types/node": "^26.1.0",
     "astro-adoc": "^0.3.0",
     "astro-robots-txt": "^1.0.0",
     "sass": "^1.101.0",

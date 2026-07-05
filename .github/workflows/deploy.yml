@@ -21,6 +21,7 @@ jobs:
       - name: Checkout your repository using git
         uses: actions/checkout@v7
         with:
+          submodules: recursive
           depth: 1
 
       - name: Install, build, and upload your site

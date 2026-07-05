@@ -1,6 +1,9 @@
 # Direnv
 .direnv
 
+# Submodules — contents tracked via .gitmodules; do NOT ignore
+# (we want the working-tree checkout committed at the pinned SHA).
+
 # build output
 dist/
 

@@ -1,0 +1,138 @@
+---
+/**
+ * Lifecycle graph component — pure SVG, no client library.
+ *
+ * Renders the system-code at the center, surrounded by:
+ *   - source spelling (top-left)
+ *   - target spelling (top-right)
+ *   - related systems (bottom arc, by relation type)
+ *
+ * The graph descriptor is computed server-side from `RegisterIndex`.
+ * For depth-2 relationships, use `<LifecycleGraphFull />` (TODO 12).
+ */
+export interface GraphNode {
+  id: string;
+  label: string;
+  href: string;
+  kind: 'self' | 'source' | 'target' | 'relation';
+}
+
+export interface GraphEdge {
+  from: string;
+  to: string;
+  label?: string;
+}
+
+export interface Props {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
+
+const { nodes, edges } = Astro.props;
+
+// Position nodes around the center.
+const W = 600;
+const H = 360;
+const cx = W / 2;
+const cy = H / 2;
+
+const positions = new Map<string, { x: number; y: number }>();
+const self = nodes.find((n) => n.kind === 'self');
+if (self) positions.set(self.id, { x: cx, y: cy });
+
+const others = nodes.filter((n) => n.kind !== 'self');
+const byKind = new Map<string, GraphNode[]>();
+for (const n of others) {
+  if (!byKind.has(n.kind)) byKind.set(n.kind, []);
+  byKind.get(n.kind)!.push(n);
+}
+
+// Layout each kind in its own quadrant.
+const quadrant: Record<string, { x: number; y: number; step: number }> = {
+  source: { x: cx - 220, y: cy - 100, step: 0 },
+  target: { x: cx + 220, y: cy - 100, step: 0 },
+  relation: { x: cx - 220, y: cy + 100, step: 50 },
+};
+
+for (const [kind, group] of byKind) {
+  const q = quadrant[kind] ?? quadrant.relation;
+  group.forEach((n, i) => {
+    positions.set(n.id, { x: q.x, y: q.y + i * q.step });
+  });
+}
+---
+
+<figure class="border border-line rounded p-4 bg-surface-raised my-8">
+  <figcaption class="text-xs font-mono uppercase text-ink-subtle mb-3">Lifecycle graph</figcaption>
+  <svg viewBox={`0 0 ${W} ${H}`} class="w-full h-auto" role="img" aria-label="System relationship graph">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+      </marker>
+    </defs>
+
+    {
+      edges.map((e) => {
+        const from = positions.get(e.from);
+        const to = positions.get(e.to);
+        if (!from || !to) return null;
+        return (
+          <g stroke="currentColor" stroke-width="1" fill="none" class="text-ink-subtle">
+            <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} marker-end="url(#arrow)" />
+            {e.label && (
+              <text
+                x={(from.x + to.x) / 2}
+                y={(from.y + to.y) / 2 - 4}
+                text-anchor="middle"
+                font-size="10"
+                fill="currentColor"
+                stroke="none"
+              >
+                {e.label}
+              </text>
+            )}
+          </g>
+        );
+      })
+    }
+
+    {
+      nodes.map((n) => {
+        const p = positions.get(n.id);
+        if (!p) return null;
+        const radius = n.kind === 'self' ? 60 : 40;
+        const fill =
+          n.kind === 'self' ? 'var(--color-accent)' :
+          n.kind === 'source' ? 'var(--color-accent-light)' :
+          n.kind === 'target' ? 'var(--color-iso-red)' :
+          'var(--color-surface-sunken)';
+        const textColor = n.kind === 'self' ? 'var(--color-surface)' : 'var(--color-ink)';
+        return (
+          <g>
+            <a href={n.href}>
+              <circle
+                cx={p.x}
+                cy={p.y}
+                r={radius}
+                fill={fill}
+                stroke="var(--color-line)"
+                stroke-width="1"
+              />
+              <text
+                x={p.x}
+                y={p.y}
+                text-anchor="middle"
+                dominant-baseline="middle"
+                font-size="11"
+                font-family="var(--font-mono)"
+                fill={textColor}
+              >
+                {n.label.length > 18 ? n.label.slice(0, 16) + '…' : n.label}
+              </text>
+            </a>
+          </g>
+        );
+      })
+    }
+  </svg>
+</figure>
