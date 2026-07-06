@@ -1,0 +1,131 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const authorityExamples = [
+  { id: 'ISO', name: 'International Organization for Standardization' },
+  { id: 'BGN-PCGN', name: 'United States Board on Geographic Names — Permanent Committee on Geographical Names for British Official Use' },
+  { id: 'ALA-LC', name: 'American Library Association — Library of Congress' },
+  { id: 'DIN', name: 'German Institute for Standardization' },
+  { id: 'ICAO', name: 'International Civil Aviation Organization' },
+  { id: 'UN', name: 'United Nations' },
+];
+---
+
+<Layout title="Conversion system authorities">
+  <p class="text-sm text-ink-subtle mb-2"><a href="/learn">← Learn</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Conversion system authorities</h1>
+
+  <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
+    A conversion system authority is a competent authority that creates, publishes, and/or manages written language conversion systems. This page covers §5 of ISO 24229 — the requirements, competency criteria, registration process, and identifier construction rules.
+  </p>
+
+  {/* ── §5.1 General ────────────────────────────────────────── */}
+  <section class="mb-12">
+    <p class="eyebrow mb-3">§5.1 General</p>
+    <h2 class="mb-4">What an authority is.</h2>
+    <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+      <p>
+        A conversion system authority is a competent authority that creates, publishes and/or manages written language conversion systems. Authorities that are no longer competent will depend on ISO 24229/AG for managing codes, considered on a case-by-case basis.
+      </p>
+    </div>
+  </section>
+
+  {/* ── §5.2 Requirements ───────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§5.2 Requirements</p>
+    <h2 class="mb-4">Eligibility and competency.</h2>
+
+    <h3 class="text-lg font-semibold mb-3">§5.2.1 General requirements</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">A conversion system authority should:</p>
+    <ul class="max-w-2xl space-y-2 text-ink-muted list-disc pl-6 mb-6">
+      <li>Have at least one written language conversion system eligible for a conversion system code</li>
+      <li>Be competent in managing its written language conversion systems (see §5.2.4 below)</li>
+    </ul>
+
+    <h3 class="text-lg font-semibold mb-3">§5.2.2 Inactive authorities</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      If a conversion system authority does not meet the competency requirement, it is considered <em>inactive</em>.
+    </p>
+
+    <h3 class="text-lg font-semibold mb-3">§5.2.3 Varia authorities</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-2">
+      The <em>Varia systems</em> (<span class="font-mono">Var</span>) conversion system authority is managed by ISO 24229/AG to represent written language conversion systems that:
+    </p>
+    <ul class="max-w-2xl space-y-2 text-ink-muted list-disc pl-6 mb-6">
+      <li>Have a need to be represented as determined by ISO 24229/AG</li>
+      <li>Yet do not have a clear extant authority</li>
+    </ul>
+    <p class="text-sm text-ink-subtle max-w-2xl">
+      Example: the Wade-Giles Chinese transcription system is encoded as <span class="font-mono">Var:zho-Hani:Latn:WG-1912</span>.
+    </p>
+
+    <h3 class="text-lg font-semibold mt-8 mb-3">§5.2.4 Competency</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-4">
+      A competent conversion system authority is a recognised institution that has standardised processes for managing conversion systems, covering:
+    </p>
+    <ul class="max-w-2xl space-y-2 text-ink-muted list-disc pl-6 mb-4">
+      <li>Planning of written language conversion systems, including the process of designing and defining them</li>
+      <li>Performing changes to written language conversion systems in a well-planned manner</li>
+    </ul>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-2">It is recommended for a competent authority to also establish standardised processes for:</p>
+    <ul class="max-w-2xl space-y-2 text-ink-muted list-disc pl-6">
+      <li>Public announcement and dissemination of its conversion systems</li>
+      <li>Allowing a public review period for people affected by conversion systems under its management prior to enactment</li>
+    </ul>
+  </section>
+
+  {/* ── §5.3 Registration ───────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§5.3 Registration</p>
+    <h2 class="mb-4">How authorities are listed.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      ISO 24229/AG is tasked with managing the list of conversion system authorities. The AG reviews additions, modifications, and marking of inactive status at its meetings.
+    </p>
+  </section>
+
+  {/* ── §5.4 Authority identifiers ──────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§5.4 Conversion system authority identifiers</p>
+    <h2 class="mb-4">Construction rules for authority codes.</h2>
+
+    <h3 class="text-lg font-semibold mb-3">§5.4.1.1 Relationship with names</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      The principle behind authority identifiers is a <strong>visual association</strong> between the authority's name and its identifier. Identifiers are generally assigned on the basis of abbreviated names, avoiding reflection of political status wherever possible.
+    </p>
+
+    <h3 class="text-lg font-semibold mb-3">§5.4.1.2 Construction rules</h3>
+    <div class="max-w-2xl space-y-3 text-ink-muted leading-relaxed mb-6">
+      <ul class="list-disc pl-6 space-y-2">
+        <li>Maximum length: <strong>16 characters</strong></li>
+        <li>Characters: digits <span class="font-mono">0–9</span>, uppercase <span class="font-mono">A–Z</span>, lowercase <span class="font-mono">a–z</span></li>
+        <li>Elements separated by a single <strong>HYPHEN-MINUS</strong> (<span class="font-mono">-</span>, U+002D)</li>
+        <li>Minimum length: <strong>3 characters</strong> (with exception of <span class="font-mono">UN</span> for United Nations)</li>
+        <li>2-character identifiers reserved for <strong>ISO 3166-1</strong> country codes, representing the administration authority of the jurisdiction</li>
+      </ul>
+    </div>
+
+    <h3 class="text-lg font-semibold mb-3">§5.4.1.3 Capitalization</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      Identifiers use capitalization like ordinary abbreviations, but this has no distinctive meaning. An all-lowercase identifier is equally valid.
+    </p>
+
+    <h3 class="text-lg font-semibold mb-3">§5.4.2 Examples</h3>
+    <div class="max-w-2xl space-y-3">
+      {authorityExamples.map((ex, i) => (
+        <div class="flex items-baseline gap-4">
+          <span class="font-mono text-base text-gold-deep dark:text-gold-bright shrink-0">{ex.id}</span>
+          <span class="text-sm text-ink-muted">for {ex.name}</span>
+        </div>
+      ))}
+    </div>
+    <p class="mt-4 text-sm text-ink-subtle">These examples are indicative.</p>
+  </section>
+
+  {/* ── Authority directory link ─────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Directory</p>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      The full list of registered authorities is at <a href="/register/authority" class="underline">/register/authority</a>.
+    </p>
+  </section>
+</Layout>
