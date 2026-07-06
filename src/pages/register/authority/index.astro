@@ -1,0 +1,42 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const authorities = (await getCollection('authority'))
+  .map((c) => ({ id: c.id, data: c.data as Record<string, unknown> }))
+  .sort((a, b) => String(a.data.name ?? a.id).localeCompare(String(b.data.name ?? b.id)));
+---
+
+<Layout title="Authorities">
+  <p class="text-sm text-ink-subtle"><a href="/register">← Register</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Authorities</h1>
+
+  <p class="text-ink-muted max-w-2xl mb-10">
+    Each authority maintains one or more written-language conversion systems.
+    Per ISO 24229 Annex A.4, every authority designates exactly two authorised
+    persons who can submit changes on its behalf.
+  </p>
+
+  {
+    authorities.length === 0 ? (
+      <p class="text-ink-muted">No authorities registered yet.</p>
+    ) : (
+      <ul class="divide-y divide-line border-y border-line">
+        {authorities.map((a) => (
+          <li>
+            <a
+              href={`/register/authority/${a.id}`}
+              class="flex items-baseline justify-between py-4 hover:text-accent"
+            >
+              <span>
+                <span class="font-medium text-lg">{String(a.data.name ?? a.id)}</span>
+                <span class="font-mono text-xs text-ink-subtle ml-3">{String(a.data.authorityIdentifier ?? a.id)}</span>
+              </span>
+              <span class="text-sm text-ink-muted">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Layout>
