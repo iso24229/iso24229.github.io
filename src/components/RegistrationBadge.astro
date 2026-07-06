@@ -1,0 +1,13 @@
+---
+import { statusBadgeClass, statusLabel, isRegistrationStatus } from '../domain/registration/RegistrationStatus';
+
+interface Props {
+  status: unknown;
+  class?: string;
+}
+
+const { status, class: extra = '' } = Astro.props;
+const badgeClass = isRegistrationStatus(status) ? statusBadgeClass(status) : 'badge';
+const label = isRegistrationStatus(status) ? statusLabel(status) : 'Unknown';
+---
+<span class:list={['badge', badgeClass, extra]}>{label}</span>

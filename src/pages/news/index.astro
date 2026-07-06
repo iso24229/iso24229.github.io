@@ -62,13 +62,13 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
     ) : (
       <>
         {/* ── Lead story ─────────────────────────────────────────── */}
-        <article class="rule-section mb-20">
+        <article class="rule-section mb-16">
           <p class="eyebrow text-gold-deep dark:text-gold-bright mb-5">Latest</p>
-          <p class="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle mb-4">
+          <p class="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle mb-5">
             <time datetime={isoDate(lead.data.date)}>{fmtDate(lead.data.date)}</time>
             {lead.data.author && <span> · {lead.data.author}</span>}
           </p>
-          <h2 class="max-w-3xl mb-5">
+          <h2 class="font-display font-bold text-3xl md:text-4xl lg:text-[2.75rem] tracking-[-0.03em] leading-[1.08] max-w-3xl mb-6">
             <a href={`/news/${lead.id}/`} class="hover:text-gold-deep dark:hover:text-gold-bright transition-colors">
               {lead.data.title}
             </a>
@@ -108,7 +108,7 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                         <li class="border-b border-rule">
                           <a
                             href={`/news/${post.id}/`}
-                            class="grid grid-cols-[6.5rem_1fr] gap-x-6 md:gap-x-10 items-baseline py-5 pl-6 -ml-px hover:bg-paper-raised transition-colors group"
+                            class="grid grid-cols-[6.5rem_1fr] gap-x-6 md:gap-x-10 items-baseline py-6 pl-6 -ml-px hover:bg-paper-raised/60 transition-colors group"
                           >
                             <time
                               datetime={isoDate(post.data.date)}
@@ -117,14 +117,14 @@ const years = [...byYear.keys()].sort((a, b) => b - a);
                               {fmtShort(post.data.date)}
                             </time>
                             <span>
-                              <span class="block font-display text-lg md:text-xl font-semibold tracking-[-0.018em] text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">
+                              <span class="block font-display text-xl md:text-2xl font-semibold tracking-[-0.022em] leading-tight text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">
                                 {post.data.title}
                               </span>
-                              <span class="block mt-1.5 text-sm text-ink-muted leading-relaxed max-w-xl">
+                              <span class="block mt-2 text-sm text-ink-muted leading-relaxed max-w-xl">
                                 {post.data.summary}
                               </span>
                               {post.data.tags.length > 0 && (
-                                <ul class="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-[0.65rem] font-mono uppercase tracking-wider text-ink-subtle">
+                                <ul class="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[0.65rem] font-mono uppercase tracking-wider text-ink-subtle">
                                   {post.data.tags.map((tag) => (
                                     <li>{tag}</li>
                                   ))}

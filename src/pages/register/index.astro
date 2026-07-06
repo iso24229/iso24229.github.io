@@ -1,21 +1,52 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import RegistrationBadge from '../../components/RegistrationBadge.astro';
 import { getCollection } from 'astro:content';
 import { itemClassSlugs } from '../../domain/registry/ItemClassRegistry';
 import { schemaWithRichData } from '../../content.config';
+import {
+  REGISTRATION_STATUS_ORDER,
+  isRegistrationStatus,
+  type RegistrationStatus,
+} from '../../domain/registration/RegistrationStatus';
 
-const counts = await Promise.all(
-  itemClassSlugs.map(async (slug) => ({
-    slug,
-    title: schemaWithRichData[slug].title,
-    description: schemaWithRichData[slug].description,
-    count: (await getCollection(slug)).length,
-  })),
+interface EntryLike { id: string; data: Record<string, unknown>; }
+
+const perClass = await Promise.all(
+  itemClassSlugs.map(async (slug) => {
+    const collection = await getCollection(slug);
+    const entries: EntryLike[] = collection.map((c) => ({
+      id: c.id,
+      data: c.data as Record<string, unknown>,
+    }));
+    const counts = new Map<RegistrationStatus, number>();
+    for (const e of entries) {
+      const s = e.data.registrationStatus;
+      if (isRegistrationStatus(s)) counts.set(s, (counts.get(s) ?? 0) + 1);
+    }
+    return {
+      slug,
+      title: schemaWithRichData[slug].title,
+      description: schemaWithRichData[slug].description,
+      count: entries.length,
+      counts,
+    };
+  }),
 );
 
-const total = counts.reduce((sum, c) => sum + c.count, 0);
-const authorities = counts.find((c) => c.slug === 'authority')?.count ?? 0;
-const systems = counts.find((c) => c.slug === 'system-code')?.count ?? 0;
+const total = perClass.reduce((sum, c) => sum + c.count, 0);
+const authorities = perClass.find((c) => c.slug === 'authority')?.count ?? 0;
+const systems = perClass.find((c) => c.slug === 'system-code')?.count ?? 0;
+
+const totalCounts = new Map<RegistrationStatus, number>();
+for (const c of perClass) {
+  for (const [s, n] of c.counts) {
+    totalCounts.set(s, (totalCounts.get(s) ?? 0) + n);
+  }
+}
+const statusBreakdown = REGISTRATION_STATUS_ORDER
+  .map((s) => ({ status: s, count: totalCounts.get(s) ?? 0 }))
+  .filter((x) => x.count > 0);
 ---
 
 <Layout title="Content">
@@ -32,15 +63,42 @@ const systems = counts.find((c) => c.slug === 'system-code')?.count ?? 0;
     </div>
   </section>
 
+  {statusBreakdown.length > 0 && (
+    <section class="mb-12">
+      <p class="eyebrow mb-4">Registration status</p>
+      <p class="text-sm text-ink-muted max-w-2xl mb-5 leading-relaxed">
+        Every entry in the register carries an ISO 19135 registration lifecycle state. Most content today is <strong>proposed</strong> — awaiting Advisory Group review.
+      </p>
+      <ul class="flex flex-wrap gap-x-6 gap-y-3">
+        {statusBreakdown.map(({ status, count }) => (
+          <li class="flex items-center gap-3">
+            <RegistrationBadge status={status} />
+            <span class="font-mono text-sm text-ink">{count}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
   <section>
     <p class="eyebrow mb-4">Item classes</p>
     <ul class="border-t border-rule">
-      {counts.map((c) => (
+      {perClass.map((c) => (
         <li class="border-b border-rule">
           <a href={`/register/${c.slug}/p/1`} class="flex items-baseline justify-between gap-4 py-4 group">
             <div class="flex-1 min-w-0">
               <h2 class="text-lg font-semibold tracking-tight group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">{c.title}</h2>
               {c.description && <p class="text-sm text-ink-muted mt-0.5">{c.description}</p>}
+              {c.counts.size > 0 && (
+                <ul class="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+                  {[...c.counts.entries()].map(([status, n]) => (
+                    <li class="flex items-center gap-1.5 text-xs">
+                      <RegistrationBadge status={status} />
+                      <span class="font-mono text-ink-subtle">{n}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
             <span class="shrink-0 font-mono text-sm text-ink-subtle">{c.count}</span>
           </a>

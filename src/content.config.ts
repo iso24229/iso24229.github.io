@@ -11,6 +11,13 @@ const uuidentifiable = {
   },
 } as const;
 
+const registrationStatusTrait = {
+  registrationStatus: {
+    type: 'string',
+    title: 'Registration status',
+  },
+} as const;
+
 const remarkable = {
   remarks: {
     type: 'string',
@@ -170,6 +177,7 @@ const transformPrimitiveSchemaToZodSchema = (s: PrimitiveSchemaType): z.ZodTypeA
 
 const commonTraits = {
   ...uuidentifiable,
+  ...registrationStatusTrait,
   ...remarkable,
   ...timestampable,
 };

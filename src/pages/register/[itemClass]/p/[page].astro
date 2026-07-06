@@ -1,11 +1,15 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import RegistrationBadge from '../../../../components/RegistrationBadge.astro';
+import StatusFacets from '../../../../components/StatusFacets.astro';
 import { getCollection } from 'astro:content';
 import type { ItemClassSlug } from '../../../../domain/items/RegisterItem';
-import {
-  itemClassSlugs,
-} from '../../../../domain/registry/ItemClassRegistry';
+import { itemClassSlugs } from '../../../../domain/registry/ItemClassRegistry';
 import { schemaWithRichData } from '../../../../content.config';
+import {
+  isRegistrationStatus,
+  type RegistrationStatus,
+} from '../../../../domain/registration/RegistrationStatus';
 import type { InferGetStaticPropsType, InferGetStaticParamsType, GetStaticPaths, PaginateFunction } from 'astro';
 
 interface EntryLike {
@@ -30,6 +34,9 @@ export const getStaticPaths = (({ paginate }: { paginate: PaginateFunction }) =>
       paginate(entries as EntryLike[], {
         pageSize: 20,
         params: { itemClass },
+        props: {
+          allEntries: entries as EntryLike[],
+        },
       }),
     ),
   );
@@ -39,10 +46,22 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 type Params = InferGetStaticParamsType<typeof getStaticPaths>;
 
 const { itemClass } = Astro.params as Params;
-const { page } = Astro.props as Props;
+const { page, allEntries } = Astro.props as Props & { allEntries: EntryLike[] };
 
 const title = schemaWithRichData[itemClass as ItemClassSlug].title;
 const entries: EntryLike[] = page.data;
+
+function statusOf(e: EntryLike): RegistrationStatus | null {
+  const v = e.data.registrationStatus;
+  return isRegistrationStatus(v) ? v : null;
+}
+
+const counts = new Map<RegistrationStatus, number>();
+for (const e of allEntries) {
+  const s = statusOf(e);
+  if (s) counts.set(s, (counts.get(s) ?? 0) + 1);
+}
+const distinctStatuses = [...counts.keys()].length;
 ---
 
 <Layout title={title}>
@@ -54,6 +73,10 @@ const entries: EntryLike[] = page.data;
     <p class="text-sm text-ink-muted">{page.total} entries</p>
   </div>
 
+  {distinctStatuses > 0 && (
+    <StatusFacets itemClass={itemClass!} counts={counts} total={allEntries.length} activeStatus={null} />
+  )}
+
   {
     entries.length === 0 ? (
       <p class="text-ink-muted">No entries yet.</p>
@@ -63,13 +86,16 @@ const entries: EntryLike[] = page.data;
           <li>
             <a
               href={`/register/${itemClass}/i/${entry.id}`}
-              class="flex items-baseline justify-between py-3 gap-4 group"
+              class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-3 group"
             >
-              <span class="font-mono text-sm md:text-base group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">
+              <span class="font-mono text-sm md:text-base text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">
                 {entry.data.code ? String(entry.data.code) : (entry.data.uuid ?? entry.id)}
               </span>
-              <span class="text-ink-muted text-sm truncate text-right">
+              <span class="hidden sm:block text-ink-muted text-sm truncate text-right max-w-[28rem]">
                 {entry.data.name ?? entry.data.codeStatus ?? entry.data.systemStatus ?? ''}
+              </span>
+              <span class="justify-self-end">
+                <RegistrationBadge status={entry.data.registrationStatus} />
               </span>
             </a>
           </li>

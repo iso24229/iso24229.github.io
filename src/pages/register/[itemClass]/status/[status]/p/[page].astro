@@ -1,0 +1,130 @@
+---
+import Layout from '../../../../../../layouts/Layout.astro';
+import RegistrationBadge from '../../../../../../components/RegistrationBadge.astro';
+import StatusFacets from '../../../../../../components/StatusFacets.astro';
+import { getCollection } from 'astro:content';
+import type { ItemClassSlug } from '../../../../../../domain/items/RegisterItem';
+import { itemClassSlugs } from '../../../../../../domain/registry/ItemClassRegistry';
+import { schemaWithRichData } from '../../../../../../content.config';
+import {
+  REGISTRATION_STATUS_META,
+  isRegistrationStatus,
+  type RegistrationStatus,
+} from '../../../../../../domain/registration/RegistrationStatus';
+import type { InferGetStaticPropsType, InferGetStaticParamsType, GetStaticPaths, PaginateFunction } from 'astro';
+
+interface EntryLike {
+  id: string;
+  data: Record<string, unknown>;
+}
+
+export const getStaticPaths = (({ paginate }: { paginate: PaginateFunction }) => {
+  return Promise.all(
+    itemClassSlugs.map(async (itemClass) => {
+      const collection = await getCollection(itemClass);
+      const allEntries: EntryLike[] = collection.map((c) => ({
+        id: c.id,
+        data: c.data as Record<string, unknown>,
+      }));
+      const counts = new Map<RegistrationStatus, number>();
+      for (const e of allEntries) {
+        const s = e.data.registrationStatus;
+        if (isRegistrationStatus(s)) counts.set(s, (counts.get(s) ?? 0) + 1);
+      }
+      const paths: ReturnType<typeof paginate> = [];
+      for (const [status] of counts) {
+        const filtered = allEntries.filter((e) => e.data.registrationStatus === status);
+        const p = paginate(filtered, {
+          pageSize: 20,
+          params: { itemClass, status },
+          props: { allEntries },
+        });
+        paths.push(...p);
+      }
+      return paths;
+    }),
+  ).then((all) => all.flat() as ReturnType<typeof paginate>);
+}) satisfies GetStaticPaths;
+
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { itemClass, status } = Astro.params as Params;
+const { page, allEntries } = Astro.props as Props & { allEntries: EntryLike[] };
+const entries: EntryLike[] = page.data as unknown as EntryLike[];
+
+if (!isRegistrationStatus(status)) {
+  return Astro.redirect('/register');
+}
+
+const activeStatus = status as RegistrationStatus;
+const title = schemaWithRichData[itemClass as ItemClassSlug].title;
+
+const counts = new Map<RegistrationStatus, number>();
+for (const e of allEntries) {
+  const s = e.data.registrationStatus;
+  if (isRegistrationStatus(s)) counts.set(s, (counts.get(s) ?? 0) + 1);
+}
+---
+
+<Layout title={`${title} — ${REGISTRATION_STATUS_META[activeStatus].label}`}>
+  <p class="text-sm text-ink-subtle mb-2">
+    <a href="/register">← Register</a>
+  </p>
+  <div class="flex items-baseline justify-between mb-6 gap-4">
+    <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+    <p class="text-sm text-ink-muted shrink-0">{page.total} entries</p>
+  </div>
+
+  <StatusFacets itemClass={itemClass!} counts={counts} total={allEntries.length} activeStatus={activeStatus} />
+
+  <p class="text-sm text-ink-muted max-w-2xl mb-6 leading-relaxed">
+    <span class="font-medium text-ink">{REGISTRATION_STATUS_META[activeStatus].label}.</span>
+    {REGISTRATION_STATUS_META[activeStatus].description}
+  </p>
+
+  {
+    entries.length === 0 ? (
+      <p class="text-ink-muted">No entries with this status.</p>
+    ) : (
+      <ul class="divide-y divide-rule border-y border-rule">
+        {entries.map((entry) => (
+          <li>
+            <a
+              href={`/register/${itemClass}/i/${entry.id}`}
+              class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-3 group"
+            >
+              <span class="font-mono text-sm md:text-base text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">
+                {entry.data.code ? String(entry.data.code) : (entry.data.uuid ?? entry.id)}
+              </span>
+              <span class="hidden sm:block text-ink-muted text-sm truncate text-right max-w-[28rem]">
+                {entry.data.name ?? ''}
+              </span>
+              <span class="justify-self-end">
+                <RegistrationBadge status={entry.data.registrationStatus} />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  {
+    (page.url.prev || page.url.next) && (
+      <nav class="flex justify-between mt-8 text-sm">
+        {page.url.prev ? (
+          <a href={page.url.prev} class="underline">← Previous</a>
+        ) : (
+          <span />
+        )}
+        <span class="text-ink-muted">Page {page.currentPage} of {page.lastPage}</span>
+        {page.url.next ? (
+          <a href={page.url.next} class="underline">Next →</a>
+        ) : (
+          <span />
+        )}
+      </nav>
+    )
+  }
+</Layout>
