@@ -2,8 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +10,6 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment.
 concurrency:
   group: pages
   cancel-in-progress: true
@@ -20,41 +18,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout website repository
-        uses: actions/checkout@v4
+      - name: Checkout your repository using git
+        uses: actions/checkout@v7
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: Install, build, and upload your site output
+        uses: withastro/action@v6
         with:
-          version: '11'
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Prepare external sources (clone register + reference data)
-        run: pnpm run prepare-external
+          node-version: 22
+          package-manager: pnpm@11
         env:
+          # Default GITHUB_TOKEN. Sufficient for public same-org repos;
+          # for private register cross-repo reads, set a PAT secret or
+          # enable org-level Actions token access.
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build
-        run: pnpm run build
-
-      - name: Clean cache and node_modules before artifact upload
-        run: rm -rf .cache node_modules
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
 
   deploy:
     needs: build
@@ -65,4 +41,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

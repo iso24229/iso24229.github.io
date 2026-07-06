@@ -1,37 +1,36 @@
 # Direnv
 .direnv
 
-# Submodules — contents tracked via .gitmodules; do NOT ignore
-# (we want the working-tree checkout committed at the pinned SHA).
+# External-data cache (fetched/cloned at build time, never committed)
+.cache/
 
-# build output
+# Build output
 dist/
 
-# generated types
+# Generated types
 .astro/
 
-# dependencies
+# Dependencies
 node_modules/
 
-# logs
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# environment variables
+# Environment variables
 .env
 .env.production
 
 # macOS-specific files
 .DS_Store
 
-# Jekyll
+# Jekyll (legacy)
 _site
 .sass-cache
 .jekyll-cache/
 .jekyll-metadata
-.DS_Store
 .byebug_history
 .tmp.xml
 _documents

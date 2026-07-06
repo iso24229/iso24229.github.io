@@ -9,6 +9,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "postbuild": "node -e \"require('node:fs').rmSync('.cache', { recursive: true, force: true })\"",
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro",
