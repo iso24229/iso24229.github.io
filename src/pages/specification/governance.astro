@@ -1,0 +1,214 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+import { externalLinks } from '../../config';
+---
+
+<Layout title="Governance and lifecycle">
+  <p class="text-sm text-ink-subtle mb-2"><a href="/specification">← Specification</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Governance and lifecycle</h1>
+
+  <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
+    How the register is managed: who has authority, how decisions are made, how codes enter and leave the register, and what happens to retired codes. This page covers all of Annex A of <a href={externalLinks.iso24229Standard} class="underline">ISO 24229</a>.
+  </p>
+
+  {/* ── A.1 Registration Authority ──────────────────────────── */}
+  <section class="mb-12">
+    <p class="eyebrow mb-3">A.1 Registration authority (ISO 24229/RA)</p>
+    <h2 class="mb-6">Who maintains the register.</h2>
+
+    <h3 class="text-lg font-semibold mb-3">A.1.1 General</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      ISO has designated a Registration Authority for ISO 24229 to register conversion system codes and authority identifiers. The official listing is at <a href="https://www.iso.org/mara" class="underline">iso.org/mara</a>. CalConnect is the designated RA; the register is operated by Ribose.
+    </p>
+
+    <h3 class="text-lg font-semibold mb-3">A.1.2 Functions of the RA</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-4">The RA is entrusted with:</p>
+    <ul class="max-w-2xl space-y-2 text-ink-muted list-[lower-alpha] pl-8 mb-4">
+      <li>Adding and eliminating entries, in accordance with the rules in the standard</li>
+      <li>Advising users and ISO member bodies regarding application of the register</li>
+      <li>Updating and disseminating the register</li>
+      <li>Maintaining a reference list</li>
+      <li>Publishing changes and the history of changes allowing traceability</li>
+      <li>Administering the reservation of codes</li>
+    </ul>
+    <p class="text-sm text-ink-subtle max-w-2xl">
+      Changes become effective immediately upon publication. The criteria in A.3–A.4 shall be observed for all changes.
+    </p>
+
+    <h3 class="text-lg font-semibold mt-6 mb-3">A.1.3 Data provided by the RA</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-4">For each conversion system code, the RA provides at least:</p>
+    <ul class="max-w-2xl space-y-1.5 text-ink-muted list-disc pl-6">
+      <li>The conversion system code</li>
+      <li>The name of the conversion system and its authority</li>
+      <li>The source language and script of the conversion system</li>
+      <li>The target language and script of the conversion system</li>
+      <li>The source bibliographic reference</li>
+      <li>Method identifier of the conversion system</li>
+      <li>Status of the conversion system code</li>
+      <li>Relationship with other conversion systems</li>
+      <li>Any associated remarks</li>
+    </ul>
+  </section>
+
+  {/* ── A.2 Advisory Group ──────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">A.2 Advisory group (ISO 24229/AG)</p>
+    <h2 class="mb-6">Transparency and decision-making.</h2>
+
+    <h3 class="text-lg font-semibold mb-3">A.2.1 Principles</h3>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      The RA appoints an Advisory Group of at least 4 and up to 12 members to ensure transparency and adherence to the standard. The AG consists of experts in script or other conversions, information technologies, and library management. It includes a representative of ISO/TC 46 and may include representatives of organizations interested in using the codes.
+    </p>
+
+    <h3 class="text-lg font-semibold mb-3">A.2.2 Consensus and voting</h3>
+    <div class="max-w-2xl p-5 border border-rule rounded bg-paper-raised">
+      <p class="text-ink-muted leading-relaxed">
+        As a rule, the AG makes decisions <strong>by consensus</strong>. If a vote is needed, a decision is approved when <strong>more than two-thirds</strong> of members vote for it.
+      </p>
+    </div>
+  </section>
+
+  {/* ── A.3 Operations on authorities ───────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">A.3 Operations on conversion system authorities</p>
+    <h2 class="mb-6">How authorities are added, modified, and retired.</h2>
+
+    <div class="max-w-2xl space-y-8">
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.3.1 Registration of a new authority</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Additions are made upon request from a member of the AG. An authority is eligible if it meets the requirements in §5.2. The proposer provides justification; the AG decides on the basis of eligibility and usage justification. Identifiers are allocated by the AG at its discretion.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.3.2 Marking an authority inactive</h3>
+        <p class="text-ink-muted leading-relaxed">
+          The AG may mark an authority inactive if it ceases to exist or no longer wishes to register systems. The AG determines what information remains on the basis of practicality and continuity of usage.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.3.3 Modification of authority identifier</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Modifications are made upon request from an AG member or the authority. A significant name change may require a new identifier. The previously assigned identifier is <strong>reserved for backwards compatibility</strong>.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.3.4 Modifications to associated information</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Modifications to a registered element are made upon request from an AG member or the managing authority. The AG endeavours to maintain stability in the list of identifiers.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.3.5 Inactive authorities</h3>
+        <p class="text-ink-muted leading-relaxed">
+          If an authority is marked inactive, the responsibility for maintaining its conversion system entries is <strong>assumed by the AG</strong>.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.3.6 Varia authorities</h3>
+        <p class="text-ink-muted leading-relaxed">
+          The <em>Varia systems</em> authority is assigned the identifier <span class="font-mono">Var</span>. The AG manages systems that need representation but have no clear authority. Example: <span class="font-mono">Var:zho-Hani:Latn:WG-1912</span> (Wade-Giles Chinese transcription).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── A.4 Operations on systems ───────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">A.4 Operations on written language conversion systems</p>
+    <h2 class="mb-4">How systems are altered.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      Alterations to a registered system are made only upon request from an AG member or the managing authority. A significant name change may require the AG to change the code element concerned. The AG endeavours to maintain stability in the list of code elements.
+    </p>
+  </section>
+
+  {/* ── A.5 Reservation ─────────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">A.5 Reservation of code elements</p>
+    <h2 class="mb-6">What happens to retired codes.</h2>
+
+    <div class="max-w-2xl space-y-6">
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.5.1 General</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Code elements may be reserved for a limited period (resulting from deprecation or alteration) or for an indeterminate period (resulting from international law or exceptional requests).
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.5.2 Period of non-allocation</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Altered or deleted codes <strong>should not be reallocated indefinitely</strong>.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.5.3 Exceptional reservations</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Codes may be reserved for systems the AG has decided not to include in the register, but for which an interchange or encoding requirement exists.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.5.4 Reallocation</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Before reallocating a former code, the AG shall consult the authority or agency on whose behalf the code was reserved, with consideration given to difficulties arising from reallocation.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-base font-semibold mb-2">A.5.5 List of reserved code elements</h3>
+        <p class="text-ink-muted leading-relaxed">
+          A list of reserved code elements is maintained by the RA.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── A.6 Advice ──────────────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">A.6 Advice regarding use</p>
+    <h2 class="mb-4">The AG is available for consultation.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      The AG is available for consultation and assistance on the use of codes for conversion system authorities and written language conversion systems.
+    </p>
+  </section>
+
+  {/* ── Lifecycle summary ───────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">Lifecycle summary</p>
+    <h2 class="mb-6">The complete lifecycle of a code.</h2>
+    <div class="max-w-2xl p-6 border border-rule rounded bg-paper-raised">
+      <div class="space-y-4 text-sm">
+        <div class="flex items-center gap-4">
+          <span class="badge badge-proposed shrink-0">proposed</span>
+          <span class="text-ink-muted">Submitted by an AG member or authority. Pending review at the next AG meeting.</span>
+        </div>
+        <div class="text-center text-ink-subtle">↓ consensus or >2/3 vote</div>
+        <div class="flex items-center gap-4">
+          <span class="badge badge-stable shrink-0">preferred</span>
+          <span class="text-ink-muted">Approved by the AG. The code is published and effective immediately.</span>
+        </div>
+        <div class="text-center text-ink-subtle">↓ if authority renames or code is retired</div>
+        <div class="flex items-center gap-4">
+          <span class="badge badge-withdrawn shrink-0">deprecated</span>
+          <span class="text-ink-muted">The code is retired and reserved. Never reused. The system itself may still be active under a new code.</span>
+        </div>
+      </div>
+    </div>
+    <p class="mt-4 text-sm text-ink-subtle max-w-2xl">
+      System status is tracked independently: <span class="font-mono">current</span> (in active use), <span class="font-mono">former</span> (replaced), <span class="font-mono">inactive</span> (deprecated by the authority). See the <a href="/specification/data-model" class="underline">data model</a> for the full attribute list.
+    </p>
+  </section>
+
+  <div class="rule-section grid gap-4 md:grid-cols-2">
+    <Card href="/specification/data-model" title="Data model" body="Entities, attributes, and relationships from §6." />
+    <Card href="/specification/annex-a" title="Annex A — Terms of Reference" body="The RA's mandate per clause of Annex A." />
+  </div>
+</Layout>

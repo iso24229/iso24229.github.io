@@ -37,16 +37,10 @@ export interface NavItem {
 
 export const navigation: NavItem[] = [
   {
-    label: "About",
-    href: "/about",
-    description: "What ISO 24229 is, who operates the register, and how it works.",
-    audience: "newcomer",
-  },
-  {
-    label: "Learn",
-    href: "/learn",
-    description: "Codes, definitions, examples, FAQ, and specification.",
-    audience: "newcomer",
+    label: "News",
+    href: "/news",
+    description: "Announcements from the RA and Advisory Group.",
+    audience: "anyone",
   },
   {
     label: "Content",
@@ -55,10 +49,16 @@ export const navigation: NavItem[] = [
     audience: "user",
   },
   {
-    label: "News",
-    href: "/news",
-    description: "Announcements from the RA and Advisory Group.",
-    audience: "anyone",
+    label: "Learn",
+    href: "/learn",
+    description: "Codes, definitions, examples, FAQ, and specification.",
+    audience: "newcomer",
+  },
+  {
+    label: "About",
+    href: "/about",
+    description: "What ISO 24229 is, who operates the register, and how it works.",
+    audience: "newcomer",
   },
 ];
 
