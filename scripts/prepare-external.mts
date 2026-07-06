@@ -10,7 +10,9 @@
  * - CI / fallback: `git clone --depth 1 --branch <ref>` into
  *   `.cache/external/<name>/`. Uses `GITHUB_TOKEN` for private repos.
  *
- * Idempotent. Delete `.cache/external/<name>/` to force a re-clone.
+ * Idempotent: if the cache directory already exists and is a valid git
+ * checkout, the source is skipped. If it exists as a stale or partial
+ * checkout (e.g. restored from CI cache), it is removed and re-cloned.
  *
  * This script never modifies the source repositories.
  */
@@ -45,24 +47,36 @@ async function pathExists(p: string): Promise<boolean> {
   }
 }
 
+async function isSymlink(p: string): Promise<boolean> {
+  try {
+    const stat = await lstat(p);
+    return stat.isSymbolicLink();
+  } catch {
+    return false;
+  }
+}
+
 async function prepareFromLocal(source: ExternalSource): Promise<boolean> {
   const linkPath = join(CACHE_ROOT, source.name);
   const siblingResolved = resolve(source.localPath);
 
-  if (await pathExists(linkPath)) {
-    const stat = await lstat(linkPath);
-    if (stat.isSymbolicLink()) {
-      const target = await readlink(linkPath);
-      if (target === siblingResolved) {
-        console.log(`✓ ${source.name} → ${siblingResolved} (symlinked, sibling)`);
-        return true;
-      }
+  if (await isSymlink(linkPath)) {
+    const target = await readlink(linkPath);
+    if (target === siblingResolved) {
+      console.log(`✓ ${source.name} → ${siblingResolved} (symlinked, sibling)`);
+      return true;
     }
-    return false;
+    // Pointed at the wrong place — remove and re-link.
+    await rm(linkPath, { recursive: true, force: true });
   }
 
   if (!existsSync(siblingResolved)) {
     return false;
+  }
+
+  if (await pathExists(linkPath)) {
+    // Stale directory from a prior clone — remove before symlinking.
+    await rm(linkPath, { recursive: true, force: true });
   }
 
   await mkdir(CACHE_ROOT, { recursive: true });
@@ -96,9 +110,13 @@ async function main(): Promise<void> {
     if (linked) continue;
 
     const dest = join(CACHE_ROOT, source.name);
+
+    // Always start from a clean directory in CI. The Actions cache may
+    // restore a stale checkout from a previous run; rm ensures the new
+    // clone succeeds.
     if (await pathExists(dest)) {
-      console.log(`✓ ${source.name} (already prepared)`);
-      continue;
+      console.log(`· ${source.name}: removing stale cache directory`);
+      await rm(dest, { recursive: true, force: true });
     }
 
     try {
