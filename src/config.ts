@@ -43,7 +43,7 @@ export const navigation: NavItem[] = [
     audience: "newcomer",
   },
   {
-    label: "Register",
+    label: "Register content",
     href: "/register",
     description: "Browse authorities, systems, and spelling systems.",
     audience: "user",
