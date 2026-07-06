@@ -1,0 +1,353 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+import { externalLinks } from '../../config';
+---
+
+<Layout title="Data model">
+  <p class="text-sm text-ink-subtle mb-2"><a href="/specification">← Specification</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-4">Data model</h1>
+  <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
+    The conceptual entities, their attributes, and their relationships as defined in §6 of ISO 24229. Every entry in the register conforms to one of these models.
+  </p>
+
+  {/* ── §6.1 Common data model ──────────────────────────────── */}
+  <section class="mb-12">
+    <p class="eyebrow mb-3">§6.1 Common data model</p>
+    <h2 class="mb-4">Shared types.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      The following types are used across all entities in the register. They reference established ISO standards for their value spaces.
+    </p>
+    <div class="max-w-2xl overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-rule text-left">
+            <th class="py-2 pr-4 font-semibold">Type</th>
+            <th class="py-2 pr-4 font-semibold">References</th>
+            <th class="py-2 font-semibold">Used for</th>
+          </tr>
+        </thead>
+        <tbody class="align-top">
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">iso15924Code</td>
+            <td class="py-2 pr-4 text-ink-muted"><a href={externalLinks.iso15924Standard} class="underline">ISO 15924</a></td>
+            <td class="py-2 text-ink-muted">Script identification (4-letter alpha, title case)</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">iso639Code</td>
+            <td class="py-2 pr-4 text-ink-muted"><a href={externalLinks.iso639Standard} class="underline">ISO 639-2, 639-3, 639-5</a></td>
+            <td class="py-2 text-ink-muted">Language identification (3-letter alpha, lower case)</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">iso3166Code</td>
+            <td class="py-2 pr-4 text-ink-muted">ISO 3166-1</td>
+            <td class="py-2 text-ink-muted">Country identification (2-letter alpha, upper case)</td>
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-mono text-ink">iso8601Expression</td>
+            <td class="py-2 pr-4 text-ink-muted">ISO 8601</td>
+            <td class="py-2 text-ink-muted">Datetime expressions (timestamps)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {/* ── §6.2 Authority ──────────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§6.2 Conversion system authority</p>
+    <h2 class="mb-4">The body that manages one or more conversion systems.</h2>
+    <div class="max-w-2xl overflow-x-auto mb-6">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-rule text-left">
+            <th class="py-2 pr-4 font-semibold">Attribute</th>
+            <th class="py-2 pr-4 font-semibold">Type</th>
+            <th class="py-2 font-semibold">Description</th>
+          </tr>
+        </thead>
+        <tbody class="align-top">
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">authorityIdentifier</td>
+            <td class="py-2 pr-4 text-ink-muted">String or iso3166Code</td>
+            <td class="py-2 text-ink-muted">Identifier representing the authority. Either a 2-letter ISO 3166-1 country code (when the authority is a government) or a string of 3–16 characters following the construction rules in §5.4.1.2.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">name</td>
+            <td class="py-2 pr-4 text-ink-muted">String</td>
+            <td class="py-2 text-ink-muted">The identifiable short name that uniquely identifies the authority.</td>
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-mono text-ink">remarks</td>
+            <td class="py-2 pr-4 text-ink-muted">String</td>
+            <td class="py-2 text-ink-muted">Any further notes.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="max-w-2xl p-5 border border-rule rounded bg-paper-raised text-sm">
+      <p class="eyebrow mb-2">Authority identifier rules (§5.4.1.2)</p>
+      <ul class="space-y-1.5 text-ink-muted list-disc pl-5">
+        <li>Maximum 16 characters</li>
+        <li>Elements separated by a single hyphen-minus</li>
+        <li>Minimum 3 characters (exception: <span class="font-mono">UN</span> for United Nations)</li>
+        <li>2-character identifiers reserved for ISO 3166-1 country codes</li>
+        <li>Capitalisation follows ordinary abbreviations; no distinctive meaning</li>
+      </ul>
+    </div>
+  </section>
+
+  {/* ── §6.3 Conversion system ──────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§6.3 Written language conversion system</p>
+    <h2 class="mb-4">The core entity: a registered conversion system.</h2>
+    <div class="max-w-2xl overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-rule text-left">
+            <th class="py-2 pr-4 font-semibold">Attribute</th>
+            <th class="py-2 pr-4 font-semibold">Type</th>
+            <th class="py-2 font-semibold">Description</th>
+          </tr>
+        </thead>
+        <tbody class="align-top">
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">code</td>
+            <td class="py-2 pr-4 text-ink-muted">String</td>
+            <td class="py-2 text-ink-muted">The four-segment colon-form identifier for the system.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">name</td>
+            <td class="py-2 pr-4 text-ink-muted">String</td>
+            <td class="py-2 text-ink-muted">A name that represents the conversion system.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">authority</td>
+            <td class="py-2 pr-4 text-ink-muted">→ Authority</td>
+            <td class="py-2 text-ink-muted">The conversion system authority under which this system belongs.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">sourceSpelling</td>
+            <td class="py-2 pr-4 text-ink-muted">→ Spelling system</td>
+            <td class="py-2 text-ink-muted">The spelling system used in the source text.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">targetSpelling</td>
+            <td class="py-2 pr-4 text-ink-muted">→ Spelling system</td>
+            <td class="py-2 text-ink-muted">The spelling system used in the output text.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">identifyingSegment</td>
+            <td class="py-2 pr-4 text-ink-muted">String</td>
+            <td class="py-2 text-ink-muted">Distinguishes systems with the same authority and spelling scopes (year, version, standard number).</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">relations</td>
+            <td class="py-2 pr-4 text-ink-muted">→ Relation[] (optional)</td>
+            <td class="py-2 text-ink-muted">Typed links to other conversion systems. Hierarchical structures can be constructed through relationships.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">codeStatus</td>
+            <td class="py-2 pr-4 text-ink-muted">→ Code status (optional)</td>
+            <td class="py-2 text-ink-muted">Status of the code itself (not the system).</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">systemStatus</td>
+            <td class="py-2 pr-4 text-ink-muted">→ System status (optional)</td>
+            <td class="py-2 text-ink-muted">Status of the conversion system itself.</td>
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-mono text-ink">remarks</td>
+            <td class="py-2 pr-4 text-ink-muted">String</td>
+            <td class="py-2 text-ink-muted">Any further notes. May include the date of adoption by the authority, or cross-references to other code schemes (e.g. OGC 11-122r1).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-sm text-ink-subtle max-w-2xl">
+      Example remark: <span class="font-mono">NOTE: OGC 11-122r1 code urd_Arab2Latn_ODNI_2004</span> — a typical cross-reference showing the original code from the system from which this entry was imported.
+    </p>
+  </section>
+
+  {/* ── §6.3.3 Spelling system ──────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§6.3.3 Spelling system</p>
+    <h2 class="mb-4">The source or target form being converted.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      <span class="font-mono">scriptCode</span> shall always be present. In the case of a language-specific spelling system, <span class="font-mono">languageCode</span> is also required.
+    </p>
+    <div class="max-w-2xl overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-rule text-left">
+            <th class="py-2 pr-4 font-semibold">Attribute</th>
+            <th class="py-2 pr-4 font-semibold">Type</th>
+            <th class="py-2 pr-4 font-semibold">Required</th>
+            <th class="py-2 font-semibold">Description</th>
+          </tr>
+        </thead>
+        <tbody class="align-top">
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">scriptCode</td>
+            <td class="py-2 pr-4 text-ink-muted">iso15924Code</td>
+            <td class="py-2 pr-4 font-mono text-xs">required</td>
+            <td class="py-2 text-ink-muted">4-letter ISO 15924 code identifying the script of the spelling system.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">languageCode</td>
+            <td class="py-2 pr-4 text-ink-muted">iso639Code</td>
+            <td class="py-2 pr-4 font-mono text-xs">conditional</td>
+            <td class="py-2 text-ink-muted">3-letter ISO 639 code identifying the language. Required for language-specific spelling systems; omitted for script-only.</td>
+          </tr>
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">countryCode</td>
+            <td class="py-2 pr-4 text-ink-muted">iso3166Code</td>
+            <td class="py-2 pr-4 font-mono text-xs">optional</td>
+            <td class="py-2 text-ink-muted">2-letter ISO 3166-1 code for regional disambiguation.</td>
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-mono text-ink">extension</td>
+            <td class="py-2 pr-4 text-ink-muted">String</td>
+            <td class="py-2 pr-4 font-mono text-xs">optional</td>
+            <td class="py-2 text-ink-muted">Ad-hoc string for a non-default spelling system (e.g. <span class="font-mono">pre1972</span>).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {/* ── §6.3.4 + §6.3.7 Relations ───────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§6.3.4, §6.3.7 Conversion system relation</p>
+    <h2 class="mb-4">Typed links between conversion systems.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      Each relation connects the current system to a target system with a typed relationship. Multiple relation types may apply to the same pair. Hierarchical structures can be constructed through these relationships.
+    </p>
+    <div class="max-w-2xl overflow-x-auto mb-6">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-rule text-left">
+            <th class="py-2 pr-4 font-semibold">Attribute</th>
+            <th class="py-2 font-semibold">Description</th>
+          </tr>
+        </thead>
+        <tbody class="align-top">
+          <tr class="border-b border-rule">
+            <td class="py-2 pr-4 font-mono text-ink">targetSystem</td>
+            <td class="py-2 text-ink-muted">The conversion system that this relation points to.</td>
+          </tr>
+          <tr>
+            <td class="py-2 pr-4 font-mono text-ink">type</td>
+            <td class="py-2 text-ink-muted">One or more relation types from §6.3.7 (below).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="eyebrow mb-3">Relation types (§6.3.7)</p>
+    <div class="max-w-2xl space-y-5">
+      <div class="border-l-2 border-gold-deep dark:border-gold-bright pl-5">
+        <p class="font-mono text-sm text-gold-deep dark:text-gold-bright mb-1">basedOn</p>
+        <p class="text-sm text-ink-muted">The current system is based on the target system. The conversion process inherits certain attributes from the target.</p>
+        <p class="mt-1 text-xs font-mono text-ink-subtle break-all">Example: ALA-LC:jpn-Hrkt:Latn:1997 is based on Var:jpn-Hrkt:Latn:Hepburn-1886</p>
+      </div>
+      <div class="border-l-2 border-gold-deep dark:border-gold-bright pl-5">
+        <p class="font-mono text-sm text-gold-deep dark:text-gold-bright mb-1">basisFor</p>
+        <p class="text-sm text-ink-muted">The target system is based on the current system. Inverse of <span class="font-mono">basedOn</span>.</p>
+        <p class="mt-1 text-xs font-mono text-ink-subtle break-all">Example: Var:jpn-Hrkt:Latn:Hepburn-1886 is the basis for ALA-LC:jpn-Hrkt:Latn:1997, BGN:jpn-Hrkt:Latn:1930, BGN-PCGN:jpn-Hrkt:Latn:1976, BGN-PCGN:jpn-Hrkt:Latn:2017</p>
+      </div>
+      <div class="border-l-2 border-blue dark:border-blue-bright pl-5">
+        <p class="font-mono text-sm text-blue dark:text-blue-bright mb-1">aliasOf</p>
+        <p class="text-sm text-ink-muted">The current system is an alias to the target system. The conversion processes are identical.</p>
+      </div>
+      <div class="border-l-2 border-blue dark:border-blue-bright pl-5">
+        <p class="font-mono text-sm text-blue dark:text-blue-bright mb-1">adoptedFrom</p>
+        <p class="text-sm text-ink-muted">The current system is adopted from the target system. The conversion processes may not be identical.</p>
+      </div>
+      <div class="border-l-2 border-ink-muted pl-5">
+        <p class="font-mono text-sm text-ink-muted mb-1">supersedes</p>
+        <p class="text-sm text-ink-muted">The current system supersedes the target system.</p>
+      </div>
+      <div class="border-l-2 border-ink-muted pl-5">
+        <p class="font-mono text-sm text-ink-muted mb-1">supersededBy</p>
+        <p class="text-sm text-ink-muted">The current system is superseded by the target system. Inverse of <span class="font-mono">supersedes</span>.</p>
+      </div>
+      <div class="border-l-2 border-ink-muted pl-5">
+        <p class="font-mono text-sm text-ink-muted mb-1">relatedTo</p>
+        <p class="text-sm text-ink-muted">The current system is related to the target system. Generic relation when no more specific type applies.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── §6.3.5 Code status ──────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§6.3.5 Conversion system code status</p>
+    <h2 class="mb-4">Status of the code itself.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      The code status tracks the lifecycle of the <em>identifier</em>, not the conversion system. A deprecated code may still refer to an active system — the deprecation only means the code element has been retired (e.g. after an authority rename).
+    </p>
+    <div class="max-w-2xl space-y-3">
+      <div class="flex gap-4">
+        <span class="badge shrink-0 mt-0.5">preferred</span>
+        <p class="text-sm text-ink-muted">The current code is marked as the preferred identifier for this system.</p>
+      </div>
+      <div class="flex gap-4">
+        <span class="badge badge-proposed shrink-0 mt-0.5">deprecated</span>
+        <p class="text-sm text-ink-muted">The code has been deprecated — typically because the authority was renamed and a new code was assigned. The conversion system itself remains unchanged. The deprecated code is reserved and never reused.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── §6.3.6 System status ────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">§6.3.6 Conversion system status</p>
+    <h2 class="mb-4">Status of the conversion system itself.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      The system status tracks whether the conversion rules are still in active use, independent of the code's lifecycle.
+    </p>
+    <div class="max-w-2xl space-y-3">
+      <div class="flex gap-4">
+        <span class="badge badge-stable shrink-0 mt-0.5">current</span>
+        <p class="text-sm text-ink-muted">The system is in active use by its authority.</p>
+      </div>
+      <div class="flex gap-4">
+        <span class="badge badge-proposed shrink-0 mt-0.5">former</span>
+        <p class="text-sm text-ink-muted">The system was in use but has been replaced. The code is reserved for backwards compatibility.</p>
+      </div>
+      <div class="flex gap-4">
+        <span class="badge badge-withdrawn shrink-0 mt-0.5">inactive</span>
+        <p class="text-sm text-ink-muted">The system has been deprecated of its own accord. It may still appear in historical data but is no longer recommended for new use.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Entity relationships overview ───────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">Entity relationships</p>
+    <h2 class="mb-4">How the entities connect.</h2>
+    <div class="max-w-2xl p-6 border border-rule rounded bg-paper-raised font-mono text-sm leading-relaxed">
+      <p class="text-ink-muted mb-3">Authority <span class="text-ink-subtle">1 ──── ∞</span> Conversion system</p>
+      <p class="text-ink-muted mb-3">Conversion system <span class="text-ink-subtle">1 ── 1</span> Spelling system (source)</p>
+      <p class="text-ink-muted mb-3">Conversion system <span class="text-ink-subtle">1 ── 1</span> Spelling system (target)</p>
+      <p class="text-ink-muted mb-3">Conversion system <span class="text-ink-subtle">1 ──── ∞</span> Relation (optional)</p>
+      <p class="text-ink-muted mb-3">Relation <span class="text-ink-subtle">1 ── 1</span> Conversion system (target)</p>
+      <p class="text-ink-muted mb-3">Relation <span class="text-ink-subtle">1 ── 1+</span> Relation type</p>
+      <p class="text-ink-muted">Conversion system <span class="text-ink-subtle">0..1</span> Code status</p>
+    </div>
+  </section>
+
+  {/* ── Note on schema alignment ────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <div class="max-w-2xl p-5 border border-gold-deep dark:border-gold-bright rounded bg-paper-raised">
+      <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Schema alignment note</p>
+      <p class="text-sm text-ink-muted leading-relaxed">
+        The register's YAML schema and JSON Schemas currently use placeholder values for codeStatus (<span class="font-mono">stable, proposed, deprecated, withdrawn</span>), systemStatus (<span class="font-mono">stable, experimental, historical</span>), and relation types (<span class="font-mono">alias, successor, predecessor</span>). These will be aligned with the standard's actual values (codeStatus: <span class="font-mono">preferred, deprecated</span>; systemStatus: <span class="font-mono">current, former, inactive</span>; relation types: <span class="font-mono">basedOn, basisFor, aliasOf, adoptedFrom, supersedes, supersededBy, relatedTo</span>) in a follow-up schema migration.
+      </p>
+    </div>
+  </section>
+
+  <div class="rule-section grid gap-4 md:grid-cols-2">
+    <Card href="/specification/annex-a" title="Annex A — Terms of Reference" body="The RA's mandate per the standard." />
+    <Card href="/learn/examples" title="Worked examples" body="Nine real systems decoded." />
+  </div>
+</Layout>
