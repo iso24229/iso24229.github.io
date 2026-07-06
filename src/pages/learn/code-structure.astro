@@ -1,64 +1,215 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-
-const example = 'BGN-PCGN:chn-Hans:Latn:1979';
-const segments = example.split(':');
-const [titular, source, target, identifying] = segments;
 ---
 
 <Layout title="Anatomy of a code">
-  <article class="prose max-w-none">
-    <p class="text-sm text-ink-subtle"><a href="/learn">← Learn</a></p>
-    <h1 class="text-4xl font-semibold tracking-tight mb-6">Anatomy of a code</h1>
+  <p class="text-sm text-ink-subtle mb-2"><a href="/learn">← Learn</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Anatomy of a code</h1>
 
-    <p class="text-lg text-ink-muted mb-10">
-      Every conversion system in the register has a unique code made up of
-      four segments separated by colons.
-    </p>
+  <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
+    Every conversion system in the register has a unique code made up of four segments separated by colons. Each segment has internal structure governed by its own rules.
+  </p>
 
-    <div class="my-10 p-8 bg-surface-raised rounded">
-      <p class="font-mono text-2xl md:text-3xl mb-6 break-all">
-        <span class="text-iso-red">{titular}</span><span class="text-ink-subtle">:</span><span class="text-accent">{source}</span><span class="text-ink-subtle">:</span><span class="text-accent-light">{target}</span><span class="text-ink-subtle">:</span><span class="text-ink">{identifying}</span>
+  {/* ── Four segments overview ──────────────────────────────── */}
+  <section class="mb-12">
+    <div class="p-6 md:p-8 border border-rule rounded bg-paper-raised">
+      <p class="font-mono text-lg md:text-2xl lg:text-3xl break-all leading-tight mb-6">
+        <span class="text-gold-deep dark:text-gold-bright">BGN-PCGN</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">chn-Hans</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Latn</span><span class="text-ink-subtle">:</span><span class="text-ink">1979</span>
       </p>
       <div class="grid gap-4 md:grid-cols-4 text-sm">
         <div>
-          <p class="font-mono text-xs uppercase text-iso-red mb-1">Titular</p>
-          <p class="text-ink-muted">Authority identifier (e.g. <code>BGN-PCGN</code>) or country code.</p>
+          <p class="eyebrow text-gold-deep dark:text-gold-bright mb-1">Titular</p>
+          <p class="text-ink-muted">Authority identifier or country code. Identifies who manages the system.</p>
         </div>
         <div>
-          <p class="font-mono text-xs uppercase text-accent mb-1">Source spelling</p>
-          <p class="text-ink-muted">Language + script (+ optional country, extension).</p>
+          <p class="eyebrow text-blue dark:text-blue-bright mb-1">Source spelling</p>
+          <p class="text-ink-muted">Language + script (+ optional country, extension). The form being converted from.</p>
         </div>
         <div>
-          <p class="font-mono text-xs uppercase text-accent-light mb-1">Target spelling</p>
-          <p class="text-ink-muted">Same shape as source.</p>
+          <p class="eyebrow text-blue dark:text-blue-bright mb-1">Target spelling</p>
+          <p class="text-ink-muted">Same structure as source. The form being converted into.</p>
         </div>
         <div>
-          <p class="font-mono text-xs uppercase text-ink mb-1">Identifying</p>
-          <p class="text-ink-muted">Year, version, or document number.</p>
+          <p class="eyebrow text-ink-muted mb-1">Identifying</p>
+          <p class="text-ink-muted">Year, version, standard number — distinguishes systems that share authority, source, and target.</p>
         </div>
       </div>
     </div>
+  </section>
 
-    <h2 class="text-2xl font-semibold mt-12 mb-4">Element separators within a segment</h2>
-    <p>
-      Within a segment, elements are joined by hyphens. For example,
-      <code>ara-Arab</code> means "Arabic language in Arabic script".
-      Some authorities also permit internal hyphens in identifier strings
-      (e.g. <code>9-1995</code> referring to ISO 9:1995).
+  {/* ── Titular segment ──────────────────────────────────────── */}
+  <section class="rule-section mb-8">
+    <p class="eyebrow mb-3">Segment 1 — Titular</p>
+    <h2 class="mb-4">Who manages the system.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-4">
+      The titular segment contains the <strong>authority identifier</strong> — a short alphabetic code for the body that created and maintains the conversion system. If no authority can be identified but the system has a national character, the 2-letter ISO 3166-1 country code is used instead. If no authority can be identified at all, <span class="font-mono">Var</span> (Varia) is used, managed by the Advisory Group.
     </p>
-
-    <h2 class="text-2xl font-semibold mt-12 mb-4">Permitted characters</h2>
-    <ul class="list-disc pl-6 space-y-1">
-      <li>Digits <code>0–9</code></li>
-      <li>Latin uppercase <code>A–Z</code></li>
-      <li>Latin lowercase <code>a–z</code></li>
-      <li>Colon <code>:</code> — segment separator</li>
-      <li>Hyphen-minus <code>-</code> — element separator</li>
+    <ul class="max-w-2xl space-y-2 text-sm text-ink-muted list-disc pl-6">
+      <li><span class="font-mono">UN</span> — United Nations</li>
+      <li><span class="font-mono">BGN-PCGN</span> — US Board on Geographic Names / Permanent Committee for British Official Use</li>
+      <li><span class="font-mono">ALA-LC</span> — American Library Association / Library of Congress</li>
+      <li><span class="font-mono">ISO</span> — International Organization for Standardization</li>
+      <li><span class="font-mono">ICAO</span> — International Civil Aviation Organization</li>
+      <li><span class="font-mono">DIN</span> — German Institute for Standardization</li>
+      <li><span class="font-mono">LV</span> — Government of Latvia (ISO 3166-1 country code)</li>
+      <li><span class="font-mono">Var</span> — Varia systems (managed by ISO 24229/AG)</li>
     </ul>
-
-    <p class="mt-8 text-ink-muted">
-      Next: <a href="/learn/examples" class="underline">Worked examples →</a>
+    <p class="mt-4 text-sm text-ink-subtle">
+      Rules: maximum 16 characters; elements separated by hyphens; minimum 3 characters (except UN). Two-character identifiers are reserved for ISO 3166-1 country codes.
     </p>
-  </article>
+  </section>
+
+  {/* ── Source and target spelling segments ─────────────────── */}
+  <section class="rule-section mb-8">
+    <p class="eyebrow mb-3">Segments 2 & 3 — Source and target spelling</p>
+    <h2 class="mb-4">What is being converted, and into what.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-4">
+      Each spelling segment can contain up to four elements, separated by hyphens, in this order:
+    </p>
+    <div class="max-w-2xl p-6 border border-rule rounded bg-paper-raised mb-4">
+      <p class="font-mono text-lg break-all mb-3">
+        <span class="text-blue dark:text-blue-bright">lang</span>-<span class="text-blue dark:text-blue-bright">script</span>-<span class="text-ink-muted">country</span>-<span class="text-ink-muted">extension</span>
+      </p>
+      <div class="grid gap-3 text-sm md:grid-cols-2">
+        <div>
+          <p class="eyebrow mb-1">Language code</p>
+          <p class="text-ink-muted">ISO 639-2 or 639-3 alpha-3 (lower case). Optional — omit when the system applies to all languages in a script.</p>
+        </div>
+        <div>
+          <p class="eyebrow mb-1">Script code</p>
+          <p class="text-ink-muted">ISO 15924 alpha-4 (title case). Required. E.g. <span class="font-mono">Latn</span>, <span class="font-mono">Cyrl</span>, <span class="font-mono">Hani</span>.</p>
+        </div>
+        <div>
+          <p class="eyebrow mb-1">Country code</p>
+          <p class="text-ink-muted">ISO 3166-1 alpha-2 (upper case). Optional — disambiguates regional variants.</p>
+        </div>
+        <div>
+          <p class="eyebrow mb-1">Extension</p>
+          <p class="text-ink-muted">Ad-hoc string. Optional — refers to a non-default spelling system (e.g. <span class="font-mono">pre1972</span>).</p>
+        </div>
+      </div>
+    </div>
+    <p class="text-sm text-ink-muted max-w-2xl">
+      <strong>Abbreviation:</strong> when the script is the default for the language (e.g. Arabic in Arab script), the script code may be omitted from the segment. CLDR should be consulted when determining default scripts.
+    </p>
+  </section>
+
+  {/* ── Identifying segment ─────────────────────────────────── */}
+  <section class="rule-section mb-8">
+    <p class="eyebrow mb-3">Segment 4 — Identifying</p>
+    <h2 class="mb-4">Which version, which year, which standard.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-4">
+      The identifying segment distinguishes systems that share authority, source, and target. It can contain:
+    </p>
+    <ul class="max-w-2xl space-y-2 text-ink-muted list-disc pl-6">
+      <li>A year of adoption or issue: <span class="font-mono">2017</span>, <span class="font-mono">1979</span></li>
+      <li>A standard number: <span class="font-mono">843</span>, <span class="font-mono">1460</span></li>
+      <li>A combination: <span class="font-mono">9-1995</span> (ISO 9, 1995 edition), <span class="font-mono">1460-1982</span> (DIN 1460, 1982)</li>
+      <li>A version identifier: <span class="font-mono">v6</span>, <span class="font-mono">v4-1</span></li>
+    </ul>
+    <p class="mt-3 text-sm text-ink-subtle">
+      If no elements can be used, <span class="font-mono">na</span> (not applicable) is the substitute.
+    </p>
+  </section>
+
+  {/* ── Character set and construction rules ────────────────── */}
+  <section class="rule-section mb-8">
+    <p class="eyebrow mb-3">Construction rules</p>
+    <h2 class="mb-4">Permitted characters and separators.</h2>
+    <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+      <p>
+        Codes may contain: digits <span class="font-mono">0–9</span>, Latin uppercase <span class="font-mono">A–Z</span>, Latin lowercase <span class="font-mono">a–z</span>. No other characters are permitted within elements.
+      </p>
+      <p>
+        Segments are separated by a single <strong>colon</strong> (<span class="font-mono">:</span>). Elements within a segment are separated by a single <strong>hyphen-minus</strong> (<span class="font-mono">-</span>). A hyphen within an element (e.g. <span class="font-mono">9-1995</span>) is also accepted.
+      </p>
+      <p>
+        Capitalisation follows the relevant standards but has no distinctive meaning. An all-lower-case code is equally valid.
+      </p>
+    </div>
+  </section>
+
+  {/* ── Data model ──────────────────────────────────────────── */}
+  <section class="rule-section mb-8">
+    <p class="eyebrow mb-3">Data model</p>
+    <h2 class="mb-4">What the register stores per entry.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      Each conversion system in the register carries the following metadata, per the data model defined in the standard and the RA's operational requirements:
+    </p>
+    <div class="max-w-2xl overflow-x-auto">
+      <table class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="border-b border-rule text-left">
+            <th class="py-2 pr-4 font-semibold">Field</th>
+            <th class="py-2 pr-4 font-semibold">Source</th>
+            <th class="py-2 font-semibold">Description</th>
+          </tr>
+        </thead>
+        <tbody class="align-top">
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">code</td><td class="py-2 pr-4 text-ink-muted">ISO 24229</td><td class="py-2 text-ink-muted">Full four-segment colon-form identifier</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">name</td><td class="py-2 pr-4 text-ink-muted">RA</td><td class="py-2 text-ink-muted">Human-readable name of the conversion system</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">description</td><td class="py-2 pr-4 text-ink-muted">Authority</td><td class="py-2 text-ink-muted">Detailed explanation of the conversion rules and their usage</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">authority</td><td class="py-2 pr-4 text-ink-muted">ISO 24229</td><td class="py-2 text-ink-muted">Reference to the conversion system authority entry</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">sourceSpelling</td><td class="py-2 pr-4 text-ink-muted">ISO 24229</td><td class="py-2 text-ink-muted">Reference to the source spelling-system entry (language + script)</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">targetSpelling</td><td class="py-2 pr-4 text-ink-muted">ISO 24229</td><td class="py-2 text-ink-muted">Reference to the target spelling-system entry</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">sourceScriptCode</td><td class="py-2 pr-4 text-ink-muted">ISO 15924</td><td class="py-2 text-ink-muted">Bare script code when the source is script-only (no language)</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">targetScriptCode</td><td class="py-2 pr-4 text-ink-muted">ISO 15924</td><td class="py-2 text-ink-muted">Bare script code when the target is script-only</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">identifyingSegment</td><td class="py-2 pr-4 text-ink-muted">ISO 24229</td><td class="py-2 text-ink-muted">The fourth segment of the code (year, version, standard number)</td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">relations</td><td class="py-2 pr-4 text-ink-muted">ISO 24229</td><td class="py-2 text-ink-muted">Typed links to other systems: <span class="font-mono">predecessor</span>, <span class="font-mono">successor</span>, <span class="font-mono">alias</span></td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">codeStatus</td><td class="py-2 pr-4 text-ink-muted">ISO 24229/AG</td><td class="py-2 text-ink-muted">Lifecycle: <span class="font-mono">proposed</span> → <span class="font-mono">stable</span> → <span class="font-mono">deprecated</span> / <span class="font-mono">withdrawn</span></td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">systemStatus</td><td class="py-2 pr-4 text-ink-muted">ISO 24229/AG</td><td class="py-2 text-ink-muted">System maturity: <span class="font-mono">stable</span>, <span class="font-mono">experimental</span>, <span class="font-mono">historical</span></td></tr>
+          <tr class="border-b border-rule"><td class="py-2 pr-4 font-mono text-ink">remarks</td><td class="py-2 pr-4 text-ink-muted">RA</td><td class="py-2 text-ink-muted">Free-text notes, including cross-references to other code schemes (e.g. OGC)</td></tr>
+          <tr><td class="py-2 pr-4 font-mono text-ink">createdAt / updatedAt</td><td class="py-2 pr-4 text-ink-muted">RA</td><td class="py-2 text-ink-muted">ISO 8601 timestamps</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  {/* ── Relationships ───────────────────────────────────────── */}
+  <section class="rule-section mb-8">
+    <p class="eyebrow mb-3">Relationships</p>
+    <h2 class="mb-4">How systems connect.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
+      Conversion systems are not isolated. A system may replace an older one, be superseded by a newer one, or be equivalent to another under a different authority. The register captures these as typed relations.
+    </p>
+    <div class="max-w-2xl space-y-4">
+      <div class="border-l-2 border-gold-deep dark:border-gold-bright pl-5">
+        <p class="font-mono text-sm text-gold-deep dark:text-gold-bright mb-1">predecessor</p>
+        <p class="text-sm text-ink-muted">This system replaced an earlier conversion system. The predecessor's code is reserved for backwards compatibility.</p>
+        <p class="mt-1 text-xs font-mono text-ink-subtle">Example: Pinyin (1982) → predecessor: Wade-Giles (1912)</p>
+      </div>
+      <div class="border-l-2 border-blue dark:border-blue-bright pl-5">
+        <p class="font-mono text-sm text-blue dark:text-blue-bright mb-1">successor</p>
+        <p class="text-sm text-ink-muted">This system was replaced by a newer conversion system. The successor takes over active use.</p>
+        <p class="mt-1 text-xs font-mono text-ink-subtle">Example: Wade-Giles (1912) → successor: Pinyin (1982)</p>
+      </div>
+      <div class="border-l-2 border-ink-muted pl-5">
+        <p class="font-mono text-sm text-ink-muted mb-1">alias</p>
+        <p class="text-sm text-ink-muted">This system is functionally equivalent to another system registered under a different authority or code.</p>
+        <p class="mt-1 text-xs font-mono text-ink-subtle">Example: Two authorities may publish identical rules under different names.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── User-assigned codes ─────────────────────────────────── */}
+  <section class="rule-section mb-8">
+    <p class="eyebrow mb-3">User-assigned codes</p>
+    <h2 class="mb-4">Codes for systems not in the register.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      If users need codes for conversion systems not included in the register, the prefix <span class="font-mono">zz</span> can be used in the titular segment, followed by a hyphen. These user-assigned codes are not universally recognised and are not compatible between different entities.
+    </p>
+  </section>
+
+  {/* ── Deprecation ─────────────────────────────────────────── */}
+  <section class="rule-section mb-8">
+    <p class="eyebrow mb-3">Deprecation</p>
+    <h2 class="mb-4">When codes are retired.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      A conversion system code can be deprecated upon request from the Advisory Group or the managing authority — for example, when the authority undergoes a rename. The code is then <strong>reserved</strong>: it is never reused or reallocated. The original system remains identifiable through its reserved code.
+    </p>
+  </section>
+
+  <p class="mt-12">
+    <a href="/learn/examples" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">See nine worked examples →</a>
+  </p>
 </Layout>

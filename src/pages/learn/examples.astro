@@ -1,42 +1,156 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
-const examples = [
-  { code: 'UN:ara-Arab:Latn:2017', desc: 'United Nations system for the romanization of Arabic, approved 2017.' },
-  { code: 'UN:mon-Mong-CN:Latn:1977', desc: 'UN system for romanization of Mongolian in China, 1977.' },
-  { code: 'BGN-PCGN:chn-Hans:Latn:1979', desc: 'BGN/PCGN 1979 Agreement — Romanization of Chinese.' },
-  { code: 'ALA-LC:mal-Mlym:Latn:2012', desc: 'ALA-LC romanization of Malayalam from Malayalam script to Latin, 2012.' },
-  { code: 'ISO:Cyrl:Latn:9-1995', desc: 'ISO 9:1995 — transliteration of Cyrillic into Latin.' },
-  { code: 'ICAO:Arab:Latn:2015', desc: 'ICAO rules for rendering Arabic-script names in Latin letters (2015).' },
-  { code: 'DIN:bel-Cyrl:Latn:1460-1982', desc: 'DIN 1460 (1982) — transliteration of Belarusian Cyrillic into Latin.' },
-  { code: 'ESKT:udm-Cyrl:est-Latn:2021', desc: 'Estonian Language Committee rules for Udmurt names in Estonian (2021).' },
+interface Example {
+  code: string;
+  abbreviation?: string;
+  desc: string;
+  note?: string;
+}
+
+const examples: Example[] = [
+  {
+    code: 'UN:ara-Arab:Latn:2017',
+    abbreviation: 'UN:ara:Latn:2017',
+    desc: 'United Nations system for the romanization of Arabic, approved 2017.',
+  },
+  {
+    code: 'UN:mon-Mong-CN:Latn:1977',
+    abbreviation: 'UN:mon-CN:Latn:1977',
+    desc: 'United Nations system for the romanization of Mongolian in China, approved 1977.',
+    note: 'The country code CN in the source segment disambiguates this from Mongolian romanisation systems used in Mongolia itself.',
+  },
+  {
+    code: 'BGN-PCGN:chn-Hans:Latn:1979',
+    desc: 'BGN/PCGN 1979 Agreement — Romanization of Chinese.',
+    note: 'No abbreviation: the source script Hans (simplified Han) cannot be omitted because Chinese is written in multiple scripts.',
+  },
+  {
+    code: 'ALA-LC:mal-Mlym:Latn:2012',
+    abbreviation: 'ALA-LC:mal:Latn:2012',
+    desc: 'ALA-LC romanization system that transliterates the Malayalam language from Malayalam script characters into Latin script.',
+  },
+  {
+    code: 'ISO:Cyrl:Latn:9-1995',
+    desc: 'ISO 9:1995 for the transliteration into Latin of Cyrillic characters.',
+    note: 'No language code in the source segment — this system applies to ALL languages written in Cyrillic, not just one. The identifying segment combines the standard number (9) and year (1995).',
+  },
+  {
+    code: 'ICAO:Arab:Latn:2015',
+    desc: 'ICAO rules for rendering Arabic-script names in Latin letters, issued in 2015.',
+    note: 'Script-only source (no language) — applies to any language written in Arabic script across multiple countries.',
+  },
+  {
+    code: 'DIN:bel-Cyrl:Latn:1460-1982',
+    abbreviation: 'DIN:bel:Latn:1460-1982',
+    desc: 'DIN 1460 for the transliteration of Belarusian into Latin.',
+    note: 'The identifying segment combines the standard number (1460) and year (1982).',
+  },
+  {
+    code: 'ESKT:udm-Cyrl:est-Latn:2021',
+    abbreviation: 'ESKT:udm:est:2021',
+    desc: 'Estonian Language Committee\'s rules for rendering Udmurt names in Estonian texts, approved 2021.',
+    note: 'The target is language-specific: est-Latn means Estonian in Latin script, not Latin in general. This system converts into the Estonian alphabet specifically.',
+  },
+  {
+    code: 'LV:eng-Latn:lav-Latn:2006',
+    abbreviation: 'LV:eng:lav:2006',
+    desc: 'Official instructions in Latvia on rendering English proper names in Latvian, issued in 2006.',
+    note: 'Same script, different language. Both source and target use Latin script — the conversion re-spells English names using Latvian orthographic conventions. This illustrates that ISO 24229 covers conversions within the same script, not just cross-script romanisation.',
+  },
 ];
+
+function colorize(code: string): string {
+  // Split into segments by colon, but keep the colons
+  const parts = code.split(/(:)/);
+  return parts.map((part, i) => {
+    if (part === ':') return '<span class="text-ink-subtle">:</span>';
+    // Color segments alternately
+    if (i === 0) return `<span class="text-gold-deep dark:text-gold-bright">${part}</span>`;
+    if (i === 2) return `<span class="text-blue dark:text-blue-bright">${part}</span>`;
+    if (i === 4) return `<span class="text-blue dark:text-blue-bright">${part}</span>`;
+    if (i === 6) return `<span class="text-ink">${part}</span>`;
+    return part;
+  }).join('');
+}
 ---
 
 <Layout title="Worked examples">
-  <article>
-    <p class="text-sm text-ink-subtle"><a href="/learn">← Learn</a></p>
-    <h1 class="text-4xl font-semibold tracking-tight mb-6">Worked examples</h1>
+  <p class="text-sm text-ink-subtle mb-2"><a href="/learn">← Learn</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Worked examples</h1>
 
-    <p class="text-lg text-ink-muted mb-10 max-w-2xl">
-      Each example below is a real-world conversion system. The four-segment
-      structure lets you unambiguously identify the system regardless of how
-      the source refers to it.
-    </p>
+  <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
+    Nine real-world conversion systems, drawn from the examples in ISO 24229 §4. Each illustrates a different facet of the code structure — abbreviated forms, script-only segments, same-script conversions, and combined standard-number/year identifiers.
+  </p>
 
-    <ul class="space-y-6">
-      {
-        examples.map((ex) => (
-          <li class="border-l-2 border-accent pl-6">
-            <p class="font-mono text-lg md:text-xl break-all">{ex.code}</p>
-            <p class="text-ink-muted mt-2">{ex.desc}</p>
-          </li>
-        ))
-      }
+  <div class="space-y-10 max-w-3xl">
+    {examples.map((ex, i) => (
+      <article class="border-t border-rule pt-6">
+        <p class="eyebrow mb-3">Example {i + 1}</p>
+
+        <p class="font-mono text-lg md:text-xl lg:text-2xl break-all leading-tight mb-3" set:html={colorize(ex.code)} />
+
+        {ex.abbreviation && (
+          <p class="text-sm text-ink-subtle mb-3">
+            Possible abbreviation: <span class="font-mono">{ex.abbreviation}</span>
+          </p>
+        )}
+
+        <p class="text-ink-muted leading-relaxed">{ex.desc}</p>
+
+        {ex.note && (
+          <p class="mt-3 text-sm text-ink-subtle leading-relaxed border-l-2 border-rule pl-4">{ex.note}</p>
+        )}
+
+        {/* Segment breakdown */}
+        <dl class="mt-5 grid grid-cols-[120px_1fr] gap-x-4 gap-y-2 text-sm">
+          {(() => {
+            const segs = ex.code.split(':');
+            return (
+              <>
+                <dt class="eyebrow pt-0.5">Titular</dt>
+                <dd class="font-mono text-gold-deep dark:text-gold-bright">{segs[0]}</dd>
+                <dt class="eyebrow pt-0.5">Source</dt>
+                <dd class="font-mono text-blue dark:text-blue-bright">{segs[1]}</dd>
+                <dt class="eyebrow pt-0.5">Target</dt>
+                <dd class="font-mono text-blue dark:text-blue-bright">{segs[2]}</dd>
+                <dt class="eyebrow pt-0.5">Identifying</dt>
+                <dd class="font-mono">{segs[3]}</dd>
+              </>
+            );
+          })()}
+        </dl>
+      </article>
+    ))}
+  </div>
+
+  {/* ── Patterns observed ────────────────────────────────────── */}
+  <section class="rule-section max-w-2xl">
+    <p class="eyebrow mb-3">Patterns across the examples</p>
+    <h2 class="mb-6">What these nine tell us.</h2>
+    <ul class="space-y-4 text-ink-muted leading-relaxed list-disc pl-6">
+      <li>
+        <strong>Abbreviated forms</strong> (Examples 1, 2, 4, 7, 8, 9): when the script is the default for the language, it can be omitted from the source or target segment. <span class="font-mono text-sm">UN:ara-Arab:Latn:2017</span> abbreviates to <span class="font-mono text-sm">UN:ara:Latn:2017</span> because Arabic script is the default for the Arabic language.
+      </li>
+      <li>
+        <strong>Script-only, no language</strong> (Examples 5, 6): when a conversion system applies to all languages written in a script, the language code is omitted. <span class="font-mono text-sm">ISO:Cyrl:Latn:9-1995</span> covers ALL Cyrillic-script languages, not just Russian or Belarusian.
+      </li>
+      <li>
+        <strong>Same script, different language</strong> (Example 9): <span class="font-mono text-sm">LV:eng-Latn:lav-Latn:2006</span> converts English names to Latvian spelling — both in Latin script. ISO 24229 covers this type of conversion, not just cross-script romanisation.
+      </li>
+      <li>
+        <strong>Language-specific target</strong> (Example 8): <span class="font-mono text-sm">ESKT:udm-Cyrl:est-Latn:2021</span> converts Udmurt names into Estonian specifically, using the Estonian alphabet — not Latin in general.
+      </li>
+      <li>
+        <strong>Country code in source</strong> (Example 2): <span class="font-mono text-sm">UN:mon-Mong-CN:Latn:1977</span> includes CN because the UN romanisation of Mongolian differs between China and Mongolia.
+      </li>
+      <li>
+        <strong>Combined identifiers</strong> (Examples 5, 7): the identifying segment can combine a standard number and year: <span class="font-mono text-sm">9-1995</span> (ISO 9:1995), <span class="font-mono text-sm">1460-1982</span> (DIN 1460:1982).
+      </li>
     </ul>
+  </section>
 
-    <p class="mt-12 text-ink-muted">
-      Next: <a href="/learn/use-cases" class="underline">Use cases →</a>
-    </p>
-  </article>
+  <p class="mt-12">
+    <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Full code structure →</a>
+  </p>
 </Layout>
