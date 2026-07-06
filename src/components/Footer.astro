@@ -35,30 +35,29 @@ const year = new Date().getFullYear();
                 href={org.href}
                 target="_blank"
                 rel="noopener"
-                class="flex items-start gap-3 group"
-                title={`${org.name} — ${org.role}`}
+                class="flex items-center gap-3 group"
+                title={org.name}
               >
                 <img
                   src={org.logo.light}
                   alt={`${org.name} logo`}
                   class:list={[
-                    'h-8 w-auto',
+                    'h-7 w-auto',
                     org.invertInDark ? 'dark:invert' : 'hidden dark:block',
                     org.invertInDark ? 'dark:block' : '',
                   ]}
                   width="120"
-                  height="32"
+                  height="28"
                 />
                 {!org.invertInDark && (
                   <img
                     src={org.logo.dark}
                     alt={`${org.name} logo`}
-                    class="block dark:hidden h-8 w-auto"
+                    class="block dark:hidden h-7 w-auto"
                     width="120"
-                    height="32"
+                    height="28"
                   />
                 )}
-                <span class="text-xs text-ink-muted leading-tight">{org.role}</span>
               </a>
             </li>
           ))

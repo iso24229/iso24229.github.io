@@ -1,15 +1,17 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
+import LifecycleGraph from '../../../../components/LifecycleGraph.astro';
 import { getCollection } from 'astro:content';
 import type { ItemClassSlug } from '../../../../domain/items/RegisterItem';
+import type { SystemCode } from '../../../../domain/items/SystemCode';
+import { RegisterIndex } from '../../../../domain/register/RegisterIndex';
+import { buildLifecycleGraph } from '../../../../domain/graph/buildLifecycleGraph';
 import { itemClassSlugs } from '../../../../domain/registry/ItemClassRegistry';
 import { schemaWithRichData, mapSchema, primitiveTypeOf, titleOf } from '../../../../content.config';
+import { externalLinks, repoUrls } from '../../../../config';
 import type { GetStaticPaths, InferGetStaticParamsType, InferGetStaticPropsType } from 'astro';
 
-interface EntryLike {
-  id: string;
-  data: Record<string, unknown>;
-}
+interface EntryLike { id: string; data: Record<string, unknown>; }
 
 export const getStaticPaths = (async () => {
   const all = await Promise.all(
@@ -17,10 +19,7 @@ export const getStaticPaths = (async () => {
       const collection = await getCollection(itemClass);
       return {
         itemClass,
-        entries: collection.map((c) => ({
-          id: c.id,
-          data: c.data as Record<string, unknown>,
-        })),
+        entries: collection.map((c) => ({ id: c.id, data: c.data as Record<string, unknown> })),
       };
     }),
   );
@@ -38,25 +37,288 @@ type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { itemClass, uuid } = Astro.params as Params;
 const { entry } = Astro.props as Props;
 
-const title = schemaWithRichData[itemClass as ItemClassSlug].title;
+const classTitle = schemaWithRichData[itemClass as ItemClassSlug].title;
 const schema = schemaWithRichData[itemClass as ItemClassSlug].schema;
 const fields = mapSchema(schema, ([k, t]) => ({ key: k, title: titleOf(k, t), type: primitiveTypeOf(t) }));
+
+const isSystemCode = itemClass === 'system-code';
+const isAuthority = itemClass === 'authority';
+
+// System-code specific rendering data
+let codeSegments: readonly [string, string, string, string] | null = null;
+let authorityName = '';
+let authorityHref = '';
+let graphNodes: any[] = [];
+let graphEdges: any[] = [];
+let relatedSystems: Array<{ uuid: string; type: string; targetSystem: string }> = [];
+
+if (isSystemCode) {
+  const code = String(entry.data.code ?? '');
+  const segs = code.split(':');
+  if (segs.length === 4) {
+    codeSegments = segs as [string, string, string, string];
+  }
+
+  // Build index for relations and lookups
+  type RawEntry = { id: string; data: unknown };
+  const index = await RegisterIndex.load(async (slug) => {
+    const coll = (await getCollection(slug as Parameters<typeof getCollection>[0])) as unknown as RawEntry[];
+    return coll.map((c) => ({ id: c.id, data: c.data as Record<string, unknown> }));
+  });
+  const sc = index.byUuid<SystemCode>('system-code', uuid!);
+  if (sc) {
+    const auth = index.authorityOf(sc);
+    if (auth) {
+      authorityName = auth.name;
+      authorityHref = `/register/authority/${auth.uuid}`;
+    }
+    const g = buildLifecycleGraph(index, sc);
+    graphNodes = g.nodes;
+    graphEdges = g.edges;
+  }
+}
+
+function titleCaseLabel(s: string): string {
+  // camelCase → "Camel Case"
+  return s
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[_-]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function fieldLabel(key: string): string {
+  const f = fields.find((x) => x.key === key);
+  const raw = f?.title && f.title.length > 0 ? f.title : key;
+  // If the title looks like a raw camelCase identifier (no spaces), title-case it.
+  return /\s/.test(raw) ? raw : titleCaseLabel(raw);
+}
+
+function fieldValue(key: string): string {
+  const v = entry.data[key];
+  if (v === null || v === undefined || v === '') return '—';
+
+  // Astro content-collection references come through as objects with
+  // a `id` / `uuid` / `$ref` shape, or as ZodReference wrappers.
+  // Extract the human-meaningful identifier.
+  if (typeof v === 'object') {
+    const obj = v as Record<string, unknown>;
+    const id = obj.id ?? obj.uuid ?? obj.$ref ?? obj.slug;
+    if (typeof id === 'string') return id;
+    // Zod reference internals sometimes nest under `data`
+    if (obj.data && typeof obj.data === 'object') {
+      const inner = (obj.data as Record<string, unknown>).id
+        ?? (obj.data as Record<string, unknown>).uuid;
+      if (typeof inner === 'string') return inner;
+    }
+    return JSON.stringify(v);
+  }
+
+  if (Array.isArray(v)) {
+    if (v.length === 0) return '—';
+    return v.map((item) => {
+      if (typeof item === 'string') return item;
+      if (item && typeof item === 'object') {
+        const o = item as Record<string, unknown>;
+        return String(o.id ?? o.uuid ?? o.$ref ?? JSON.stringify(item));
+      }
+      return String(item);
+    }).join(', ');
+  }
+
+  // Dates: render as UTC ISO 8601, not local time
+  if (v instanceof Date) {
+    return v.toISOString().replace(/\.\d{3}Z$/, 'Z');
+  }
+
+  return String(v);
+}
 ---
 
-<Layout title={`${title} — ${uuid}`}>
-  <p class="text-sm text-ink-subtle mb-2">
-    <a href={`/register/${itemClass}`}>{title}</a> →
+<Layout title={`${classTitle} — ${uuid}`}>
+  <p class="text-sm text-ink-subtle mb-6">
+    <a href={`/register/${itemClass}`} class="hover:text-ink">{classTitle}</a>
+    <span class="mx-2">/</span>
+    <span class="font-mono">{uuid}</span>
   </p>
-  <h1 class="text-3xl font-semibold tracking-tight font-mono mb-6">{uuid}</h1>
 
-  <dl class="grid gap-x-8 gap-y-4 max-w-3xl">
-    {
-      fields.map((field) => (
-        <div class="border-b border-line pb-3">
-          <dt class="text-xs font-mono uppercase text-ink-subtle">{field.title}</dt>
-          <dd class="mt-1 font-mono">{String(entry.data[field.key] ?? '—')}</dd>
+  {/* ── System-code: hero with full code + segments ───────────── */}
+  {isSystemCode && codeSegments && (
+    <section class="mb-12">
+      <div class="flex flex-wrap items-center gap-2 mb-4">
+        <span class:list={['badge', `badge-${String(entry.data.codeStatus ?? 'stable')}`]}>{String(entry.data.codeStatus ?? 'stable')}</span>
+        <span class="badge">{String(entry.data.systemStatus ?? '')}</span>
+      </div>
+
+      <p class="font-mono text-2xl md:text-4xl lg:text-5xl break-all leading-tight mb-4">
+        <span class="text-gold-deep dark:text-gold-bright">{codeSegments[0]}</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">{codeSegments[1]}</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">{codeSegments[2]}</span><span class="text-ink-subtle">:</span><span class="text-ink">{codeSegments[3]}</span>
+      </p>
+
+      <h1 class="text-2xl md:text-3xl font-semibold tracking-tight mb-4">{String(entry.data.name ?? uuid)}</h1>
+
+      {entry.data.description && (
+        <p class="text-base md:text-lg text-ink-muted max-w-3xl leading-relaxed">{String(entry.data.description)}</p>
+      )}
+
+      {entry.data.remarks && (
+        <p class="mt-4 text-sm text-ink-subtle italic max-w-3xl">{String(entry.data.remarks)}</p>
+      )}
+    </section>
+  )}
+
+  {/* ── Non-system-code: standard hero ────────────────────────── */}
+  {!isSystemCode && (
+    <section class="mb-10">
+      {isAuthority && (
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <span class="badge">authority</span>
         </div>
-      ))
-    }
-  </dl>
+      )}
+      <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mb-2">{String(entry.data.name ?? entry.data.code ?? uuid)}</h1>
+      {!isAuthority && (
+        <p class="font-mono text-sm text-ink-subtle">{uuid}</p>
+      )}
+      {entry.data.remarks && (
+        <p class="mt-4 text-base text-ink-muted max-w-2xl leading-relaxed">{String(entry.data.remarks)}</p>
+      )}
+    </section>
+  )}
+
+  {/* ── Lifecycle graph (system-code only) ───────────────────── */}
+  {isSystemCode && graphNodes.length > 0 && (
+    <section class="mb-12">
+      <LifecycleGraph nodes={graphNodes} edges={graphEdges} />
+    </section>
+  )}
+
+  <div class="grid gap-12 lg:grid-cols-[1fr_280px]">
+    {/* ── Main column ─────────────────────────────────────────── */}
+    <div class="max-w-3xl space-y-12">
+      {/* Authority cross-link */}
+      {isSystemCode && authorityName && (
+        <section>
+          <p class="eyebrow mb-3">Maintained by</p>
+          <a href={authorityHref} class="card-link block">
+            <p class="text-base font-semibold">{authorityName}</p>
+            <p class="mt-1 text-sm text-ink-muted">Conversion system authority →</p>
+          </a>
+        </section>
+      )}
+
+      {/* System-code specific: source/target/identifying breakdown */}
+      {isSystemCode && codeSegments && (
+        <section>
+          <p class="eyebrow mb-3">Code breakdown</p>
+          <dl class="border-t border-rule">
+            <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
+              <dt class="eyebrow pt-1">Titular</dt>
+              <dd>
+                <p class="font-mono text-base text-gold-deep dark:text-gold-bright">{codeSegments[0]}</p>
+                <p class="text-sm text-ink-muted mt-0.5">Authority identifier</p>
+              </dd>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
+              <dt class="eyebrow pt-1">Source</dt>
+              <dd>
+                <p class="font-mono text-base text-blue dark:text-blue-bright">{codeSegments[1]}</p>
+                <p class="text-sm text-ink-muted mt-0.5">Source spelling system</p>
+              </dd>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
+              <dt class="eyebrow pt-1">Target</dt>
+              <dd>
+                <p class="font-mono text-base text-blue dark:text-blue-bright">{codeSegments[2]}</p>
+                <p class="text-sm text-ink-muted mt-0.5">Target spelling system</p>
+              </dd>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
+              <dt class="eyebrow pt-1">Identifying</dt>
+              <dd>
+                <p class="font-mono text-base">{codeSegments[3]}</p>
+                <p class="text-sm text-ink-muted mt-0.5">{String(entry.data.identifyingSegment ? '' : '')}{String(entry.data.identifyingSegment ?? codeSegments[3])}</p>
+              </dd>
+            </div>
+          </dl>
+        </section>
+      )}
+
+      {/* Full record table (always) */}
+      <section>
+        <p class="eyebrow mb-3">Full record</p>
+        <dl class="border-t border-rule">
+          {fields.map((field) => {
+            const key = field.key as string;
+            const isRemarks = key === 'remarks';
+            const isDate = key === 'createdAt' || key === 'updatedAt';
+            void isDate;
+            const isRef = ['authority', 'sourceSpelling', 'targetSpelling', 'codeStatus', 'systemStatus', 'relations'].includes(key);
+            void isRef;
+            return (
+              <div class="grid grid-cols-[160px_1fr] gap-4 py-3 border-b border-rule">
+                <dt class="text-xs font-medium text-ink-muted pt-1">{fieldLabel(key)}</dt>
+                <dd class:list={[
+                  'text-sm break-all',
+                  isRemarks ? 'font-sans text-ink-muted leading-relaxed' : 'font-mono',
+                ]}>
+                  {fieldValue(key)}
+                </dd>
+              </div>
+            );
+          })}
+        </dl>
+      </section>
+    </div>
+
+    {/* ── Side column ─────────────────────────────────────────── */}
+    <aside class="space-y-8">
+      <section>
+        <p class="eyebrow mb-3">Download</p>
+        <ul class="text-sm space-y-1.5">
+          <li><a href={`/register/${itemClass}/i/${uuid}.jsonld`} class="hover:text-gold-deep dark:hover:text-gold-bright">JSON-LD</a></li>
+          <li><a href={`/register/${itemClass}/i/${uuid}.ttl`} class="hover:text-gold-deep dark:hover:text-gold-bright">Turtle (TTL)</a></li>
+          <li><a href={`/register/${itemClass}/i/${uuid}.rdf`} class="hover:text-gold-deep dark:hover:text-gold-bright">RDF/XML</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <p class="eyebrow mb-3">Reference</p>
+        <ul class="text-sm space-y-1.5">
+          <li><a href="/specification/annex-a" class="hover:text-gold-deep dark:hover:text-gold-bright">Annex A ToR</a></li>
+          <li><a href={externalLinks.iso24229Standard} class="hover:text-gold-deep dark:hover:text-gold-bright">ISO 24229 standard</a></li>
+          <li><a href={externalLinks.iso639Standard} class="hover:text-gold-deep dark:hover:text-gold-bright">ISO 639 (language)</a></li>
+          <li><a href={externalLinks.iso15924Standard} class="hover:text-gold-deep dark:hover:text-gold-bright">ISO 15924 (script)</a></li>
+        </ul>
+      </section>
+
+      <section>
+        <p class="eyebrow mb-3">Source data</p>
+        <ul class="text-sm space-y-1.5">
+          <li>
+            <a
+              href={`${repoUrls.register}/blob/main/${itemClass}/${uuid}.yaml`}
+              target="_blank"
+              rel="noopener"
+              class="hover:text-gold-deep dark:hover:text-gold-bright inline-flex items-center gap-1"
+            >
+              YAML on GitHub
+              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" class="opacity-70"><path d="M3 1h6v6M9 1L3 7M1 3v6h6" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <p class="eyebrow mb-3">Suggest a change</p>
+        <a
+          href={`${repoUrls.register}/issues/new?labels=amendment&title=${encodeURIComponent(`Amend ${uuid}`)}`}
+          target="_blank"
+          rel="noopener"
+          class="text-sm hover:text-gold-deep dark:hover:text-gold-bright"
+        >
+          Open an issue →
+        </a>
+      </section>
+    </aside>
+  </div>
 </Layout>

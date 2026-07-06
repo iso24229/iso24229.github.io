@@ -58,16 +58,18 @@ const entries: EntryLike[] = page.data;
     entries.length === 0 ? (
       <p class="text-ink-muted">No entries yet.</p>
     ) : (
-      <ul class="divide-y divide-line border-y border-line">
+      <ul class="divide-y divide-rule border-y border-rule">
         {entries.map((entry) => (
           <li>
             <a
               href={`/register/${itemClass}/i/${entry.id}`}
-              class="flex items-baseline justify-between py-3 hover:text-accent"
+              class="flex items-baseline justify-between py-3 gap-4 group"
             >
-              <span class="font-mono">{entry.data.uuid ?? entry.id}</span>
-              <span class="text-ink-muted text-sm ml-4 truncate">
-                {entry.data.name ?? entry.data.code ?? entry.data.codeStatus ?? ''}
+              <span class="font-mono text-sm md:text-base group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">
+                {entry.data.code ? String(entry.data.code) : (entry.data.uuid ?? entry.id)}
+              </span>
+              <span class="text-ink-muted text-sm truncate text-right">
+                {entry.data.name ?? entry.data.codeStatus ?? entry.data.systemStatus ?? ''}
               </span>
             </a>
           </li>
