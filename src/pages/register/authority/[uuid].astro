@@ -1,0 +1,117 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { JsonLdExporter } from '../../../semantic/JsonLdExporter';
+import { itemFactories } from '../../../domain/factories';
+import { Authority } from '../../../domain/items/Authority';
+import type { GetStaticPaths, InferGetStaticParamsType } from 'astro';
+
+type RawEntry = { id: string; data: unknown };
+
+export const getStaticPaths = (async () => {
+  const coll = (await getCollection('authority')) as unknown as RawEntry[];
+  return coll.map((entry) => ({
+    params: { uuid: entry.id },
+    props: { entry },
+  }));
+}) satisfies GetStaticPaths;
+
+const { uuid } = Astro.params as InferGetStaticParamsType<typeof getStaticPaths>;
+const { entry } = Astro.props as { entry: RawEntry };
+
+const authority = itemFactories.authority(entry.data as Record<string, unknown>) as Authority;
+const allSystems = (await getCollection('system-code')) as unknown as RawEntry[];
+const systems = allSystems
+  .filter((s) => (s.data as Record<string, unknown>).authority === uuid)
+  .map((s) => ({
+    id: s.id,
+    code: String((s.data as Record<string, unknown>).code ?? ''),
+    name: String((s.data as Record<string, unknown>).name ?? ''),
+  }));
+
+const jsonLd = new JsonLdExporter().exportItem(authority);
+const data = entry.data as Record<string, unknown>;
+const address = (data.address ?? null) as { street: string; city: string; country: string; postalCode: string } | null;
+const contact = (data.contact ?? null) as { email?: string; url?: string } | null;
+const persons = (data.authorisedPersons ?? []) as Array<{ name: string; role: string; email: string }>;
+---
+
+<Layout title={authority.displayName}>
+  <p class="text-sm text-ink-subtle mb-2">
+    <a href="/register/authority">Authorities</a> →
+  </p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-2">{authority.displayName}</h1>
+  <p class="font-mono text-ink-subtle mb-6">@{authority.authorityIdentifier}</p>
+
+  <div class="grid gap-8 md:grid-cols-2 max-w-4xl">
+    <section>
+      <h2 class="text-sm font-mono uppercase text-ink-subtle mb-3">Address</h2>
+      {
+        address ? (
+          <address class="not-italic text-sm leading-relaxed">
+            {address.street}<br />
+            {address.city}<br />
+            {address.country} {address.postalCode}
+          </address>
+        ) : (
+          <p class="text-sm text-ink-muted">Not provided.</p>
+        )
+      }
+    </section>
+
+    <section>
+      <h2 class="text-sm font-mono uppercase text-ink-subtle mb-3">Contact</h2>
+      <ul class="text-sm space-y-1">
+        {contact?.email && <li><a href={`mailto:${contact.email}`} class="underline">{contact.email}</a></li>}
+        {contact?.url && <li><a href={contact.url} target="_blank" rel="noopener" class="underline">{contact.url}</a></li>}
+        {!contact?.email && !contact?.url && <li class="text-ink-muted">Not provided.</li>}
+      </ul>
+    </section>
+
+    <section class="md:col-span-2">
+      <h2 class="text-sm font-mono uppercase text-ink-subtle mb-3">Authorised persons</h2>
+      {
+        persons.length === 2 ? (
+          <ul class="grid gap-4 md:grid-cols-2">
+            {persons.map((p) => (
+              <li class="border border-line rounded p-4">
+                <p class="font-medium">{p.name}</p>
+                <p class="text-sm text-ink-muted">{p.role}</p>
+                <p class="text-sm mt-2"><a href={`mailto:${p.email}`} class="underline">{p.email}</a></p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="text-sm text-ink-muted">
+            Two authorised persons not yet on file. Per Annex A.4, this must be remedied before this authority can submit changes.
+          </p>
+        )
+      }
+    </section>
+
+    <section class="md:col-span-2">
+      <h2 class="text-sm font-mono uppercase text-ink-subtle mb-3">Systems registered under this authority</h2>
+      {
+        systems.length === 0 ? (
+          <p class="text-sm text-ink-muted">No systems registered yet.</p>
+        ) : (
+          <ul class="divide-y divide-line border-y border-line">
+            {systems.map((s) => (
+              <li>
+                <a
+                  href={`/register/system-code/i/${s.id}`}
+                  class="flex items-baseline justify-between py-3 hover:text-accent"
+                >
+                  <span class="font-mono">{s.code}</span>
+                  <span class="text-ink-muted text-sm ml-4 truncate">{s.name}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </section>
+  </div>
+
+  <script type="application/ld+json" set:html={jsonLd} />
+</Layout>
