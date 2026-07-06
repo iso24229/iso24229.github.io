@@ -37,9 +37,15 @@ export interface NavItem {
 
 export const navigation: NavItem[] = [
   {
+    label: "About",
+    href: "/about",
+    description: "What ISO 24229 is, who operates the register, and how it works.",
+    audience: "newcomer",
+  },
+  {
     label: "Learn",
     href: "/learn",
-    description: "What ISO 24229 is and how codes work.",
+    description: "Codes, definitions, examples, FAQ, and specification.",
     audience: "newcomer",
   },
   {
@@ -52,30 +58,6 @@ export const navigation: NavItem[] = [
     label: "News",
     href: "/news",
     description: "Announcements from the RA and Advisory Group.",
-    audience: "anyone",
-  },
-  {
-    label: "Apply",
-    href: "/apply",
-    description: "Submit a new system or apply to register a new authority.",
-    audience: "authority",
-  },
-  {
-    label: "Managers",
-    href: "/managers",
-    description: "ISO/TC 46/AG materials: composition, meetings, ToR.",
-    audience: "manager",
-  },
-  {
-    label: "Specification",
-    href: "/specification",
-    description: "Register specification and Terms of Reference (Annex A).",
-    audience: "anyone",
-  },
-  {
-    label: "FAQ",
-    href: "/faq",
-    description: "Answers to common questions.",
     audience: "anyone",
   },
 ];

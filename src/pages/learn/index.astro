@@ -5,41 +5,18 @@ import Card from '../../components/Card.astro';
 
 <Layout title="Learn">
   <h1 class="text-4xl font-semibold tracking-tight mb-4">Learn</h1>
-  <p class="text-ink-muted max-w-2xl">
-    ISO 24229 is the international standard for written language conversion
-    systems. Start here if you're new.
+  <p class="text-ink-muted max-w-2xl mb-10">
+    ISO 24229 is the international standard for written language conversion systems. Start here if you're new.
   </p>
 
-  <div class="mt-10 grid gap-4 md:grid-cols-2">
-    <Card
-      href="/learn/what-is-iso-24229"
-      title="What is ISO 24229?"
-      body="Composes with ISO 639 (language) and ISO 15924 (script)."
-    />
-    <Card
-      href="/learn/code-structure"
-      title="Anatomy of a code"
-      body="Four colon-separated segments: titular · source spelling · target spelling · identifying."
-    />
-    <Card
-      href="/learn/examples"
-      title="Worked examples"
-      body="Real systems decoded, segment by segment."
-    />
-    <Card
-      href="/learn/use-cases"
-      title="Use cases"
-      body="Where written language conversion shows up — libraries, gazetteers, i18n."
-    />
-    <Card
-      href="/learn/glossary"
-      title="Glossary"
-      body="Defined terms from §3 of the standard — script, spelling system, transliteration, transcription, romanization."
-    />
-    <Card
-      href="/learn/comparison"
-      title="Comparison with related systems"
-      body="How ISO 24229 relates to BCP 47, ALA-LC, ICAO 9303, UN systems, ISO 9."
-    />
+  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <Card href="/learn/what-is-iso-24229" title="What is ISO 24229?" body="How the standard works and what a code means." />
+    <Card href="/learn/code-structure" title="Anatomy of a code" body="Four colon-separated segments: titular · source · target · identifying." />
+    <Card href="/learn/examples" title="Worked examples" body="Real systems decoded, segment by segment." />
+    <Card href="/learn/use-cases" title="Use cases" body="Where written language conversion shows up." />
+    <Card href="/learn/glossary" title="Glossary" body="Defined terms from §3 of the standard." />
+    <Card href="/learn/comparison" title="Comparison" body="How ISO 24229 relates to BCP 47, ALA-LC, ICAO, UN systems." />
+    <Card href="/faq" title="FAQ" body="Common questions, briefly answered." />
+    <Card href="/specification" title="Specification" body="Annex A Terms of Reference and ISO 19135 compliance." />
   </div>
 </Layout>
