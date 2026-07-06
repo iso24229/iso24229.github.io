@@ -1,14 +1,11 @@
 name: Deploy to GitHub Pages
 
 on:
-  # Trigger the workflow every time you push to the `main` branch
-  # Using a different branch name? Replace `main` with your branch's name
   push:
     branches:
       - main
   workflow_dispatch:
 
-  # Allow this job to clone the repo and create a page deployment
 permissions:
   contents: read
   pages: write
@@ -18,10 +15,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout your repository using git
+      - name: Checkout website repository
         uses: actions/checkout@v7
         with:
-          submodules: recursive
           depth: 1
 
       - name: Install, build, and upload your site
@@ -29,6 +25,13 @@ jobs:
         with:
           node-version: 24
           package-manager: pnpm@11
+        env:
+          # Default GITHUB_TOKEN authorises reads of same-org private
+          # repos when "Allow GitHub Actions to create and approve pull
+          # requests" is enabled on the org. For other private repos,
+          # set a PAT in the website repo's secrets and reference it
+          # here instead.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     needs: build

@@ -1,0 +1,30 @@
+# External data sources.
+#
+# The website is decoupled from these repositories — no git submodule
+# binding. The build pipeline (`scripts/prepare-external.mts`) reads this
+# file and prepares `.cache/external/<name>/` for each source.
+#
+# Local dev: when a sibling clone exists at `localPath`, it is symlinked
+#   into the cache. Edits in the sibling repo are picked up immediately.
+# CI: each source is `git clone --depth 1 --branch <ref>` into the cache.
+#
+# To point the site at a different register deployment, edit this file.
+
+sources:
+  - name: iso639-data
+    repoUrl: https://github.com/iso24229/iso639-data
+    ref: v0.1.0
+    localPath: ../iso639-data
+    private: false
+
+  - name: iso15924-data
+    repoUrl: https://github.com/iso24229/iso15924-data
+    ref: v0.1.0
+    localPath: ../iso15924-data
+    private: false
+
+  - name: iso24229-register
+    repoUrl: https://github.com/iso24229/iso24229-register
+    ref: main
+    localPath: ../iso24229-register
+    private: true

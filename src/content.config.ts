@@ -1,6 +1,8 @@
 import { reference, defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
+import { resolveSourcePath } from './config/external-sources';
+import { join } from 'node:path';
 
 const uuidentifiable = {
   uuid: {
@@ -132,30 +134,30 @@ export const transformSchemaToZodSchema = (s: SchemaObjectType): z.ZodRawShape =
 const transformPrimitiveSchemaToZodSchema = (s: PrimitiveSchemaType): z.ZodTypeAny => {
   switch(s) {
     case 'date':
-      return z.string().transform((val: string) => new Date(val));
+      return z.coerce.date();
     case 'date?':
-      return z.string().transform((val: string) => new Date(val)).optional();
+      return z.coerce.date().nullish();
     case 'number':
       return z.number();
     case 'number?':
-      return z.number().optional();
+      return z.number().nullish();
     case 'string':
       return z.string();
     case 'string?':
-      return z.string().optional();
+      return z.string().nullish();
     default:
       if (Array.isArray(s)) {
         return z.array(
           transformPrimitiveSchemaToZodSchema(
             primitiveTypeOf(s[0])
           )
-        );
+        ).nullish();
       }
       else {
         if (isReferenceSchemaType(s)) {
           const res = reference(s.ref);
           if (s.optional) {
-            return res.optional();
+            return res.nullish();
           }
           else {
             return res;
@@ -172,9 +174,14 @@ const commonTraits = {
   ...timestampable,
 };
 
+const registerRoot = resolveSourcePath('iso24229-register');
+
 const def = (schema: z.ZodType, itemClass: string) => defineCollection({
   schema,
-  loader: glob({ pattern: '*.{json,yaml,yml}', base: `./src/content/${itemClass}` }),
+  loader: glob({
+    pattern: '*.{json,yaml,yml}',
+    base: join(registerRoot, itemClass),
+  }),
 });
 
 export const itemClasses = [
@@ -244,11 +251,14 @@ export const versionedSchemaWithRichData: VersionedSchemaWithRichData = {
       schema: {
         code: 'string',
         name: 'string',
-        authority: ref('authority'),
-        sourceSpelling: ref('spelling-system'),
-        targetSpelling: ref('spelling-system'),
+        description: 'string?',
+        authority: ref('authority', true),
+        sourceSpelling: ref('spelling-system', true),
+        sourceScriptCode: 'string?',
+        targetSpelling: ref('spelling-system', true),
+        targetScriptCode: 'string?',
         identifyingSegment: 'string',
-        relations: [ref('system-relation')],
+        relations: [ref('system-relation', true)],
         codeStatus: ref('code-status'),
         systemStatus: ref('system-status'),
         ...commonTraits,

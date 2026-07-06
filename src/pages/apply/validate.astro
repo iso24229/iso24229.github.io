@@ -1,6 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { ReferenceDataIndex } from '../../domain/reference/ReferenceDataIndex';
+import { resolveSourcePath } from '../../config/external-sources';
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
 
 const idx = ReferenceDataIndex.load();
 const iso639Count = idx.iso639Count;
@@ -9,21 +12,19 @@ const iso15924Count = idx.iso15924Count;
 // Inline the manifest as JSON for the client-side validator to use without
 // a network roundtrip. ~600KB compressed for all 639 parts; acceptable
 // for a single-page tool.
-const iso639Codes = Array.from({ length: 0 } as string[]);
-const iso15924Codes = Array.from({ length: 0 } as string[]);
-// Build manifests lazily — we expose only the codes (not full data) to keep
-// the page weight low.
-import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
+const iso639Codes: string[] = [];
+const iso15924Codes: string[] = [];
+const iso639Root = resolveSourcePath('iso639-data');
+const iso15924Root = join(resolveSourcePath('iso15924-data'), 'codes');
 for (const part of ['639-1', '639-2', '639-3', '639-5'] as const) {
   try {
-    for (const f of readdirSync(join('external/iso639-data', part))) {
+    for (const f of readdirSync(join(iso639Root, part))) {
       if (f.endsWith('.yaml')) iso639Codes.push(f.replace(/\.yaml$/, ''));
     }
   } catch {}
 }
 try {
-  for (const f of readdirSync('external/iso15924-data/codes')) {
+  for (const f of readdirSync(iso15924Root)) {
     if (f.endsWith('.yaml')) iso15924Codes.push(f.replace(/\.yaml$/, ''));
   }
 } catch {}
