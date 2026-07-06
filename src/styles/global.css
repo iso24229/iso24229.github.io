@@ -2,6 +2,7 @@
 
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
+@import "@fontsource-variable/space-grotesk";
 
 /* ──────────────────────────────────────────────────────────────────
  * Design tokens — single source of truth.
@@ -39,6 +40,7 @@
 
   /* Typography */
   --font-sans: "Inter Variable", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Space Grotesk Variable", "Space Grotesk", "Inter Variable", system-ui, sans-serif;
   --font-mono: "JetBrains Mono Variable", "JetBrains Mono", "Fira Code", Consolas, monospace;
 
   /* Radii — restrained, mostly square */
@@ -115,9 +117,9 @@ a:hover {
   color: var(--color-gold-bright);
 }
 
-/* ── Headlines: tight, refined sans ────────────────────────────── */
+/* ── Headlines: Space Grotesk — distinctive, editorial, engineered ── */
 h1, h2, h3, h4 {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.022em;
   color: var(--color-ink);
@@ -128,17 +130,25 @@ h1 {
   font-size: clamp(2.5rem, 5.2vw, 4.25rem);
   line-height: 1.02;
   font-weight: 700;
-  letter-spacing: -0.030em;
+  letter-spacing: -0.035em;
 }
 
 h2 {
   font-size: clamp(1.5rem, 2.6vw, 2.125rem);
-  line-height: 1.12;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
 }
 
 h3 {
   font-size: 1.3125rem;
-  line-height: 1.2;
+  line-height: 1.18;
+  letter-spacing: -0.018em;
+}
+
+h4 {
+  font-size: 1.0625rem;
+  line-height: 1.25;
+  letter-spacing: -0.012em;
 }
 
 p {
