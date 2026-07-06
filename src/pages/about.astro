@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/Card.astro';
+import { externalLinks } from '../config';
+---
+
+<Layout title="About">
+  <section class="mb-16">
+    <p class="eyebrow mb-4">About</p>
+    <h1 class="max-w-4xl">The official register of written language conversion systems.</h1>
+    <p class="mt-6 text-lg text-ink-muted max-w-2xl leading-relaxed">
+      ISO 24229 is the international standard for codes that identify written language conversion systems — transliteration, transcription, romanization, and orthographic reform alike. This website is the official register operated by CalConnect as Registration Authority, designated by ISO.
+    </p>
+  </section>
+
+  <div class="rule-section grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <Card href="/learn/what-is-iso-24229" title="What is ISO 24229?" body="How the standard works and what a code means." />
+    <Card href="/learn/glossary" title="Glossary" body="Defined terms from the standard." />
+    <Card href="/learn/comparison" title="Comparison" body="How ISO 24229 relates to BCP 47, ALA-LC, ICAO, UN systems." />
+    <Card href="/apply" title="Submit a system" body="For authorities adding new conversion systems." />
+    <Card href="/managers" title="Advisory Group" body="For ISO/TC 46/AG members." />
+    <Card href="/specification" title="Specification" body="Annex A Terms of Reference and ISO 19135 compliance." />
+  </div>
+
+  <div class="rule-section">
+    <p class="eyebrow mb-3">Registration Authority</p>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      <a href={externalLinks.calconnect} class="underline">CalConnect</a> is the Registration Authority (ISO 24229/RA), designated by ISO. The register is operated by <a href={externalLinks.ribose} class="underline">Ribose</a>. An Advisory Group (ISO 24229/AG) of 4–12 experts reviews submissions at its bimonthly meeting.
+    </p>
+  </div>
+</Layout>
