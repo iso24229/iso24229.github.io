@@ -5,7 +5,8 @@
  * the `yaml` package and exposes typed accessors for the rest of the
  * codebase.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { parse } from 'yaml';
 
 export interface ExternalSource {
@@ -33,12 +34,26 @@ export function sourceByName(name: string): ExternalSource {
 }
 
 /**
- * Resolve the active cache path for a source. Always returns the cache
- * path — `scripts/prepare-external.mts` is responsible for ensuring
- * the cache path contains the right thing (symlink to sibling, or git
- * clone).
+ * Resolve the active path for a source.
+ *
+ * Priority:
+ *   1. If a sibling clone exists at `localPath` (developer's machine),
+ *      use it directly. No symlink, no copy — tools read from the
+ *      sibling repo.
+ *   2. Otherwise use `.cache/external/<name>/` — populated by
+ *      `scripts/prepare-external.mts` via `git clone` (CI case).
+ *
+ * We deliberately do NOT create symlinks into `.cache/`. Earlier the
+ * cache directory was a symlink to the sibling repo, and Vite / TS /
+ * Astro file watchers followed the symlink into the sibling's `.git`,
+ * causing runaway CPU. Returning the sibling path directly avoids the
+ * entire class of "tool follows symlink somewhere unexpected" bugs.
  */
 export function resolveSourcePath(name: ExternalSourceName): string {
-  sourceByName(name); // throws on unknown
+  const src = sourceByName(name);
+  const sibling = resolve(src.localPath);
+  if (existsSync(sibling)) {
+    return sibling;
+  }
   return `.cache/external/${name}`;
 }

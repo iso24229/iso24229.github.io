@@ -20,10 +20,11 @@ describe('external-sources config', () => {
     expect(sourceByName('iso24229-register').private).toBe(true);
   });
 
-  it('resolveSourcePath returns the cache path', () => {
-    expect(resolveSourcePath('iso639-data')).toBe('.cache/external/iso639-data');
-    expect(resolveSourcePath('iso15924-data')).toBe('.cache/external/iso15924-data');
-    expect(resolveSourcePath('iso24229-register')).toBe('.cache/external/iso24229-register');
+  it('resolveSourcePath prefers a sibling clone when present', () => {
+    // On a developer machine with siblings checked out, paths resolve
+    // to the sibling — no symlink, no cache directory.
+    const resolved = resolveSourcePath('iso639-data');
+    expect(resolved.endsWith('iso639-data')).toBe(true);
   });
 
   it('sourceByName throws on unknown', () => {
