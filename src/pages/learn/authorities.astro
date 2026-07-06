@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
 
 const authorityExamples = [
   { id: 'ISO', name: 'International Organization for Standardization' },
@@ -9,11 +10,23 @@ const authorityExamples = [
   { id: 'ICAO', name: 'International Civil Aviation Organization' },
   { id: 'UN', name: 'United Nations' },
 ];
+const tocItems = [{ "id": "general",
+  "label": "General" },
+  { "id": "requirements",
+  "label": "Requirements" },
+  { "id": "registration",
+  "label": "Registration" },
+  { "id": "identifiers",
+  "label": "Authority identifiers" }];
 ---
 
 <Layout title="Conversion system authorities">
   <p class="text-sm text-ink-subtle mb-2"><a href="/learn">← Learn</a></p>
   <h1 class="text-4xl font-semibold tracking-tight mb-6">Conversion system authorities</h1>
+
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
 
   <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
     A conversion system authority is a competent authority that creates, publishes, and/or manages written language conversion systems. This page covers §5 of ISO 24229 — the requirements, competency criteria, registration process, and identifier construction rules.
@@ -128,4 +141,6 @@ const authorityExamples = [
       The full list of registered authorities is at <a href="/register/authority" class="underline">/register/authority</a>.
     </p>
   </section>
+    </div>
+  </div>
 </Layout>
