@@ -1,0 +1,20 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+import { externalLinks } from '../../../config';
+---
+
+<Layout title="Specification">
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">Specification</h1>
+
+  <p class="text-lg text-ink-muted max-w-2xl mb-10">
+    The ISO 24229 Registration Authority operates this register under <a href={externalLinks.iso19135Standard} class="underline">ISO 19135</a> (Procedures for the registration of items of geographic information). The Terms of Reference are given by Annex A of <a href={externalLinks.iso24229Standard} class="underline">ISO 24229</a>. A sibling register operated by the same team is at <a href={externalLinks.ferin} class="underline">ferin.org</a>.
+  </p>
+
+  <div class="grid gap-4 md:grid-cols-3 mt-8">
+    <Card href="/learn/specification/data-model" title="Data model" body="Entities, attributes, and relationships from §6 of the standard." />
+    <Card href="/learn/specification/governance" title="Governance and lifecycle" body="Registration Authority, Advisory Group, operations, and code reservation from Annex A." />
+    <Card href="/learn/specification/annex-a" title="Annex A — Terms of Reference" body="The RA's mandate per the standard." />
+    <Card href="/learn/specification/iso-19135" title="ISO 19135 compliance" body="How the register lifecycle maps to the ISO 19135 model." />
+  </div>
+</Layout>
