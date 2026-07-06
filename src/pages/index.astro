@@ -5,51 +5,133 @@ import { externalLinks } from '../config';
 ---
 
 <Layout>
-  <section class="mb-16">
-    <p class="text-sm font-medium text-accent uppercase tracking-wide mb-4">
-      ISO 24229 · Written-language conversion systems
+  {/* ── Hero ─────────────────────────────────────────────────── */}
+  <section class="mb-20 pt-8 md:pt-16">
+    <p class="eyebrow mb-5">
+      <a href={externalLinks.iso24229Standard} class="hover:text-gold-deep dark:hover:text-gold-bright">ISO 24229</a>
+      · International Standard
     </p>
-    <h1 class="text-5xl md:text-6xl font-semibold tracking-tight max-w-4xl leading-[1.05]">
-      The official register of
-      <span class="text-ink-subtle">written language conversion systems</span>.
-    </h1>
-    <p class="mt-6 text-lg text-ink-muted max-w-2xl">
-      Operated by CalConnect and Ribose as Registration Authority under
-      <a href={externalLinks.iso24229Standard} class="underline">ISO 24229</a>,
-      designated by ISO/TC 46/WG 3. Built on
-      <a href={externalLinks.iso639Standard} class="underline">ISO 639</a> (language)
-      and <a href={externalLinks.iso15924Standard} class="underline">ISO 15924</a> (script).
-    </p>
-  </section>
 
-  <section class="mb-20">
-    <h2 class="text-sm uppercase tracking-wide text-ink-subtle mb-6">Who are you?</h2>
-    <div class="grid gap-4 md:grid-cols-3">
-      <Card
-        href="/register"
-        title="I'm looking up a system"
-        body="Find a written language conversion system by authority, source language, or code."
-        audience="Users"
-      />
-      <Card
-        href="/apply"
-        title="I represent an authority"
-        body="Add a new system to your authority, or apply to register a new authority."
-        audience="Authorities"
-      />
-      <Card
-        href="/managers"
-        title="I'm on the Advisory Group"
-        body="ISO/TC 46/AG materials: composition, Terms of Reference, meetings."
-        audience="Managers"
-      />
+    <h1 class="max-w-4xl">
+      The international standard for
+      <span class="text-ink-subtle"> written language conversion systems</span>.
+    </h1>
+
+    <p class="mt-8 text-lg md:text-xl text-ink-muted max-w-2xl leading-relaxed">
+      ISO 24229 gives every system that converts text from one script or
+      spelling to another — transliteration, transcription, romanization,
+      and orthographic reform alike — a single, unambiguous identifier.
+    </p>
+
+    <p class="mt-5 text-base text-ink-muted max-w-2xl leading-relaxed">
+      It is the third member of a trio with <a href={externalLinks.iso639Standard}>ISO 639</a> (language) and <a href={externalLinks.iso15924Standard}>ISO 15924</a> (script): together they let you identify <em>any</em> written form of any language, and the rules for converting between forms.
+    </p>
+
+    <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
+      <a href="/learn/what-is-iso-24229" class="inline-flex items-center gap-2 text-ink hover:text-gold-deep dark:hover:text-gold-bright">
+        Start with the explainer
+        <span aria-hidden="true">→</span>
+      </a>
+      <a href="/register" class="inline-flex items-center gap-2 text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">
+        Browse the register
+        <span aria-hidden="true">→</span>
+      </a>
+      <span class="text-ink-subtle">·</span>
+      <span class="text-ink-subtle">
+        Operated by <a href={externalLinks.calconnect}>CalConnect</a> as Registration Authority, designated by ISO.
+      </span>
     </div>
   </section>
 
-  <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-    <Card href="/learn" title="Learn" body="What ISO 24229 is and how codes work." />
-    <Card href="/specification" title="Specification" body="Register specification (Annex A ToR) and ISO 19135 compliance." />
-    <Card href="/faq" title="FAQ" body="Answers to common questions." />
-    <Card href="/register" title="Browse register" body="Authorities, systems, spelling systems." />
+  {/* ── What problem does it solve ──────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Why it exists</p>
+    <h2 class="max-w-3xl">
+      A library catalogue in Tokyo, a gazetteer in Canberra, and a corpus
+      in Berkeley might all reference the same Chinese romanization —
+      each calling it something different.
+    </h2>
+    <p class="mt-6 text-ink-muted max-w-2xl leading-relaxed">
+      ISO 24229 gives every system a single machine-readable code so data
+      flows between library systems, geospatial databases, linguistic
+      corpora, and software localisation pipelines without loss.
+    </p>
+  </section>
+
+  {/* ── Code anatomy ────────────────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Anatomy of a code</p>
+    <div class="p-6 md:p-8 border border-rule rounded bg-paper-raised">
+      <p class="font-mono text-xl md:text-2xl lg:text-3xl break-all leading-tight">
+        <span class="text-gold-deep dark:text-gold-bright">UN</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">ara-Arab</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Latn</span><span class="text-ink-subtle">:</span><span>2017</span>
+      </p>
+      <p class="mt-4 text-sm text-ink-muted max-w-2xl">
+        United Nations romanization of Arabic, adopted 2017.
+        Four colon-separated segments:
+        <strong>authority</strong> · <strong>source</strong> · <strong>target</strong> · <strong>identifying</strong>.
+      </p>
+    </div>
+    <p class="mt-5">
+      <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">
+        Read the full code structure →
+      </a>
+    </p>
+  </section>
+
+  {/* ── Trio ────────────────────────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Where it sits</p>
+    <h2 class="max-w-2xl">Part three of a trilogy.</h2>
+    <div class="mt-8 grid gap-px bg-rule border border-rule rounded overflow-hidden md:grid-cols-3">
+      <div class="bg-paper p-6">
+        <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Step 1</p>
+        <p class="text-2xl font-semibold">
+          <a href={externalLinks.iso639Standard}>ISO 639</a>
+        </p>
+        <p class="text-sm text-ink-muted mt-1">identifies the <em>language</em></p>
+        <p class="mt-4 font-mono text-sm text-ink">zho — Chinese</p>
+      </div>
+      <div class="bg-paper p-6">
+        <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Step 2</p>
+        <p class="text-2xl font-semibold">
+          <a href={externalLinks.iso15924Standard}>ISO 15924</a>
+        </p>
+        <p class="text-sm text-ink-muted mt-1">identifies the <em>script</em></p>
+        <p class="mt-4 font-mono text-sm text-ink">Hani — Han (Hanzi)</p>
+      </div>
+      <div class="bg-paper-raised p-6">
+        <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Step 3</p>
+        <p class="text-2xl font-semibold">
+          <a href={externalLinks.iso24229Standard}>ISO 24229</a>
+        </p>
+        <p class="text-sm text-ink-muted mt-1">identifies the <em>conversion system</em></p>
+        <p class="mt-4 font-mono text-sm text-ink break-all">acadsin:zho-Hani:Latn:2002</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Where to go next ─────────────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Explore</p>
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-6">
+      <Card href="/learn" title="Learn" body="Codes, definitions, examples, and use cases." />
+      <Card href="/register" title="Register" body="Authorities, systems, and spelling systems." />
+      <Card href="/news" title="News" body="Announcements from the RA and Advisory Group." />
+      <Card href="/faq" title="FAQ" body="Common questions, briefly answered." />
+    </div>
+  </section>
+
+  {/* ── For authorities and managers (small, below the fold) ── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">For authorities & managers</p>
+    <p class="text-ink-muted max-w-2xl">
+      Already recognised as a conversion system authority, or sitting on
+      the Advisory Group?
+    </p>
+    <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      <a href="/apply" class="text-ink hover:text-gold-deep dark:hover:text-gold-bright">Apply / submit a system →</a>
+      <a href="/managers" class="text-ink hover:text-gold-deep dark:hover:text-gold-bright">AG materials →</a>
+      <a href="/specification" class="text-ink hover:text-gold-deep dark:hover:text-gold-bright">Specification (Annex A ToR) →</a>
+    </div>
   </section>
 </Layout>

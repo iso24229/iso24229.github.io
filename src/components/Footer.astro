@@ -4,17 +4,21 @@ import OutwardLink from './OutwardLink.astro';
 const year = new Date().getFullYear();
 ---
 
-<footer class="border-t border-line bg-surface-raised mt-16">
+<footer class="border-t border-rule bg-paper-raised mt-16">
   <div class="container-page py-12 grid gap-10 md:grid-cols-[2fr_1fr_1fr]">
     <div>
-      <p class="text-sm font-semibold mb-2">{siteTitle}</p>
-      <p class="text-sm text-ink-muted max-w-md">
-        <a href={externalLinks.calconnect} class="underline" rel="noopener">CalConnect</a>
-        is the Registration Authority designated under
-        <a href={externalLinks.iso24229Standard} class="underline" rel="noopener">ISO 24229</a>
-        by ISO/TC 46/WG 3. Operated as an
-        <a href={externalLinks.iso19135Standard} class="underline" rel="noopener">ISO 19135</a>
-        register.
+      <div class="flex items-center gap-3 mb-4">
+        <img
+          src="/assets/logos/iso-red.svg"
+          alt="ISO — International Organization for Standardization"
+          width="36"
+          height="36"
+          class="block"
+        />
+        <p class="text-base font-semibold leading-tight">{siteTitle}</p>
+      </div>
+      <p class="text-sm text-ink-muted max-w-md leading-relaxed">
+        <a href={externalLinks.calconnect} class="underline" rel="noopener">CalConnect</a> is the Registration Authority designated by ISO. The register is operated by <a href={externalLinks.ribose} class="underline" rel="noopener">Ribose</a>.
       </p>
       <p class="text-xs text-ink-subtle mt-4">
         © {year} International Organization for Standardization. All rights reserved.
@@ -22,7 +26,7 @@ const year = new Date().getFullYear();
     </div>
 
     <div>
-      <p class="text-xs font-semibold uppercase tracking-wide text-ink-subtle mb-3">Operated by</p>
+      <p class="eyebrow mb-3">Registration Authority</p>
       <ul class="space-y-3">
         {
           operatingAuthorities.map((org) => (
@@ -37,17 +41,23 @@ const year = new Date().getFullYear();
                 <img
                   src={org.logo.light}
                   alt={`${org.name} logo`}
-                  class="hidden dark:block h-8 w-auto"
+                  class:list={[
+                    'h-8 w-auto',
+                    org.invertInDark ? 'dark:invert' : 'hidden dark:block',
+                    org.invertInDark ? 'dark:block' : '',
+                  ]}
                   width="120"
                   height="32"
                 />
-                <img
-                  src={org.logo.dark}
-                  alt={`${org.name} logo`}
-                  class="block dark:hidden h-8 w-auto"
-                  width="120"
-                  height="32"
-                />
+                {!org.invertInDark && (
+                  <img
+                    src={org.logo.dark}
+                    alt={`${org.name} logo`}
+                    class="block dark:hidden h-8 w-auto"
+                    width="120"
+                    height="32"
+                  />
+                )}
                 <span class="text-xs text-ink-muted leading-tight">{org.role}</span>
               </a>
             </li>
@@ -57,7 +67,7 @@ const year = new Date().getFullYear();
     </div>
 
     <div>
-      <p class="text-xs font-semibold uppercase tracking-wide text-ink-subtle mb-3">Source</p>
+      <p class="eyebrow mb-3">Source</p>
       <ul class="space-y-1.5 text-sm">
         <li><OutwardLink href={repoUrls.website}>Website source</OutwardLink></li>
         <li><OutwardLink href={repoUrls.register}>Register data</OutwardLink></li>

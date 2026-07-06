@@ -1,156 +1,240 @@
 @import "tailwindcss";
 
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/jetbrains-mono";
+
+/* ──────────────────────────────────────────────────────────────────
+ * Design tokens — single source of truth.
+ *
+ * Palette derived from the ISO 24229 logomark (a gold + blue sphere):
+ *   gold   #ffcd38 → #fec340 → #d28529  (light to dark)
+ *   blue   #dee7f5 → #a0b6dc → #6587c5 → #5374b9 → #3a5a9c
+ *
+ * The logomark is the only place colour is used liberally; the rest of
+ * the UI uses ink-on-paper with gold as the single editorial accent
+ * and blue for structural elements (links, focus rings).
+ * ────────────────────────────────────────────────────── */
+
 @theme {
-  /* Colors */
-  --color-iso-red: #e3000f;
-  --color-iso-blue: #0061ad;
+  /* Brand */
+  --color-gold: #d28529;
+  --color-gold-bright: #ffcd38;
+  --color-gold-deep: #a86513;
+  --color-blue: #5374b9;
+  --color-blue-bright: #a0b6dc;
+  --color-blue-deep: #3a5a9c;
 
-  --color-accent: #0061ad;
-  --color-accent-light: #3385d6;
-  --color-accent-dark: #003f73;
+  /* Ink + paper (light is default) */
+  --color-paper: #fbfaf6;
+  --color-paper-raised: #f3f1ea;
+  --color-paper-sunken: #ecebe4;
+  --color-ink: #14161a;
+  --color-ink-muted: #4a4d56;
+  --color-ink-subtle: #7a7d86;
+  --color-rule: #d5d3c9;
 
-  --color-ink: #0a0a0a;
-  --color-ink-muted: #4a4a4a;
-  --color-ink-subtle: #7a7a7a;
+  /* Accent defaults to gold. Links use blue. */
+  --color-accent: var(--color-gold);
+  --color-accent-contrast: var(--color-paper);
 
-  --color-surface: #ffffff;
-  --color-surface-raised: #f5f5f5;
-  --color-surface-sunken: #ededed;
+  /* Typography */
+  --font-sans: "Inter Variable", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", "Fira Code", Consolas, monospace;
 
-  --color-line: #d4d4d4;
-
-  /* Fonts */
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-  --font-serif: 'Source Serif Pro', Georgia, serif;
-
-  /* Radii */
-  --radius-sm: 4px;
-  --radius-DEFAULT: 8px;
-  --radius-lg: 16px;
-  --radius-pill: 9999px;
+  /* Radii — restrained, mostly square */
+  --radius-sm: 2px;
+  --radius-DEFAULT: 4px;
+  --radius-lg: 8px;
 
   /* Layout */
   --content-width: 1200px;
-  --header-height: 80px;
+  --header-height: 72px;
 }
 
-/* Dark-mode tokens (applied via .dark on <html>) */
+/* Dark mode: same palette, inverted paper/ink + brighter accent */
 .dark {
-  --color-ink: #e0e0e0;
-  --color-ink-muted: #a0a0a0;
-  --color-ink-subtle: #707070;
+  --color-paper: #0c0e14;
+  --color-paper-raised: #16181f;
+  --color-paper-sunken: #06070b;
+  --color-ink: #e8e6df;
+  --color-ink-muted: #a8a59b;
+  --color-ink-subtle: #6c6a62;
+  --color-rule: #2a2c34;
 
-  --color-surface: #0e0e0e;
-  --color-surface-raised: #1a1a1a;
-  --color-surface-sunken: #050505;
-
-  --color-line: #2a2a2a;
+  --color-accent: var(--color-gold-bright);
+  --color-blue: var(--color-blue-bright);
 }
 
-/* Selection */
+/* ── Selection ─────────────────────────────────────────────────── */
 ::selection {
-  background-color: var(--color-iso-red);
-  color: var(--color-surface);
+  background-color: var(--color-gold-bright);
+  color: var(--color-paper);
 }
 
-/* Base typography */
+.dark ::selection {
+  background-color: var(--color-gold);
+  color: #000;
+}
+
+/* ── Base ──────────────────────────────────────────────────────── */
 html {
   font-family: var(--font-sans);
-  background-color: var(--color-surface);
+  background-color: var(--color-paper);
   color: var(--color-ink);
-  transition: background-color 0.2s ease;
+  font-feature-settings: "ss01", "cv11";
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  font-feature-settings: "ss01";
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-code, pre {
+code, pre, kbd, samp {
   font-family: var(--font-mono);
+  font-feature-settings: "ss02", "ss03";
 }
 
-/* Link treatment: editorial New-York-style arrow on hover */
+/* ── Links: editorial, restrained ──────────────────────────────── */
 a {
-  color: inherit;
+  color: var(--color-blue);
   text-decoration: none;
-  position: relative;
-  transition: color 0.15s ease;
+  transition: color 0.12s ease;
 }
 
 a:hover {
-  color: var(--color-accent);
+  color: var(--color-gold-deep);
 }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
+.dark a:hover {
+  color: var(--color-gold-bright);
+}
+
+/* ── Headlines: tight, refined sans ────────────────────────────── */
+h1, h2, h3, h4 {
   font-family: var(--font-sans);
   font-weight: 600;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.022em;
+  color: var(--color-ink);
+  text-wrap: balance;
 }
 
-h1 { font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.05; }
-h2 { font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.1; }
-h3 { font-size: 1.5rem; line-height: 1.2; }
+h1 {
+  font-size: clamp(2.5rem, 5.2vw, 4.25rem);
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.030em;
+}
 
-/* Reusable component classes */
+h2 {
+  font-size: clamp(1.5rem, 2.6vw, 2.125rem);
+  line-height: 1.12;
+}
+
+h3 {
+  font-size: 1.3125rem;
+  line-height: 1.2;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* ── Reusable components ───────────────────────────────────────── */
 @layer components {
   .container-page {
     width: 100%;
     max-width: var(--content-width);
     margin-inline: auto;
-    padding-inline: clamp(1rem, 5vw, 3rem);
+    padding-inline: clamp(1.25rem, 5vw, 3.5rem);
   }
 
+  /* Editorial section divider: hairline rule with breathing room */
+  .rule-section {
+    border-top: 1px solid var(--color-rule);
+    padding-top: 2.5rem;
+    margin-top: 2.5rem;
+  }
+
+  /* Card: square corners, hairline border, restrained hover */
   .card-link {
     display: block;
-    padding: 1.5rem;
-    background-color: var(--color-surface-raised);
-    border: 1px solid var(--color-line);
+    padding: 1.5rem 1.75rem;
+    background-color: var(--color-paper);
+    border: 1px solid var(--color-rule);
     border-radius: var(--radius-DEFAULT);
     transition: border-color 0.15s ease, transform 0.15s ease;
   }
 
   .card-link:hover {
-    border-color: var(--color-accent);
+    border-color: var(--color-gold);
     transform: translateY(-1px);
   }
 
+  /* Badges: monospace, restrained */
   .badge {
     display: inline-flex;
     align-items: center;
-    padding: 0.125rem 0.625rem;
-    border-radius: var(--radius-pill);
-    font-size: 0.75rem;
+    padding: 0.0625rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
     font-weight: 500;
-    background-color: var(--color-surface-sunken);
+    letter-spacing: 0.02em;
+    background-color: var(--color-paper-sunken);
     color: var(--color-ink-muted);
+    text-transform: lowercase;
   }
 
   .badge-proposed {
-    background-color: rgb(255 200 0 / 0.15);
-    color: rgb(180 130 0);
+    background-color: color-mix(in srgb, var(--color-gold) 14%, transparent);
+    color: var(--color-gold-deep);
   }
 
   .badge-stable {
-    background-color: rgb(0 180 0 / 0.15);
-    color: rgb(0 130 0);
+    background-color: color-mix(in srgb, #2a8a3e 14%, transparent);
+    color: #2a8a3e;
   }
 
   .badge-withdrawn {
-    background-color: rgb(255 0 0 / 0.15);
-    color: rgb(180 0 0);
+    background-color: color-mix(in srgb, #b94a4a 14%, transparent);
+    color: #b94a4a;
   }
 
   .dark .badge-proposed {
-    background-color: rgb(255 200 0 / 0.2);
-    color: rgb(255 220 100);
+    background-color: color-mix(in srgb, var(--color-gold-bright) 22%, transparent);
+    color: var(--color-gold-bright);
   }
 
   .dark .badge-stable {
-    background-color: rgb(0 180 0 / 0.2);
-    color: rgb(120 255 120);
+    background-color: color-mix(in srgb, #5ecb76 22%, transparent);
+    color: #5ecb76;
   }
+
+  .dark .badge-withdrawn {
+    background-color: color-mix(in srgb, #e67373 22%, transparent);
+    color: #e67373;
+  }
+
+  /* Editorial small caps for eyebrows / kickers */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-subtle);
+  }
+}
+
+/* ── Focus: gold ring (consistent across themes) ───────────────── */
+*:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }

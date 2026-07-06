@@ -6,10 +6,10 @@ author: 'CalConnect (ISO 24229/RA)'
 tags: ['announcement', 'registration-authority']
 ---
 
-CalConnect — designated by ISO/TC 46/WG 3 as the Registration Authority
+CalConnect — designated by ISO as the Registration Authority
 (ISO 24229/RA) — has stood up the official register of written language
 conversion systems at **www.iso24229.org**. The register is operated by
-Ribose, a CalConnect member.
+Ribose.
 
 ## What is now available
 

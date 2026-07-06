@@ -19,7 +19,7 @@ const pageTitle = title === '' ? siteTitle : `${title} | ${siteTitle}`;
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
@@ -35,8 +35,30 @@ const pageTitle = title === '' ? siteTitle : `${title} | ${siteTitle}`;
     <title>{pageTitle}</title>
     <GoogleAnalytics />
     <ClientRouter />
+    {/* Theme must be applied BEFORE first paint to avoid FOUC, and
+        re-applied after every Astro view transition. */}
+    <script is:inline>
+      (function () {
+        const root = document.documentElement;
+        const stored = localStorage.getItem('theme');
+        const prefersDark = matchMedia('(prefers-color-scheme: dark)').matches;
+        const initial = stored ?? (prefersDark ? 'dark' : 'light');
+        const apply = (t) => {
+          root.classList.toggle('dark', t === 'dark');
+          root.dataset.theme = t;
+        };
+        apply(initial);
+
+        document.addEventListener('astro:after-swap', () => apply(localStorage.getItem('theme') ?? initial));
+        document.addEventListener('astro:before-swap', (e) => {
+          const t = localStorage.getItem('theme') ?? initial;
+          e.newDocument.documentElement.classList.toggle('dark', t === 'dark');
+          e.newDocument.documentElement.dataset.theme = t;
+        });
+      })();
+    </script>
   </head>
-  <body class="min-h-screen flex flex-col bg-surface text-ink antialiased">
+  <body class="min-h-screen flex flex-col bg-paper text-ink antialiased">
     <Header />
     <main class={constrained ? 'container-page flex-1 py-10' : 'flex-1'}>
       <slot />

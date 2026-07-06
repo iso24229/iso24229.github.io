@@ -5,7 +5,7 @@
 export const siteUrl = "https://www.iso24229.org";
 export const siteTitle = "ISO 24229 Registry";
 export const siteDescription =
-  "The official register of written-language conversion systems, designated by ISO/TC 46/WG 3 under ISO 24229.";
+  "The official register of written-language conversion systems, designated by ISO under ISO 24229.";
 
 /** Repository links that the UI needs. */
 export const repoUrls = {
@@ -89,6 +89,8 @@ export interface OperatingAuthority {
     light: string;
     dark: string;
   };
+  /** When true, the light-mode logo is reused in dark mode via CSS invert. */
+  invertInDark?: boolean;
 }
 
 export const operatingAuthorities: OperatingAuthority[] = [
@@ -103,11 +105,12 @@ export const operatingAuthorities: OperatingAuthority[] = [
   },
   {
     name: "Ribose",
-    role: "Operator (CalConnect member)",
+    role: "Operator",
     href: externalLinks.ribose,
     logo: {
       light: "/assets/logos/ribose.svg",
       dark: "/assets/logos/ribose.svg",
     },
+    invertInDark: true,
   },
 ];

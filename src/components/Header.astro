@@ -1,30 +1,24 @@
 ---
 import NavBar from './NavBar.astro';
 import ThemeControl from './ThemeControl.astro';
-import { siteTitle } from '../config';
 ---
 
-<header class="border-b border-line bg-surface/95 backdrop-blur sticky top-0 z-40">
+<header class="border-b border-rule bg-paper/95 backdrop-blur sticky top-0 z-40">
   <div class="container-page flex items-center justify-between h-[var(--header-height)] gap-6">
-    <a href="/" rel="prefetch-intent" class="flex items-center gap-3 group" title="Back to home">
+    <a href="/" rel="prefetch-intent" class="flex items-center gap-3 group" title="ISO 24229 register — home">
       <img
-        src="/assets/logos/iso-red.svg"
-        alt="ISO"
-        width="40"
-        height="40"
+        src="/assets/logos/iso-24229-logo.svg"
+        alt="ISO 24229 logomark"
+        width="36"
+        height="36"
         class="block"
       />
-      <div class="flex flex-col leading-tight">
-        <span class="font-semibold text-lg tracking-tight">
-          ISO 24229
-          <span class="text-ink-subtle font-normal">Registry</span>
-        </span>
-        <span class="text-xs text-ink-subtle">
-          {siteTitle}
-        </span>
-      </div>
+      <span class="font-display text-xl font-semibold tracking-tight leading-none">
+        ISO 24229
+        <span class="text-ink-subtle font-normal italic">Registry</span>
+      </span>
     </a>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-1">
       <NavBar />
       <ThemeControl />
     </div>
