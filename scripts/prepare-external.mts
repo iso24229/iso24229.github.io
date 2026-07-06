@@ -85,14 +85,25 @@ async function prepareFromLocal(source: ExternalSource): Promise<boolean> {
   return true;
 }
 
+/**
+ * Returns the access token to use for cloning private sources, if any.
+ *
+ * Preference order:
+ * 1. ISO24229_CI_PAT_TOKEN — PAT scoped to read the iso24229 org's
+ *    private repos. Set as a secret in the website repo's CI.
+ * 2. GITHUB_TOKEN — fallback for environments where the default
+ *    Actions token has cross-repo read access (e.g. via org settings).
+ */
+function privateSourceToken(): string | undefined {
+  return process.env.ISO24229_CI_PAT_TOKEN ?? process.env.GITHUB_TOKEN;
+}
+
 function prepareFromClone(source: ExternalSource): void {
   const dest = join(CACHE_ROOT, source.name);
+  const token = privateSourceToken();
   const url =
-    source.private && process.env.GITHUB_TOKEN
-      ? source.repoUrl.replace(
-          'https://',
-          `https://x-access-token:${process.env.GITHUB_TOKEN}@`,
-        )
+    source.private && token
+      ? source.repoUrl.replace('https://', `https://x-access-token:${token}@`)
       : source.repoUrl;
 
   execFileSync(
