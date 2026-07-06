@@ -5,23 +5,56 @@ import { externalLinks } from '../config';
 ---
 
 <Layout title="About">
+  {/* ── Hero: what the standard is ─────────────────────────── */}
+  <section class="mb-16">
+    <p class="eyebrow mb-4">About</p>
+    <h1 class="max-w-4xl mb-6">The international standard for written language conversion systems.</h1>
+    <p class="text-lg text-ink-muted max-w-2xl leading-relaxed">
+      ISO 24229 gives every system that converts text from one script or spelling to another — transliteration, transcription, romanisation, and orthographic reform alike — a single, unambiguous identifier. This website is the official register, operated by CalConnect as Registration Authority, designated by ISO.
+    </p>
+  </section>
+
+  {/* ── The standard ────────────────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">The standard</p>
+    <h2 class="max-w-2xl mb-6">Codes for written language conversion systems.</h2>
+    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
+      <p>
+        ISO 24229 covers every type of written language conversion: transliteration (sign-by-sign, typically reversible), transcription (sound-by-sign, typically not), romanisation (any non-Latin script into Latin), and orthographic reform (same script, different spelling rules).
+      </p>
+      <p>
+        Each system receives a four-segment colon-separated code — for example <span class="font-mono text-sm">acadsin:zho-Hani:Latn:2002</span> — that cites ISO 639 for the language and ISO 15924 for the script, then adds the authority identifier and an identifying segment (typically a year or standard number). The code is designed to be machine-readable, human-parseable, and globally unambiguous.
+      </p>
+    </div>
+  </section>
+
+  {/* ── Registration Authority ──────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Registration Authority</p>
+    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
+      <p>
+        <a href={externalLinks.calconnect} class="underline">CalConnect</a> is the Registration Authority (ISO 24229/RA), designated by ISO. The register is operated by <a href={externalLinks.ribose} class="underline">Ribose</a>. An Advisory Group (ISO 24229/AG) of 4–12 experts — including a representative of ISO/TC 46 — reviews submissions at its bimonthly meeting. As a rule, decisions are made by consensus; if a vote is needed, a decision is approved when more than two-thirds of members vote for it.
+      </p>
+    </div>
+  </section>
+
   {/* ── Logo + philosophy ──────────────────────────────────── */}
-  <section class="mb-20">
-    <div class="flex flex-col md:flex-row items-start gap-12 mb-12">
+  <section class="rule-section">
+    <div class="flex flex-col md:flex-row items-start gap-12 mb-10">
       <img
         src="/assets/logos/iso-24229-logo.svg"
         alt="ISO 24229 logomark"
-        width="180"
-        height="180"
-        class="shrink-0 w-32 md:w-48 h-auto"
+        width="160"
+        height="160"
+        class="shrink-0 w-28 md:w-40 h-auto"
       />
       <div>
-        <p class="eyebrow mb-4">About</p>
-        <h1 class="mb-0">An atlas of refraction.</h1>
+        <p class="eyebrow mb-3">The logomark</p>
+        <h2 class="max-w-xl">An atlas of refraction.</h2>
       </div>
     </div>
 
-    <div class="max-w-2xl space-y-6 text-lg text-ink-muted leading-relaxed">
+    <div class="max-w-2xl space-y-6 text-ink-muted leading-relaxed">
       <p>
         At the centre of the ISO 24229 logomark sits a circle divided into two halves. This is the semantic core — the invariant meaning that exists before any script is chosen, before any pen meets paper. Meaning, in its essence, does not change when it crosses from one writing system to another. The concept of <em>water</em> is the same whether written <span class="font-mono">水</span> in Hanzi, <span class="font-mono">мөрөн</span> in Cyrillic, or <span class="font-mono">usma</span> in Latin. The two halves of the core acknowledge that meaning is always dual: it lives both in the intention of the writer and in the comprehension of the reader, and these two are never quite identical.
       </p>
@@ -31,15 +64,11 @@ import { externalLinks } from '../config';
       </p>
 
       <p>
-        Both the semantic centre and the expressive rings are set at an angle — a rotation governed by the golden ratio. This is not decoration. It is the logomark's deepest statement: meaning and its written expression are never perfectly aligned. They drift. The angle between them is the inherent bias of every transliteration, every transcription, every romanization. When Arabic flows into Latin, when Cyrillic flows into Latin, when Hanzi flows into Pinyin, something is preserved and something is refracted — bent slightly, like light passing through water.
+        Both the semantic centre and the expressive rings are set at an angle — a rotation governed by the golden ratio. This is not decoration. It is the logomark's deepest statement: meaning and its written expression are never perfectly aligned. They drift. The angle between them is the inherent bias of every transliteration, every transcription, every romanisation. When Arabic flows into Latin, when Cyrillic flows into Latin, when Hanzi flows into Pinyin, something is preserved and something is refracted — bent slightly, like light passing through water.
       </p>
 
       <p>
-        ISO 24229 exists to make this refraction <strong>visible</strong>.
-      </p>
-
-      <p>
-        Every code in the register is a named, identifiable conversion path. By assigning each system a unique code, the standard transforms an otherwise opaque transformation into an auditable, citable act. A reader who encounters a romanised name in a library catalogue can, by looking up its ISO 24229 code, learn precisely which conversion system was applied, which authority defined it, and what drift it introduces. The register does not eliminate drift — that is impossible — but it makes drift <em>transparent</em>.
+        ISO 24229 exists to make this refraction <strong>visible</strong>. Every code in the register is a named, identifiable conversion path. By assigning each system a unique code, the standard transforms an otherwise opaque transformation into an auditable, citable act. The register does not eliminate drift — that is impossible — but it makes drift <em>transparent</em>.
       </p>
 
       <p>
@@ -62,30 +91,6 @@ import { externalLinks } from '../config';
       </p>
       <p>
         Where gold and blue meet, at the angle of the golden ratio, the two colours do not merge into green. They hold their distinction. This is intentional: meaning and expression are not the same thing, and ISO 24229's purpose is to keep them legibly separate — to ensure that every reader can tell which is which, even when they are tightly interleaved.
-      </p>
-    </div>
-  </section>
-
-  {/* ── The standard ────────────────────────────────────────── */}
-  <section class="rule-section">
-    <p class="eyebrow mb-3">The standard</p>
-    <h2 class="max-w-2xl mb-6">Codes for written language conversion systems.</h2>
-    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
-      <p>
-        ISO 24229 is the international standard for codes that identify written language conversion systems. It covers every type of conversion: transliteration (sign-by-sign, typically reversible), transcription (sound-by-sign, typically not), romanisation (any non-Latin script into Latin), and orthographic reform (same script, different spelling rules).
-      </p>
-      <p>
-        Each system receives a four-segment colon-separated code — for example <span class="font-mono text-sm">acadsin:zho-Hani:Latn:2002</span> — that cites ISO 639 for the language and ISO 15924 for the script, then adds the authority identifier and an identifying segment (typically a year or standard number). The code is designed to be machine-readable, human-parseable, and globally unambiguous.
-      </p>
-    </div>
-  </section>
-
-  {/* ── The Registration Authority ──────────────────────────── */}
-  <section class="rule-section">
-    <p class="eyebrow mb-3">Registration Authority</p>
-    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
-      <p>
-        <a href={externalLinks.calconnect} class="underline">CalConnect</a> is the Registration Authority (ISO 24229/RA), designated by ISO. The register is operated by <a href={externalLinks.ribose} class="underline">Ribose</a>. An Advisory Group (ISO 24229/AG) of 4–12 experts — including a representative of ISO/TC 46 — reviews submissions at its bimonthly meeting. As a rule, decisions are made by consensus; if a vote is needed, a decision is approved when more than two-thirds of members vote for it.
       </p>
     </div>
   </section>
