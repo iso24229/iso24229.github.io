@@ -1,11 +1,28 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { externalLinks, repoUrls } from '../../config';
+import TableOfContents from '../../components/TableOfContents.astro';
+const tocItems = [{ "id": "ra",
+  "label": "A.1 Registration authority" },
+  { "id": "ag",
+  "label": "A.2 Advisory group" },
+  { "id": "operations-authorities",
+  "label": "A.3 Authority operations" },
+  { "id": "operations-systems",
+  "label": "A.4 System operations" },
+  { "id": "reservation",
+  "label": "A.5 Reservation" },
+  { "id": "advice",
+  "label": "A.6 Advice" }];
 ---
 
 <Layout title="Annex A — Terms of Reference">
   <p class="text-sm text-ink-subtle"><a href="/specs">← Specification</a></p>
   <h1 class="text-4xl font-semibold tracking-tight mb-2">Annex A — Terms of Reference</h1>
+
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
   <p class="text-sm text-ink-subtle mb-8">
     The Terms of Reference for the ISO 24229 Registration Authority, per Annex A of the <a href={externalLinks.iso24229Standard} class="underline">published standard</a>.
   </p>
@@ -141,4 +158,6 @@ import { externalLinks, repoUrls } from '../../config';
       authorised persons (also an operational choice for accountability).
     </p>
   </section>
+    </div>
+  </div>
 </Layout>

@@ -1,12 +1,30 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Card from '../../components/Card.astro';
 import { externalLinks } from '../../config';
+import TableOfContents from '../../components/TableOfContents.astro';
+const tocItems = [{ "id": "ra",
+  "label": "A.1 Registration Authority" },
+  { "id": "ag",
+  "label": "A.2 Advisory Group" },
+  { "id": "operations-authorities",
+  "label": "A.3 Authority operations" },
+  { "id": "operations-systems",
+  "label": "A.4 System operations" },
+  { "id": "reservation",
+  "label": "A.5 Reservation" },
+  { "id": "advice",
+  "label": "A.6 Advice" },
+  { "id": "lifecycle",
+  "label": "Lifecycle summary" }];
 ---
 
 <Layout title="Governance and lifecycle">
   <p class="text-sm text-ink-subtle mb-2"><a href="/specs">← Specification</a></p>
   <h1 class="text-4xl font-semibold tracking-tight mb-6">Governance and lifecycle</h1>
+
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
 
   <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
     How the register is managed: who has authority, how decisions are made, how codes enter and leave the register, and what happens to retired codes. This page covers all of Annex A of <a href={externalLinks.iso24229Standard} class="underline">ISO 24229</a>.
@@ -181,7 +199,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── Lifecycle summary ───────────────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="lifecycle" class="rule-section mb-12">
     <p class="eyebrow mb-3">Lifecycle summary</p>
     <h2 class="mb-6">The complete lifecycle of a code.</h2>
     <div class="max-w-2xl p-6 border border-rule rounded bg-paper-raised">
@@ -208,4 +226,6 @@ import { externalLinks } from '../../config';
   </section>
 
   <p class="mt-12 text-sm"><a href="/specs" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">← Back to Specification</a></p>
+    </div>
+  </div>
 </Layout>

@@ -2,6 +2,17 @@
 import Layout from '../../layouts/Layout.astro';
 import GovernanceDiagram from '../../components/GovernanceDiagram.astro';
 import { externalLinks } from '../../config';
+import TableOfContents from '../../components/TableOfContents.astro';
+const tocItems = [{ "id": "purpose",
+  "label": "Purpose" },
+  { "id": "scope",
+  "label": "Scope" },
+  { "id": "governance",
+  "label": "Governance" },
+  { "id": "logomark",
+  "label": "The logomark" },
+  { "id": "colours",
+  "label": "The colours" }];
 ---
 
 <Layout title="About">
@@ -14,8 +25,12 @@ import { externalLinks } from '../../config';
     </p>
   </section>
 
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
+
   {/* ── Purpose ────────────────────────────────────────────────── */}
-  <section class="rule-section">
+  <section id="purpose" class="rule-section">
     <p class="eyebrow mb-3">Purpose</p>
     <h2 class="max-w-2xl mb-6">Why this standard exists.</h2>
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
@@ -32,7 +47,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── Scope ──────────────────────────────────────────────────── */}
-  <section class="rule-section">
+  <section id="scope" class="rule-section">
     <p class="eyebrow mb-3">Scope</p>
     <h2 class="max-w-2xl mb-6">What the standard defines.</h2>
     <ul class="max-w-2xl space-y-3 text-ink-muted leading-relaxed list-disc pl-6">
@@ -45,7 +60,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── Governance ─────────────────────────────────────────────── */}
-  <section class="rule-section">
+  <section id="governance" class="rule-section">
     <p class="eyebrow mb-3">Governance</p>
     <h2 class="max-w-2xl mb-6">How the register is managed.</h2>
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed mb-8">
@@ -60,7 +75,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── Logo + philosophy ──────────────────────────────────── */}
-  <section class="rule-section">
+  <section id="logomark" class="rule-section">
     <div class="flex flex-col md:flex-row items-start gap-12 mb-10">
       <img
         src="/assets/logos/iso-24229-logo.svg"
@@ -98,7 +113,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── Colours ──────────────────────────────────────────────── */}
-  <section class="rule-section">
+  <section id="colours" class="rule-section">
     <p class="eyebrow mb-3">The colours</p>
     <h2 class="max-w-2xl mb-6">Gold and blue, held in tension.</h2>
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
@@ -110,4 +125,6 @@ import { externalLinks } from '../../config';
       </p>
     </div>
   </section>
+    </div>
+  </div>
 </Layout>

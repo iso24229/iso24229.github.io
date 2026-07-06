@@ -1,12 +1,32 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Card from '../../components/Card.astro';
 import { externalLinks } from '../../config';
+import TableOfContents from '../../components/TableOfContents.astro';
+const tocItems = [{ "id": "common",
+  "label": "Common data model" },
+  { "id": "authority",
+  "label": "Authority model" },
+  { "id": "system",
+  "label": "Conversion system model" },
+  { "id": "spelling",
+  "label": "Spelling system model" },
+  { "id": "relations",
+  "label": "Relations" },
+  { "id": "code-status",
+  "label": "Code status" },
+  { "id": "system-status",
+  "label": "System status" },
+  { "id": "entity-relationships",
+  "label": "Entity relationships" }];
 ---
 
 <Layout title="Data model">
   <p class="text-sm text-ink-subtle mb-2"><a href="/specs">← Specification</a></p>
   <h1 class="text-4xl font-semibold tracking-tight mb-4">Data model</h1>
+
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
   <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
     The conceptual entities, their attributes, and their relationships as defined in §6 of ISO 24229. Every entry in the register conforms to one of these models.
   </p>
@@ -322,7 +342,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── Entity relationships overview ───────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="entity-relationships" class="rule-section mb-12">
     <p class="eyebrow mb-3">Entity relationships</p>
     <h2 class="mb-4">How the entities connect.</h2>
     <div class="max-w-2xl p-6 border border-rule rounded bg-paper-raised font-mono text-sm leading-relaxed">
@@ -337,4 +357,6 @@ import { externalLinks } from '../../config';
   </section>
 
   <p class="mt-12 text-sm"><a href="/specs" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">← Back to Specification</a></p>
+    </div>
+  </div>
 </Layout>
