@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import RegistrationBadge from '../../../components/RegistrationBadge.astro';
 import { getCollection } from 'astro:content';
 
 const authorities = (await getCollection('authority'))
@@ -26,13 +27,16 @@ const authorities = (await getCollection('authority'))
           <li>
             <a
               href={`/register/authority/${a.id}`}
-              class="flex items-baseline justify-between py-4 hover:text-accent"
+              class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-4 hover:text-accent"
             >
               <span>
                 <span class="font-medium text-lg">{String(a.data.name ?? a.id)}</span>
                 <span class="font-mono text-xs text-ink-subtle ml-3">{String(a.data.authorityIdentifier ?? a.id)}</span>
               </span>
-              <span class="text-sm text-ink-muted">→</span>
+              <span class="hidden sm:block text-sm text-ink-subtle text-right">→</span>
+              <span class="justify-self-end">
+                <RegistrationBadge status={a.data.registrationStatus} />
+              </span>
             </a>
           </li>
         ))}

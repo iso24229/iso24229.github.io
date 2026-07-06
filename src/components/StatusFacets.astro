@@ -1,0 +1,61 @@
+---
+import {
+  REGISTRATION_STATUS_ORDER,
+  REGISTRATION_STATUS_META,
+  isRegistrationStatus,
+  type RegistrationStatus,
+} from '../domain/registration/RegistrationStatus';
+
+interface Props {
+  itemClass: string;
+  counts: Map<RegistrationStatus, number>;
+  total: number;
+  activeStatus?: RegistrationStatus | null;
+}
+
+const { itemClass, counts, total, activeStatus = null } = Astro.props;
+
+const facets: Array<{ key: RegistrationStatus | 'all'; label: string; count: number; active: boolean }> = [
+  {
+    key: 'all',
+    label: 'All',
+    count: total,
+    active: activeStatus === null,
+  },
+  ...REGISTRATION_STATUS_ORDER
+    .filter((s) => (counts.get(s) ?? 0) > 0)
+    .map((s) => ({
+      key: s,
+      label: REGISTRATION_STATUS_META[s].label,
+      count: counts.get(s) ?? 0,
+      active: activeStatus === s,
+    })),
+];
+
+function hrefFor(key: RegistrationStatus | 'all'): string {
+  if (key === 'all') return `/register/${itemClass}/p/1`;
+  return `/register/${itemClass}/status/${key}/p/1`;
+}
+---
+<nav aria-label="Filter by registration status" class="mb-8">
+  <p class="eyebrow mb-3">Registration status</p>
+  <ul class="flex flex-wrap gap-x-1 gap-y-1.5 -mx-1">
+    {facets.map((f) => (
+      <li>
+        <a
+          href={hrefFor(f.key)}
+          aria-current={f.active ? 'page' : undefined}
+          class:list={[
+            'inline-flex items-baseline gap-2 px-3 py-1.5 rounded-sm text-sm transition-colors',
+            f.active
+              ? 'bg-ink text-paper'
+              : 'text-ink-muted hover:text-ink hover:bg-paper-raised',
+          ]}
+        >
+          <span class="font-medium">{f.label}</span>
+          <span class:list={['font-mono text-xs', f.active ? 'text-paper/70' : 'text-ink-subtle']}>{f.count}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>

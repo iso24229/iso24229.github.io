@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import RegistrationBadge from '../../../components/RegistrationBadge.astro';
 import { getCollection } from 'astro:content';
 import { JsonLdExporter } from '../../../semantic/JsonLdExporter';
 import { itemFactories } from '../../../domain/factories';
@@ -40,6 +41,10 @@ const persons = (data.authorisedPersons ?? []) as Array<{ name: string; role: st
   <p class="text-sm text-ink-subtle mb-2">
     <a href="/register/authority">Authorities</a> →
   </p>
+  <div class="flex flex-wrap items-center gap-2 mb-3">
+    <RegistrationBadge status={data.registrationStatus} />
+    <span class="badge">authority</span>
+  </div>
   <h1 class="text-4xl font-semibold tracking-tight mb-2">{authority.displayName}</h1>
   <p class="font-mono text-ink-subtle mb-6">@{authority.authorityIdentifier}</p>
 

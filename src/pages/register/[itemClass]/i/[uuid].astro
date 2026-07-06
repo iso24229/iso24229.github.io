@@ -1,6 +1,7 @@
 ---
 import Layout from '../../../../layouts/Layout.astro';
 import LifecycleGraph from '../../../../components/LifecycleGraph.astro';
+import RegistrationBadge from '../../../../components/RegistrationBadge.astro';
 import { getCollection } from 'astro:content';
 import type { ItemClassSlug } from '../../../../domain/items/RegisterItem';
 import type { SystemCode } from '../../../../domain/items/SystemCode';
@@ -147,8 +148,9 @@ function fieldValue(key: string): string {
   {isSystemCode && codeSegments && (
     <section class="mb-12">
       <div class="flex flex-wrap items-center gap-2 mb-4">
-        <span class:list={['badge', `badge-${String(entry.data.codeStatus ?? 'stable')}`]}>{String(entry.data.codeStatus ?? 'stable')}</span>
-        <span class="badge">{String(entry.data.systemStatus ?? '')}</span>
+        <RegistrationBadge status={entry.data.registrationStatus} />
+        <span class="badge">code: {String(entry.data.codeStatus ?? '—')}</span>
+        <span class="badge">system: {String(entry.data.systemStatus ?? '—')}</span>
       </div>
 
       <p class="font-mono text-2xl md:text-4xl lg:text-5xl break-all leading-tight mb-4">
@@ -170,11 +172,10 @@ function fieldValue(key: string): string {
   {/* ── Non-system-code: standard hero ────────────────────────── */}
   {!isSystemCode && (
     <section class="mb-10">
-      {isAuthority && (
-        <div class="flex flex-wrap items-center gap-2 mb-3">
-          <span class="badge">authority</span>
-        </div>
-      )}
+      <div class="flex flex-wrap items-center gap-2 mb-3">
+        <RegistrationBadge status={entry.data.registrationStatus} />
+        {isAuthority && <span class="badge">authority</span>}
+      </div>
       <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mb-2">{String(entry.data.name ?? entry.data.code ?? uuid)}</h1>
       {!isAuthority && (
         <p class="font-mono text-sm text-ink-subtle">{uuid}</p>
