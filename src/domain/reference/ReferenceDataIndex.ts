@@ -1,6 +1,7 @@
 /**
- * Loads ISO 639 and ISO 15924 reference data from the pinned submodules
- * under `external/`. Builds in-memory maps for O(1) code lookups.
+ * Loads ISO 639 and ISO 15924 reference data from the prepared cache
+ * (see `external-sources.yaml` and `scripts/prepare-external.mts`).
+ * Builds in-memory maps for O(1) code lookups.
  *
  * Adding a new reference dataset = adding a new loader method here.
  * Callers (the validator page, schema validators, the rendering layer)
@@ -9,9 +10,10 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse } from 'yaml';
+import { resolveSourcePath } from '../../config/external-sources';
 
-const ISO639_PATH = 'external/iso639-data';
-const ISO15924_PATH = 'external/iso15924-data/codes';
+const ISO639_PATH = resolveSourcePath('iso639-data');
+const ISO15924_PATH = join(resolveSourcePath('iso15924-data'), 'codes');
 
 export interface Iso639Entry {
   readonly part: '639-1' | '639-2' | '639-3' | '639-5';

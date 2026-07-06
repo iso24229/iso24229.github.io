@@ -1,6 +1,0 @@
-[submodule "external/iso639-data"]
-	path = external/iso639-data
-	url = https://github.com/iso24229/iso639-data.git
-[submodule "external/iso15924-data"]
-	path = external/iso15924-data
-	url = https://github.com/iso24229/iso15924-data.git
