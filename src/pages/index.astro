@@ -24,7 +24,7 @@ import { externalLinks } from '../config';
     </p>
 
     <p class="mt-5 text-base text-ink-muted max-w-2xl leading-relaxed">
-      It is the third member of a trio with <a href={externalLinks.iso639Standard}>ISO 639</a> (language) and <a href={externalLinks.iso15924Standard}>ISO 15924</a> (script): together they let you identify <em>any</em> written form of any language, and the rules for converting between forms.
+      ISO 24229 composes with <a href={externalLinks.iso639Standard}>ISO 639</a> (language) and <a href={externalLinks.iso15924Standard}>ISO 15924</a> (script) to give every written form of any language an unambiguous identifier — and the rules for converting between forms.
     </p>
 
     <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
@@ -58,56 +58,71 @@ import { externalLinks } from '../config';
     </p>
   </section>
 
-  {/* ── Code anatomy ────────────────────────────────────────── */}
+  {/* ── Code anatomy: SVG diagram ────────────────────────────── */}
   <section class="rule-section">
-    <p class="eyebrow mb-3">Anatomy of a code</p>
-    <div class="p-6 md:p-8 border border-rule rounded bg-paper-raised">
-      <p class="font-mono text-xl md:text-2xl lg:text-3xl break-all leading-tight">
-        <span class="text-gold-deep dark:text-gold-bright">UN</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">ara-Arab</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Latn</span><span class="text-ink-subtle">:</span><span>2017</span>
-      </p>
-      <p class="mt-4 text-sm text-ink-muted max-w-2xl">
-        United Nations romanization of Arabic, adopted 2017.
-        Four colon-separated segments:
-        <strong>authority</strong> · <strong>source</strong> · <strong>target</strong> · <strong>identifying</strong>.
+    <p class="eyebrow mb-3">What a code is made of</p>
+    <h2 class="max-w-2xl mb-3">One code, four segments, three standards.</h2>
+    <p class="text-ink-muted max-w-2xl mb-8 leading-relaxed">
+      A single ISO 24229 code is built from identifiers you may already know:
+      ISO 639 for languages, ISO 15924 for scripts. ISO 24229 is the standard
+      that defines how they combine.
+    </p>
+
+    <div class="border border-rule rounded bg-paper-raised p-6 md:p-10">
+      <svg viewBox="0 0 760 280" class="w-full h-auto" role="img" aria-label="Anatomy of the ISO 24229 code acadsin:zho-Hani:Latn:2002">
+        <style>
+          .code-seg { font-family: var(--font-mono, monospace); font-size: 28px; font-weight: 500; }
+          .code-colon { fill: var(--color-ink-subtle, #888); font-family: var(--font-mono, monospace); font-size: 28px; }
+          .lbl { font-family: var(--font-sans, sans-serif); font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+          .lbl-meta { font-family: var(--font-sans, sans-serif); font-size: 11px; }
+          .arrow { stroke: var(--color-rule, #ccc); stroke-width: 1; fill: none; }
+        </style>
+
+        {/* The code itself, centered */}
+        <text x="380" y="140" text-anchor="middle" class="code-seg" fill="var(--color-ink, #111)">
+          <tspan fill="var(--color-gold-deep, #a86513)" class="code-seg">acadsin</tspan><tspan class="code-colon">:</tspan><tspan fill="var(--color-blue, #5374b9)" class="code-seg">zho-Hani</tspan><tspan class="code-colon">:</tspan><tspan fill="var(--color-blue, #5374b9)" class="code-seg">Latn</tspan><tspan class="code-colon">:</tspan><tspan fill="var(--color-ink, #111)" class="code-seg">2002</tspan>
+        </text>
+
+        {/* Bracket + label for acadsin (authority) */}
+        <path d="M 145 156 L 145 168 L 215 168" class="arrow"/>
+        <text x="180" y="190" text-anchor="middle" class="lbl" fill="var(--color-gold-deep, #a86513)">Authority</text>
+        <text x="180" y="206" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-muted, #666)">ISO 24229/AG</text>
+        <text x="180" y="222" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-subtle, #888)">Academia Sinica</text>
+
+        {/* Bracket + label for zho-Hani (source spelling) */}
+        <path d="M 290 156 L 290 168 L 365 168" class="arrow"/>
+        <text x="328" y="190" text-anchor="middle" class="lbl" fill="var(--color-blue, #5374b9)">Source spelling</text>
+        <text x="328" y="206" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-muted, #666)">zho — ISO 639</text>
+        <text x="328" y="222" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-subtle, #888)">Hani — ISO 15924</text>
+
+        {/* Bracket + label for Latn (target spelling) */}
+        <path d="M 450 156 L 450 168 L 525 168" class="arrow"/>
+        <text x="488" y="190" text-anchor="middle" class="lbl" fill="var(--color-blue, #5374b9)">Target spelling</text>
+        <text x="488" y="206" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-muted, #666)">Latn — ISO 15924</text>
+        <text x="488" y="222" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-subtle, #888)">(script only)</text>
+
+        {/* Bracket + label for 2002 (identifying) */}
+        <path d="M 605 156 L 605 168 L 675 168" class="arrow"/>
+        <text x="640" y="190" text-anchor="middle" class="lbl" fill="var(--color-ink-muted, #666)">Identifying</text>
+        <text x="640" y="206" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-subtle, #888)">Year of adoption</text>
+
+        {/* Top label: standard */}
+        <text x="380" y="50" text-anchor="middle" class="lbl" fill="var(--color-ink-subtle, #888)">ISO 24229 code</text>
+        <line x1="220" y1="62" x2="540" y2="62" class="arrow"/>
+      </svg>
+
+      <p class="mt-6 text-sm text-ink-muted leading-relaxed max-w-2xl">
+        United Nations romanization of Arabic, adopted 2017, would be encoded
+        as <a href="/register/system-code/i/acadsin_zho-Hani_Latn_2002" class="font-mono">acadsin:zho-Hani:Latn:2002</a>.
+        Each segment carries independent, verifiable meaning.
       </p>
     </div>
+
     <p class="mt-5">
       <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">
         Read the full code structure →
       </a>
     </p>
-  </section>
-
-  {/* ── Trio ────────────────────────────────────────────────── */}
-  <section class="rule-section">
-    <p class="eyebrow mb-3">Where it sits</p>
-    <h2 class="max-w-2xl">Part three of a trilogy.</h2>
-    <div class="mt-8 grid gap-px bg-rule border border-rule rounded overflow-hidden md:grid-cols-3">
-      <div class="bg-paper p-6">
-        <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Step 1</p>
-        <p class="text-2xl font-semibold">
-          <a href={externalLinks.iso639Standard}>ISO 639</a>
-        </p>
-        <p class="text-sm text-ink-muted mt-1">identifies the <em>language</em></p>
-        <p class="mt-4 font-mono text-sm text-ink">zho — Chinese</p>
-      </div>
-      <div class="bg-paper p-6">
-        <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Step 2</p>
-        <p class="text-2xl font-semibold">
-          <a href={externalLinks.iso15924Standard}>ISO 15924</a>
-        </p>
-        <p class="text-sm text-ink-muted mt-1">identifies the <em>script</em></p>
-        <p class="mt-4 font-mono text-sm text-ink">Hani — Han (Hanzi)</p>
-      </div>
-      <div class="bg-paper-raised p-6">
-        <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Step 3</p>
-        <p class="text-2xl font-semibold">
-          <a href={externalLinks.iso24229Standard}>ISO 24229</a>
-        </p>
-        <p class="text-sm text-ink-muted mt-1">identifies the <em>conversion system</em></p>
-        <p class="mt-4 font-mono text-sm text-ink break-all">acadsin:zho-Hani:Latn:2002</p>
-      </div>
-    </div>
   </section>
 
   {/* ── Where to go next ─────────────────────────────────────── */}
