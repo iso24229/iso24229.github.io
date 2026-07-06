@@ -88,7 +88,7 @@ export interface OperatingAuthority {
 export const operatingAuthorities: OperatingAuthority[] = [
   {
     name: "CalConnect",
-    role: "Registration Authority co-operator",
+    role: "Registration Authority (ISO 24229/RA)",
     href: externalLinks.calconnect,
     logo: {
       light: "/assets/logos/calconnect-light.svg",
@@ -97,7 +97,7 @@ export const operatingAuthorities: OperatingAuthority[] = [
   },
   {
     name: "Ribose",
-    role: "Registration Authority co-operator",
+    role: "Operator (CalConnect member)",
     href: externalLinks.ribose,
     logo: {
       light: "/assets/logos/ribose.svg",

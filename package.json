@@ -6,6 +6,7 @@
     "prepare-external": "tsx scripts/prepare-external.mts",
     "prebuild": "tsx scripts/prepare-external.mts",
     "predev": "tsx scripts/prepare-external.mts",
+    "pretest": "tsx scripts/prepare-external.mts",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
