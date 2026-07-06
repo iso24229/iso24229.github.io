@@ -9,6 +9,8 @@ const tocItems = [{ "id": "purpose",
   "label": "Scope" },
   { "id": "governance",
   "label": "Governance" },
+  { "id": "uris",
+  "label": "URIs" },
   { "id": "logomark",
   "label": "The logomark" },
   { "id": "colours",
@@ -72,6 +74,28 @@ const tocItems = [{ "id": "purpose",
     <p class="mt-6 text-sm">
       <a href="/specs/governance" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Full governance and lifecycle →</a>
     </p>
+  </section>
+
+  {/* ── URIs ─────────────────────────────────────────────────── */}
+  <section id="uris" class="rule-section">
+    <p class="eyebrow mb-3">Identifiers</p>
+    <h2 class="max-w-2xl mb-6">A URN for every entry.</h2>
+    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
+      <p>
+        Every register entry has a canonical, location-independent identifier — a Uniform Resource Name issued under the <a href="https://www.rfc-editor.org/rfc/rfc5141" class="underline">RFC 5141</a> <span class="font-mono">urn:iso:</span> namespace. The URN is the machine-readable twin of the human-readable code; it is what citation systems, Linked Data consumers, and digital libraries should record.
+      </p>
+      <p>
+        The pattern is <span class="font-mono">urn:iso:24229:&lt;itemClass&gt;:&lt;localId&gt;</span>:
+      </p>
+      <div class="border border-rule rounded bg-paper-raised p-5 font-mono text-sm space-y-2">
+        <p><span class="text-gold-deep dark:text-gold-bright">urn:iso:24229:system</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">ahl:heb-Hebr:Latn:2011</span></p>
+        <p><span class="text-gold-deep dark:text-gold-bright">urn:iso:24229:authority</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">ahl</span></p>
+        <p><span class="text-gold-deep dark:text-gold-bright">urn:iso:24229:spelling</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">heb-Hebr</span></p>
+      </div>
+      <p>
+        Each system-code entry's URN embeds the four-segment colon-form code as its local identifier, so the URN and the code carry the same information in two forms. The code is what humans cite in prose; the URN is what machines record in metadata, RDF graphs, and catalogue records.
+      </p>
+    </div>
   </section>
 
   {/* ── Logo + philosophy ──────────────────────────────────── */}

@@ -1,60 +1,66 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { externalLinks } from '../../config';
 
-// Definitions taken from §3 of ISO 24229 (Terms and definitions), which
-// itself sources many terms from ISO 5127. Plain-language rephrasing;
-// canonical text is in the standard.
 const terms = [
   {
     term: 'script',
     def: 'A particular graphic representation or class of representations of a set of characters used to write one or more languages (ISO 5127). Each script has an ISO 15924 code.',
     examples: ['Latn (Latin)', 'Cyrl (Cyrillic)', 'Hani (Han / Hanzi / Kanji / Hanja)', 'Arab (Arabic)'],
+    note: null as string | null,
   },
   {
     term: 'spelling system',
     def: 'A set of rules governing the orthography of a language. Several languages have undergone orthographic reforms and thus have had multiple spelling systems over time.',
     examples: ['Indonesian pre-1972 orthography (extension: `pre1972`)', 'default orthography: `ind-Latn`'],
+    note: 'A bare ISO 15924 script code (e.g. `Latn`) is NOT a spelling system — it has no language. Bare scripts live in ISO 15924 reference data only.' as string | null,
   },
   {
     term: 'written language',
     def: 'A natural language realized through the writing of characters. Identified by combining an ISO 639 language code with an ISO 15924 script code.',
     examples: ['Chinese in Han script: `zho-Hani`', 'Arabic in Arabic script: `ara-Arab`'],
+    note: null,
   },
   {
     term: 'written language conversion',
     def: 'The process whereby one spelling system is converted into another. Includes script conversion (change of script) AND conversion within the same script (e.g. re-spelling a foreign name in your own alphabet, or applying a new orthography).',
     examples: ['Arabic-script Arabic → Latin (`ara-Arab → Latn`)', 'Same-script Serbian re-spelling'],
+    note: null,
   },
   {
     term: 'transliteration',
     def: 'A conversion that represents the characters of an alphabetical or syllabic writing system by the characters of a conversion alphabet. Typically sign-by-sign reversible.',
     examples: ['ISO 9 (Cyrillic → Latin): `ISO:Cyrl:Latn:9-1995`'],
+    note: null,
   },
   {
     term: 'transcription',
     def: 'A conversion whereby the sounds of a given language are noted by the system of signs of a conversion language. Typically not reversible sign-by-sign.',
     examples: ['Wade-Giles Chinese transcription: `Var:zho-Hani:Latn:WG-1912`'],
+    note: null,
   },
   {
     term: 'romanization',
     def: 'Script conversion from a non-Roman script to the Roman (Latin) script, by means of transliteration, transcription, or both.',
     examples: ['BGN/PCGN Chinese romanization: `BGN-PCGN:chn-Hans:Latn:1979`'],
+    note: null,
   },
   {
     term: 'written language conversion system',
     def: 'A set of rules for written language conversion. Each system has a unique ISO 24229 code.',
     examples: ['`acadsin:zho-Hani:Latn:2002` — Academia Sinica Tongyong Pinyin'],
+    note: null,
   },
   {
     term: 'conversion system authority',
     def: 'A competent authority that creates, publishes, and/or manages written language conversion systems. Has an alphabetic identifier (3–16 chars).',
     examples: ['`UN` — United Nations', '`BGN-PCGN` — BGN/PCGN joint system', '`ALA-LC` — American Library Association / Library of Congress'],
+    note: null,
   },
   {
     term: 'Varia authority (Var)',
     def: 'A special authority managed by the Advisory Group for systems that need representation but do not have a clear extant authority.',
     examples: ['`Var:zho-Hani:Latn:WG-1912` — Wade-Giles Chinese transcription'],
+    note: null,
   },
 ];
 ---
@@ -62,28 +68,39 @@ const terms = [
 <Layout title="Glossary">
   <p class="text-sm text-ink-subtle"><a href="/learn">← Learn</a></p>
   <h1 class="text-4xl font-semibold tracking-tight mb-2">Glossary</h1>
-  <p class="text-sm text-ink-subtle mb-8">
-    Definitions from §3 of ISO 24229, which itself sources many terms from
-    ISO 5127.
+  <p class="text-sm text-ink-subtle mb-10 max-w-2xl leading-relaxed">
+    Definitions from §3 of ISO 24229, which itself sources many terms from ISO 5127. Examples and notes are editorial, intended to make the abstract definitions concrete.
   </p>
 
   <dl class="max-w-3xl">
-    {
-      terms.map((t) => (
-        <div class="border-t border-line py-6">
-          <dt class="text-xl font-semibold">{t.term}</dt>
-          <dd class="mt-3">
-            <p class="text-ink-muted">{t.def}</p>
-            {t.examples.length > 0 && (
-              <ul class="mt-3 space-y-1">
+    {terms.map((t, i) => (
+      <div class="border-t border-rule py-8">
+        <dt class="flex items-baseline gap-4 mb-3">
+          <span class="font-mono text-xs text-ink-subtle tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+          <span class="font-display text-xl md:text-2xl font-semibold tracking-[-0.018em] text-ink">{t.term}</span>
+        </dt>
+        <dd class="pl-8">
+          <p class="text-ink leading-relaxed max-w-2xl">{t.def}</p>
+          {t.examples.length > 0 && (
+            <div class="mt-5 border-l-2 border-gold/40 dark:border-gold-bright/40 pl-4">
+              <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Examples</p>
+              <ul class="space-y-1">
                 {t.examples.map((ex) => (
-                  <li class="text-sm font-mono text-ink-muted">{ex}</li>
+                  <li class="text-sm text-ink-muted leading-relaxed">
+                    <span class="font-mono text-ink break-all">{ex}</span>
+                  </li>
                 ))}
               </ul>
-            )}
-          </dd>
-        </div>
-      ))
-    }
+            </div>
+          )}
+          {t.note && (
+            <div class="mt-5 border-l-2 border-blue/40 dark:border-blue-bright/40 pl-4">
+              <p class="eyebrow text-blue dark:text-blue-bright mb-2">Note</p>
+              <p class="text-sm text-ink-muted leading-relaxed max-w-2xl">{t.note}</p>
+            </div>
+          )}
+        </dd>
+      </div>
+    ))}
   </dl>
 </Layout>

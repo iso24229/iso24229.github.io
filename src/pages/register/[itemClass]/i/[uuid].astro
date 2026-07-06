@@ -13,6 +13,7 @@ import { externalLinks, repoUrls } from '../../../../config';
 import type { GetStaticPaths, InferGetStaticParamsType, InferGetStaticPropsType } from 'astro';
 
 interface EntryLike { id: string; data: Record<string, unknown>; }
+interface Example { input: string; output: string; remarks?: string | null }
 
 export const getStaticPaths = (async () => {
   const all = await Promise.all(
@@ -44,45 +45,37 @@ const fields = mapSchema(schema, ([k, t]) => ({ key: k, title: titleOf(k, t), ty
 
 const isSystemCode = itemClass === 'system-code';
 const isAuthority = itemClass === 'authority';
+const isSpellingSystem = itemClass === 'spelling-system';
 
-// System-code specific rendering data
-let codeSegments: readonly [string, string, string, string] | null = null;
-let authorityName = '';
-let authorityHref = '';
-let graphNodes: any[] = [];
-let graphEdges: any[] = [];
-let relatedSystems: Array<{ uuid: string; type: string; targetSystem: string }> = [];
-
-if (isSystemCode) {
-  const code = String(entry.data.code ?? '');
-  const segs = code.split(':');
-  if (segs.length === 4) {
-    codeSegments = segs as [string, string, string, string];
-  }
-
-  // Build index for relations and lookups
-  type RawEntry = { id: string; data: unknown };
-  const index = await RegisterIndex.load(async (slug) => {
-    const coll = (await getCollection(slug as Parameters<typeof getCollection>[0])) as unknown as RawEntry[];
-    return coll.map((c) => ({ id: c.id, data: c.data as Record<string, unknown> }));
-  });
-  const sc = index.byUuid<SystemCode>('system-code', uuid!);
-  if (sc) {
-    const auth = index.authorityOf(sc);
-    if (auth) {
-      authorityName = auth.name;
-      authorityHref = `/register/authority/${auth.uuid}`;
+// Helpers --------------------------------------------------------------
+function refId(v: unknown): string | null {
+  if (v == null) return null;
+  if (typeof v === 'string') return v;
+  if (typeof v === 'object') {
+    const obj = v as Record<string, unknown>;
+    const direct = obj.id ?? obj.uuid ?? obj.$ref ?? obj.slug;
+    if (typeof direct === 'string') return direct;
+    if (obj.data && typeof obj.data === 'object') {
+      const inner = (obj.data as Record<string, unknown>);
+      const id = inner.id ?? inner.uuid ?? inner.$ref;
+      if (typeof id === 'string') return id;
     }
-    const g = buildLifecycleGraph(index, sc);
-    graphNodes = g.nodes;
-    graphEdges = g.edges;
   }
+  return null;
+}
+
+function refIds(v: unknown): string[] {
+  if (v == null) return [];
+  if (Array.isArray(v)) {
+    return v.map(refId).filter((x): x is string => x !== null);
+  }
+  const single = refId(v);
+  return single ? [single] : [];
 }
 
 function titleCaseLabel(s: string): string {
-  // camelCase → "Camel Case"
   return s
-    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/([a-z00-9])([A-Z])/g, '$1 $2')
     .replace(/[_-]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
@@ -92,49 +85,152 @@ function titleCaseLabel(s: string): string {
 function fieldLabel(key: string): string {
   const f = fields.find((x) => x.key === key);
   const raw = f?.title && f.title.length > 0 ? f.title : key;
-  // If the title looks like a raw camelCase identifier (no spaces), title-case it.
   return /\s/.test(raw) ? raw : titleCaseLabel(raw);
 }
 
 function fieldValue(key: string): string {
   const v = entry.data[key];
+  const id = refId(v);
+  if (id !== null) return id;
   if (v === null || v === undefined || v === '') return '—';
-
-  // Astro content-collection references come through as objects with
-  // a `id` / `uuid` / `$ref` shape, or as ZodReference wrappers.
-  // Extract the human-meaningful identifier.
-  if (typeof v === 'object') {
-    const obj = v as Record<string, unknown>;
-    const id = obj.id ?? obj.uuid ?? obj.$ref ?? obj.slug;
-    if (typeof id === 'string') return id;
-    // Zod reference internals sometimes nest under `data`
-    if (obj.data && typeof obj.data === 'object') {
-      const inner = (obj.data as Record<string, unknown>).id
-        ?? (obj.data as Record<string, unknown>).uuid;
-      if (typeof inner === 'string') return inner;
-    }
-    return JSON.stringify(v);
-  }
-
   if (Array.isArray(v)) {
     if (v.length === 0) return '—';
-    return v.map((item) => {
-      if (typeof item === 'string') return item;
-      if (item && typeof item === 'object') {
-        const o = item as Record<string, unknown>;
-        return String(o.id ?? o.uuid ?? o.$ref ?? JSON.stringify(item));
-      }
-      return String(item);
-    }).join(', ');
+    const parts = v.map((item) => refId(item) ?? (typeof item === 'string' ? item : JSON.stringify(item)));
+    return parts.join(', ');
   }
-
-  // Dates: render as UTC ISO 8601, not local time
   if (v instanceof Date) {
     return v.toISOString().replace(/\.\d{3}Z$/, 'Z');
   }
-
   return String(v);
 }
+
+// System-code rendering -----------------------------------------------
+let codeSegments: readonly [string, string, string, string] | null = null;
+let authorityEntry: EntryLike | null = null;
+let sourceSpellingEntry: EntryLike | null = null;
+let targetSpellingEntry: EntryLike | null = null;
+let graphNodes: any[] = [];
+let graphEdges: any[] = [];
+let relations: Array<{ uuid: string; type: string; targetSystem: string; targetName: string }> = [];
+let sourceLanguage = '';
+let sourceScript = '';
+let targetLanguage = '';
+let targetScript = '';
+let allSystemsForCrossLink: EntryLike[] = [];
+
+if (isSystemCode) {
+  const code = String(entry.data.code ?? '');
+  const segs = code.split(':');
+  if (segs.length === 4) codeSegments = segs as [string, string, string, string];
+
+  type RawEntry = { id: string; data: unknown };
+  const index = await RegisterIndex.load(async (slug) => {
+    const coll = (await getCollection(slug as Parameters<typeof getCollection>[0])) as unknown as RawEntry[];
+    return coll.map((c) => ({ id: c.id, data: c.data as Record<string, unknown> }));
+  });
+
+  const sc = index.byUuid<SystemCode>('system-code', uuid!);
+
+  // Authority
+  const authorityId = refId(entry.data.authority);
+  if (authorityId) {
+    const all = (await getCollection('authority')) as unknown as RawEntry[];
+    authorityEntry = all
+      .filter((a) => a.id === authorityId)
+      .map((a) => ({ id: a.id, data: a.data as Record<string, unknown> }))[0] ?? null;
+  }
+
+  // Source spelling
+  const sourceSpellingId = refId(entry.data.sourceSpelling);
+  if (sourceSpellingId) {
+    const all = (await getCollection('spelling-system')) as unknown as RawEntry[];
+    sourceSpellingEntry = all
+      .filter((s) => s.id.toLowerCase() === sourceSpellingId.toLowerCase())
+      .map((s) => ({ id: s.id, data: s.data as Record<string, unknown> }))[0] ?? null;
+    if (sourceSpellingEntry) {
+      sourceLanguage = String(sourceSpellingEntry.data.languageCode ?? '');
+      sourceScript = String(sourceSpellingEntry.data.scriptCode ?? '');
+    }
+  } else if (entry.data.sourceScriptCode) {
+    sourceScript = String(entry.data.sourceScriptCode);
+  }
+
+  // Target spelling
+  const targetSpellingId = refId(entry.data.targetSpelling);
+  if (targetSpellingId) {
+    const all = (await getCollection('spelling-system')) as unknown as RawEntry[];
+    targetSpellingEntry = all
+      .filter((s) => s.id.toLowerCase() === targetSpellingId.toLowerCase())
+      .map((s) => ({ id: s.id, data: s.data as Record<string, unknown> }))[0] ?? null;
+    if (targetSpellingEntry) {
+      targetLanguage = String(targetSpellingEntry.data.languageCode ?? '');
+      targetScript = String(targetSpellingEntry.data.scriptCode ?? '');
+    }
+  } else if (entry.data.targetScriptCode) {
+    targetScript = String(entry.data.targetScriptCode);
+  }
+
+  // Relations: load each referenced system-relation + its target system
+  const relationIds = refIds(entry.data.relations);
+  if (relationIds.length > 0) {
+    const allRelations = (await getCollection('system-relation')) as unknown as RawEntry[];
+    const allSystems = (await getCollection('system-code')) as unknown as RawEntry[];
+    allSystemsForCrossLink = allSystems.map((s) => ({ id: s.id, data: s.data as Record<string, unknown> }));
+    for (const rid of relationIds) {
+      const rel = allRelations.find((r) => r.id === rid);
+      if (!rel) continue;
+      const relData = rel.data as Record<string, unknown>;
+      const targetSysId = refId(relData.targetSystem) ?? '';
+      const target = allSystems.find((s) => s.id === targetSysId);
+      relations.push({
+        uuid: rel.id,
+        type: String(relData.type ?? ''),
+        targetSystem: targetSysId,
+        targetName: target ? String((target.data as Record<string, unknown>).name ?? targetSysId) : targetSysId,
+      });
+    }
+  }
+
+  // Lifecycle graph
+  if (sc) {
+    const g = buildLifecycleGraph(index, sc);
+    graphNodes = g.nodes;
+    graphEdges = g.edges;
+  }
+}
+
+// Spelling-system: find systems using this as source or target
+let sourceOfSystems: EntryLike[] = [];
+let targetOfSystems: EntryLike[] = [];
+if (isSpellingSystem) {
+  const allSystems = (await getCollection('system-code')) as unknown as { id: string; data: unknown }[];
+  const list = allSystems.map((s) => ({ id: s.id, data: s.data as Record<string, unknown> }));
+  const uuidLower = (uuid ?? '').toLowerCase();
+  sourceOfSystems = list.filter((s) => (refId(s.data.sourceSpelling) ?? '').toLowerCase() === uuidLower);
+  targetOfSystems = list.filter((s) => (refId(s.data.targetSpelling) ?? '').toLowerCase() === uuidLower);
+}
+
+const examplesRaw = entry.data.examples;
+const examples: Example[] = Array.isArray(examplesRaw)
+  ? examplesRaw
+      .filter((e): e is Record<string, unknown> => typeof e === 'object' && e !== null)
+      .map((e) => ({
+        input: String(e.input ?? ''),
+        output: String(e.output ?? ''),
+        remarks: typeof e.remarks === 'string' ? e.remarks : null,
+      }))
+      .filter((e) => e.input && e.output)
+  : [];
+
+const specificationRaw = entry.data.specification;
+const specificationUrls: string[] = Array.isArray(specificationRaw)
+  ? specificationRaw.filter((u): u is string => typeof u === 'string' && u.length > 0)
+  : [];
+
+const codeStatusId = refId(entry.data.codeStatus) ?? '';
+const systemStatusId = refId(entry.data.systemStatus) ?? '';
+const uri = typeof entry.data.uri === 'string' ? entry.data.uri : '';
+const abstractText = typeof entry.data.abstract === 'string' ? entry.data.abstract : '';
 ---
 
 <Layout title={`${classTitle} — ${uuid}`}>
@@ -149,18 +245,29 @@ function fieldValue(key: string): string {
     <section class="mb-12">
       <div class="flex flex-wrap items-center gap-2 mb-4">
         <RegistrationBadge status={entry.data.registrationStatus} />
-        <span class="badge">code: {String(entry.data.codeStatus ?? '—')}</span>
-        <span class="badge">system: {String(entry.data.systemStatus ?? '—')}</span>
+        {codeStatusId && <span class="badge">code: {codeStatusId}</span>}
+        {systemStatusId && <span class="badge">system: {systemStatusId}</span>}
       </div>
 
       <p class="font-mono text-2xl md:text-4xl lg:text-5xl break-all leading-tight mb-4">
-        <span class="text-gold-deep dark:text-gold-bright">{codeSegments[0]}</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">{codeSegments[1]}</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">{codeSegments[2]}</span><span class="text-ink-subtle">:</span><span class="text-ink">{codeSegments[3]}</span>
+        <a href={`/register/authority/${codeSegments[0].toLowerCase()}`} class="text-gold-deep dark:text-gold-bright hover:underline">{codeSegments[0]}</a><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">{codeSegments[1]}</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">{codeSegments[2]}</span><span class="text-ink-subtle">:</span><span class="text-ink">{codeSegments[3]}</span>
       </p>
 
       <h1 class="text-2xl md:text-3xl font-semibold tracking-tight mb-4">{String(entry.data.name ?? uuid)}</h1>
 
+      {abstractText && (
+        <p class="text-lg md:text-xl text-ink leading-relaxed max-w-3xl mb-4">{abstractText}</p>
+      )}
+
       {entry.data.description && (
-        <p class="text-base md:text-lg text-ink-muted max-w-3xl leading-relaxed">{String(entry.data.description)}</p>
+        <p class="text-base text-ink-muted max-w-3xl leading-relaxed mb-4">{String(entry.data.description)}</p>
+      )}
+
+      {uri && (
+        <p class="font-mono text-sm text-ink-muted max-w-3xl break-all mb-4">
+          <span class="text-ink-subtle">URI:</span>
+          <span class="ml-2">{uri}</span>
+        </p>
       )}
 
       {entry.data.remarks && (
@@ -180,6 +287,15 @@ function fieldValue(key: string): string {
       {!isAuthority && (
         <p class="font-mono text-sm text-ink-subtle">{uuid}</p>
       )}
+      {entry.data.abstract && (
+        <p class="mt-4 text-base md:text-lg text-ink leading-relaxed max-w-3xl">{String(entry.data.abstract)}</p>
+      )}
+      {entry.data.uri && (
+        <p class="mt-3 font-mono text-sm text-ink-muted break-all">
+          <span class="text-ink-subtle">URI:</span>
+          <span class="ml-2">{String(entry.data.uri)}</span>
+        </p>
+      )}
       {entry.data.remarks && (
         <p class="mt-4 text-base text-ink-muted max-w-2xl leading-relaxed">{String(entry.data.remarks)}</p>
       )}
@@ -196,51 +312,159 @@ function fieldValue(key: string): string {
   <div class="grid gap-12 lg:grid-cols-[1fr_280px]">
     {/* ── Main column ─────────────────────────────────────────── */}
     <div class="max-w-3xl space-y-12">
+
       {/* Authority cross-link */}
-      {isSystemCode && authorityName && (
+      {isSystemCode && authorityEntry && (
         <section>
           <p class="eyebrow mb-3">Maintained by</p>
-          <a href={authorityHref} class="card-link block">
-            <p class="text-base font-semibold">{authorityName}</p>
-            <p class="mt-1 text-sm text-ink-muted">Conversion system authority →</p>
+          <a href={`/register/authority/${authorityEntry.id}`} class="card-link block">
+            <p class="text-base font-semibold">{String(authorityEntry.data.name ?? authorityEntry.id)}</p>
+            <p class="mt-1 text-sm text-ink-muted font-mono">@{String(authorityEntry.data.authorityIdentifier ?? authorityEntry.id)}</p>
           </a>
         </section>
       )}
 
-      {/* System-code specific: source/target/identifying breakdown */}
-      {isSystemCode && codeSegments && (
+      {/* Source / target scope */}
+      {isSystemCode && (
         <section>
-          <p class="eyebrow mb-3">Code breakdown</p>
+          <p class="eyebrow mb-3">Conversion scope</p>
           <dl class="border-t border-rule">
             <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
-              <dt class="eyebrow pt-1">Titular</dt>
-              <dd>
-                <p class="font-mono text-base text-gold-deep dark:text-gold-bright">{codeSegments[0]}</p>
-                <p class="text-sm text-ink-muted mt-0.5">Authority identifier</p>
-              </dd>
-            </div>
-            <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
               <dt class="eyebrow pt-1">Source</dt>
-              <dd>
-                <p class="font-mono text-base text-blue dark:text-blue-bright">{codeSegments[1]}</p>
-                <p class="text-sm text-ink-muted mt-0.5">Source spelling system</p>
+              <dd class="text-sm">
+                {sourceSpellingEntry ? (
+                  <a href={`/register/spelling-system/i/${sourceSpellingEntry.id}`} class="font-mono text-blue dark:text-blue-bright hover:underline">
+                    {sourceSpellingEntry.id}
+                  </a>
+                ) : (
+                  <span class="font-mono text-ink">—</span>
+                )}
+                {sourceLanguage && (
+                  <span class="ml-3 text-ink-muted">
+                    <a href={`/register/iso639/${sourceLanguage}`} class="hover:underline">language: {sourceLanguage}</a>
+                  </span>
+                )}
+                {sourceScript && (
+                  <span class="ml-3 text-ink-muted">
+                    <a href={`/register/iso15924/${sourceScript}`} class="hover:underline">script: {sourceScript}</a>
+                  </span>
+                )}
               </dd>
             </div>
             <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
               <dt class="eyebrow pt-1">Target</dt>
-              <dd>
-                <p class="font-mono text-base text-blue dark:text-blue-bright">{codeSegments[2]}</p>
-                <p class="text-sm text-ink-muted mt-0.5">Target spelling system</p>
-              </dd>
-            </div>
-            <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
-              <dt class="eyebrow pt-1">Identifying</dt>
-              <dd>
-                <p class="font-mono text-base">{codeSegments[3]}</p>
-                <p class="text-sm text-ink-muted mt-0.5">{String(entry.data.identifyingSegment ? '' : '')}{String(entry.data.identifyingSegment ?? codeSegments[3])}</p>
+              <dd class="text-sm">
+                {targetSpellingEntry ? (
+                  <a href={`/register/spelling-system/i/${targetSpellingEntry.id}`} class="font-mono text-blue dark:text-blue-bright hover:underline">
+                    {targetSpellingEntry.id}
+                  </a>
+                ) : targetScript ? (
+                  <span class="font-mono text-ink">{targetScript}</span>
+                ) : (
+                  <span class="font-mono text-ink">—</span>
+                )}
+                {targetLanguage && (
+                  <span class="ml-3 text-ink-muted">
+                    <a href={`/register/iso639/${targetLanguage}`} class="hover:underline">language: {targetLanguage}</a>
+                  </span>
+                )}
+                {targetScript && (
+                  <span class="ml-3 text-ink-muted">
+                    <a href={`/register/iso15924/${targetScript}`} class="hover:underline">script: {targetScript}</a>
+                  </span>
+                )}
               </dd>
             </div>
           </dl>
+        </section>
+      )}
+
+      {/* Relations */}
+      {isSystemCode && relations.length > 0 && (
+        <section>
+          <p class="eyebrow mb-3">Relations</p>
+          <ul class="border-t border-rule">
+            {relations.map((r) => (
+              <li class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule items-baseline">
+                <span class="eyebrow pt-0.5">{r.type}</span>
+                <a href={`/register/system-code/i/${r.targetSystem}`} class="font-mono text-sm text-blue dark:text-blue-bright hover:underline break-all">
+                  {r.targetName}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* Specification URLs */}
+      {isSystemCode && specificationUrls.length > 0 && (
+        <section>
+          <p class="eyebrow mb-3">Specification</p>
+          <ul class="space-y-2">
+            {specificationUrls.map((u) => (
+              <li>
+                <a href={u} target="_blank" rel="noopener" class="text-blue dark:text-blue-bright underline break-all font-mono text-sm">
+                  {u}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* Examples */}
+      {isSystemCode && examples.length > 0 && (
+        <section>
+          <p class="eyebrow mb-3">Examples</p>
+          <ul class="border-t border-rule">
+            {examples.map((ex) => (
+              <li class="grid grid-cols-[1fr_auto_1fr] gap-x-3 gap-y-1 py-3 border-b border-rule items-baseline">
+                <span class="font-mono text-base text-ink break-all">{ex.input}</span>
+                <span aria-hidden="true" class="text-ink-subtle">→</span>
+                <span class="font-mono text-base text-blue dark:text-blue-bright break-all">{ex.output}</span>
+                {ex.remarks && (
+                  <span class="col-span-3 text-sm text-ink-subtle italic">{ex.remarks}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* Spelling-system: source-of / target-of lists */}
+      {isSpellingSystem && (sourceOfSystems.length > 0 || targetOfSystems.length > 0) && (
+        <section>
+          <p class="eyebrow mb-3">Systems using this spelling</p>
+          {sourceOfSystems.length > 0 && (
+            <div class="mb-6">
+              <p class="text-sm font-semibold text-ink mb-2">As source ({sourceOfSystems.length})</p>
+              <ul class="border-t border-rule">
+                {sourceOfSystems.map((s) => (
+                  <li class="border-b border-rule">
+                    <a href={`/register/system-code/i/${s.id}`} class="flex items-baseline justify-between gap-3 py-2 group">
+                      <span class="font-mono text-sm text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">{String(s.data.code ?? s.id)}</span>
+                      <span class="text-xs text-ink-subtle shrink-0">{String(s.data.name ?? '')}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {targetOfSystems.length > 0 && (
+            <div>
+              <p class="text-sm font-semibold text-ink mb-2">As target ({targetOfSystems.length})</p>
+              <ul class="border-t border-rule">
+                {targetOfSystems.map((s) => (
+                  <li class="border-b border-rule">
+                    <a href={`/register/system-code/i/${s.id}`} class="flex items-baseline justify-between gap-3 py-2 group">
+                      <span class="font-mono text-sm text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">{String(s.data.code ?? s.id)}</span>
+                      <span class="text-xs text-ink-subtle shrink-0">{String(s.data.name ?? '')}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </section>
       )}
 
@@ -251,10 +475,15 @@ function fieldValue(key: string): string {
           {fields.map((field) => {
             const key = field.key as string;
             const isRemarks = key === 'remarks';
-            const isDate = key === 'createdAt' || key === 'updatedAt';
-            void isDate;
-            const isRef = ['authority', 'sourceSpelling', 'targetSpelling', 'codeStatus', 'systemStatus', 'relations'].includes(key);
-            void isRef;
+            const isAbstract = key === 'abstract';
+            const isDescription = key === 'description';
+            const isUri = key === 'uri';
+            const isExamples = key === 'examples';
+            const isSpecification = key === 'specification';
+            // Skip fields already rendered in curated sections above
+            if (isSystemCode && (isAbstract || isDescription || isUri)) return null;
+            if (isSystemCode && isExamples && examples.length > 0) return null;
+            if (isSystemCode && isSpecification && specificationUrls.length > 0) return null;
             return (
               <div class="grid grid-cols-[160px_1fr] gap-4 py-3 border-b border-rule">
                 <dt class="text-xs font-medium text-ink-muted pt-1">{fieldLabel(key)}</dt>
