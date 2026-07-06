@@ -5,9 +5,25 @@ import { getCollection } from 'astro:content';
 import { JsonLdExporter } from '../../../semantic/JsonLdExporter';
 import { itemFactories } from '../../../domain/factories';
 import { Authority } from '../../../domain/items/Authority';
+import {
+  REGISTRATION_STATUS_ORDER,
+  isRegistrationStatus,
+  type RegistrationStatus,
+} from '../../../domain/registration/RegistrationStatus';
 import type { GetStaticPaths, InferGetStaticParamsType } from 'astro';
 
 type RawEntry = { id: string; data: unknown };
+
+function refId(v: unknown): string | null {
+  if (v == null) return null;
+  if (typeof v === 'string') return v;
+  if (typeof v === 'object') {
+    const obj = v as Record<string, unknown>;
+    const direct = obj.id ?? obj.uuid ?? obj.$ref ?? obj.slug;
+    if (typeof direct === 'string') return direct;
+  }
+  return null;
+}
 
 export const getStaticPaths = (async () => {
   const coll = (await getCollection('authority')) as unknown as RawEntry[];
@@ -21,14 +37,28 @@ const { uuid } = Astro.params as InferGetStaticParamsType<typeof getStaticPaths>
 const { entry } = Astro.props as { entry: RawEntry };
 
 const authority = itemFactories.authority(entry.data as Record<string, unknown>) as Authority;
-const allSystems = (await getCollection('system-code')) as unknown as RawEntry[];
-const systems = allSystems
-  .filter((s) => (s.data as Record<string, unknown>).authority === uuid)
+
+// All systems for this authority (Zod references are objects — use refId + case-insensitive)
+const allSystemsRaw = (await getCollection('system-code')) as unknown as RawEntry[];
+const systemsForAuthority = allSystemsRaw
+  .filter((s) => {
+    const id = refId((s.data as Record<string, unknown>).authority);
+    return id !== null && id.toLowerCase() === uuid!.toLowerCase();
+  })
   .map((s) => ({
     id: s.id,
-    code: String((s.data as Record<string, unknown>).code ?? ''),
-    name: String((s.data as Record<string, unknown>).name ?? ''),
+    data: s.data as Record<string, unknown>,
   }));
+
+// Status breakdown
+const statusCounts = new Map<RegistrationStatus, number>();
+for (const s of systemsForAuthority) {
+  const v = s.data.registrationStatus;
+  if (isRegistrationStatus(v)) statusCounts.set(v, (statusCounts.get(v) ?? 0) + 1);
+}
+const statusBreakdown = REGISTRATION_STATUS_ORDER
+  .map((status) => ({ status, count: statusCounts.get(status) ?? 0 }))
+  .filter((x) => x.count > 0);
 
 const jsonLd = new JsonLdExporter().exportItem(authority);
 const data = entry.data as Record<string, unknown>;
@@ -47,8 +77,17 @@ const persons = (data.authorisedPersons ?? []) as Array<{ name: string; role: st
   </div>
   <h1 class="text-4xl font-semibold tracking-tight mb-2">{authority.displayName}</h1>
   <p class="font-mono text-ink-subtle mb-6">@{authority.authorityIdentifier}</p>
+  {data.abstract && (
+    <p class="text-base md:text-lg text-ink leading-relaxed max-w-3xl mb-6">{String(data.abstract)}</p>
+  )}
+  {data.uri && (
+    <p class="font-mono text-sm text-ink-muted break-all mb-6">
+      <span class="text-ink-subtle">URI:</span>
+      <span class="ml-2">{String(data.uri)}</span>
+    </p>
+  )}
 
-  <div class="grid gap-8 md:grid-cols-2 max-w-4xl">
+  <div class="grid gap-8 md:grid-cols-2 max-w-4xl mb-12">
     <section>
       <h2 class="text-sm font-mono uppercase text-ink-subtle mb-3">Address</h2>
       {
@@ -79,7 +118,7 @@ const persons = (data.authorisedPersons ?? []) as Array<{ name: string; role: st
         persons.length === 2 ? (
           <ul class="grid gap-4 md:grid-cols-2">
             {persons.map((p) => (
-              <li class="border border-line rounded p-4">
+              <li class="border border-rule rounded p-4">
                 <p class="font-medium">{p.name}</p>
                 <p class="text-sm text-ink-muted">{p.role}</p>
                 <p class="text-sm mt-2"><a href={`mailto:${p.email}`} class="underline">{p.email}</a></p>
@@ -93,30 +132,56 @@ const persons = (data.authorisedPersons ?? []) as Array<{ name: string; role: st
         )
       }
     </section>
-
-    <section class="md:col-span-2">
-      <h2 class="text-sm font-mono uppercase text-ink-subtle mb-3">Systems registered under this authority</h2>
-      {
-        systems.length === 0 ? (
-          <p class="text-sm text-ink-muted">No systems registered yet.</p>
-        ) : (
-          <ul class="divide-y divide-line border-y border-line">
-            {systems.map((s) => (
-              <li>
-                <a
-                  href={`/register/system-code/i/${s.id}`}
-                  class="flex items-baseline justify-between py-3 hover:text-accent"
-                >
-                  <span class="font-mono">{s.code}</span>
-                  <span class="text-ink-muted text-sm ml-4 truncate">{s.name}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        )
-      }
-    </section>
   </div>
+
+  {/* ── Systems registered under this authority ─────────────────── */}
+  <section class="rule-section">
+    <div class="flex items-baseline justify-between gap-4 mb-4">
+      <h2 class="text-2xl font-semibold tracking-tight">Systems registered</h2>
+      <p class="text-sm text-ink-muted">{systemsForAuthority.length} system{systemsForAuthority.length === 1 ? '' : 's'}</p>
+    </div>
+
+    {statusBreakdown.length > 0 && (
+      <div class="mb-6 flex flex-wrap gap-x-3 gap-y-2 items-center">
+        <span class="eyebrow">Status:</span>
+        <ul class="flex flex-wrap gap-x-3 gap-y-1.5">
+          {statusBreakdown.map(({ status, count }) => (
+            <li class="flex items-center gap-1.5 text-sm">
+              <RegistrationBadge status={status} />
+              <span class="font-mono text-ink-subtle">{count}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )}
+
+    {
+      systemsForAuthority.length === 0 ? (
+        <p class="text-ink-muted">No systems registered yet.</p>
+      ) : (
+        <ul class="divide-y divide-rule border-y border-rule">
+          {systemsForAuthority.map((s) => (
+            <li>
+              <a
+                href={`/register/system-code/i/${s.id}`}
+                class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-3 group"
+              >
+                <span class="font-mono text-sm md:text-base text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">
+                  {String(s.data.code ?? s.id)}
+                </span>
+                <span class="hidden sm:block text-ink-muted text-sm truncate text-right max-w-[24rem]">
+                  {String(s.data.name ?? '')}
+                </span>
+                <span class="justify-self-end">
+                  <RegistrationBadge status={s.data.registrationStatus} />
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
 
   <script type="application/ld+json" set:html={jsonLd} />
 </Layout>
