@@ -7,6 +7,7 @@
     "prebuild": "tsx scripts/prepare-external.mts",
     "predev": "tsx scripts/prepare-external.mts",
     "pretest": "tsx scripts/prepare-external.mts",
+    "clean": "node scripts/clean.mjs",
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
