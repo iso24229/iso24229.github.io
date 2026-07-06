@@ -1,18 +1,18 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { repoUrls } from '../../config';
+import Layout from '../../../layouts/Layout.astro';
+import { repoUrls } from '../../../config';
 
 const issueUrl = `${repoUrls.register}/issues/new?template=apply-new-authority.yml`;
 ---
 
 <Layout title="New authority — application">
-  <p class="text-sm text-ink-subtle"><a href="/apply">← Apply</a></p>
+  <p class="text-sm text-ink-subtle"><a href="/about/apply">← Apply</a></p>
   <h1 class="text-4xl font-semibold tracking-tight mb-6">New authority — application</h1>
 
   <p class="text-lg text-ink-muted max-w-2xl mb-8">
     Authorities under ISO 24229 are recognised institutions that maintain
     one or more written-language conversion systems. Applications are
-    reviewed by the <a href="/managers" class="underline">ISO/TC 46 Advisory Group</a> at its bimonthly meeting.
+    reviewed by the <a href="/about/managers" class="underline">ISO/TC 46 Advisory Group</a> at its bimonthly meeting.
   </p>
 
   <h2 class="text-xl font-semibold mb-3">What you'll need</h2>

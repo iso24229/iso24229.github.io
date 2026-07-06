@@ -1,7 +1,7 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Card from '../../components/Card.astro';
-import { repoUrls, externalLinks } from '../../config';
+import Layout from '../../../layouts/Layout.astro';
+import Card from '../../../components/Card.astro';
+import { repoUrls, externalLinks } from '../../../config';
 ---
 
 <Layout title="Apply">
@@ -15,18 +15,18 @@ import { repoUrls, externalLinks } from '../../config';
 
   <div class="grid gap-4 md:grid-cols-2 mt-8">
     <Card
-      href="/apply/existing-authority"
+      href="/about/apply/existing-authority"
       title="Existing authority — new system"
       body="Add a new conversion system under your existing authority."
     />
     <Card
-      href="/apply/new-authority"
+      href="/about/apply/new-authority"
       title="New authority — application"
       body="Apply to register a new authority with the Advisory Group."
     />
   </div>
 
   <p class="mt-12 text-ink-muted">
-    Submissions follow a Unicode-style justification process. See <a href="/learn/specification" class="underline">the specification</a> for the rules.
+    Submissions follow a Unicode-style justification process. See <a href="/specs" class="underline">the specification</a> for the rules.
   </p>
 </Layout>
