@@ -11,7 +11,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "postbuild": "node -e \"require('node:fs').rmSync('.cache', { recursive: true, force: true })\"",
+    "postbuild": "node -e \"require('node:fs').rmSync('.cache', { recursive: true, force: true }); require('node:fs').writeFileSync('dist/.nojekyll', '')\"",
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro",
