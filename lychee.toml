@@ -1,0 +1,35 @@
+# Lychee Link Checker Configuration
+# For Documentation: https://github.com/lycheeverse/lychee
+
+# Cache results to avoid re-checking same URLs
+cache = true
+max_cache_age = "1d"
+
+# Check both source files and built site
+include_verbatim = true
+
+# File types to check
+include = [
+  "dist/**/*.html"
+]
+
+# Exclude patterns for URLs
+exclude = [
+  ".git",
+  ".github",
+  "node_modules",
+  "vendor",
+  ".cache",
+  "dist/.nojekyll",
+  "dist/CNAME",
+]
+
+# Exclude URL patterns (external + internal)
+# - localhost: dev only
+# - go.microsoft.com, astexplorer.net: rate-limited / flaky
+# - github.com/iso24229/iso24229-register/blob/main/<path>: branch may be ahead of clone
+exclude_loopback = true
+
+[[exclude_urls]]
+"localhost:4321" = true
+"^https?://127\\.0\\.0\\.1" = true

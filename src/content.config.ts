@@ -11,6 +11,20 @@ const uuidentifiable = {
   },
 } as const;
 
+const identifiable = {
+  uri: {
+    type: 'string',
+    title: 'URI',
+  },
+} as const;
+
+const abstractable = {
+  abstract: {
+    type: 'string',
+    title: 'Abstract',
+  },
+} as const;
+
 const registrationStatusTrait = {
   registrationStatus: {
     type: 'string',
@@ -234,6 +248,8 @@ export const versionedSchemaWithRichData: VersionedSchemaWithRichData = {
           title: 'Name',
           type: 'string',
         },
+        ...identifiable,
+        ...abstractable,
         ...commonTraits,
       },
     },
@@ -251,6 +267,7 @@ export const versionedSchemaWithRichData: VersionedSchemaWithRichData = {
         scriptCode: 'string',
         countryCode: 'string?',
         extension: 'string',
+        ...identifiable,
         ...commonTraits,
       },
     },
@@ -259,7 +276,11 @@ export const versionedSchemaWithRichData: VersionedSchemaWithRichData = {
       schema: {
         code: 'string',
         name: 'string',
+        ...identifiable,
+        ...abstractable,
         description: 'string?',
+        specification: ['string'],
+        examples: 'string?',
         authority: ref('authority', true),
         sourceSpelling: ref('spelling-system', true),
         sourceScriptCode: 'string?',
@@ -308,6 +329,17 @@ export const zodSchemas = Object.entries(schemas).reduce((acc, [k, v]) => {
   acc[k as ItemClass] = z.object(transformSchemaToZodSchema(v));
   return acc;
 }, {} as Record<ItemClass, z.ZodType>);
+
+(zodSchemas['system-code'] as z.ZodObject<any>) = (zodSchemas['system-code'] as z.ZodObject<any>).extend({
+  examples: z.array(
+    z.object({
+      input: z.string(),
+      output: z.string(),
+      remarks: z.string().nullish(),
+    }),
+  ).default([]),
+  specification: z.array(z.string()).default([]),
+});
 
 export const collections = Object.entries(zodSchemas).reduce((acc, [k, v]) => {
   acc[k] = def(v, k);

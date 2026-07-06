@@ -1,0 +1,133 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import RegistrationBadge from '../../../components/RegistrationBadge.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+
+interface EntryLike { id: string; data: Record<string, unknown>; }
+
+export const getStaticPaths = (async () => {
+  const all = (await getCollection('system-code')) as unknown as EntryLike[];
+  const allSpellings = (await getCollection('spelling-system')) as unknown as EntryLike[];
+
+  function refId(v: unknown): string | null {
+    if (v == null) return null;
+    if (typeof v === 'string') return v;
+    if (typeof v === 'object') {
+      const obj = v as Record<string, unknown>;
+      const direct = obj.id ?? obj.uuid ?? obj.$ref ?? obj.slug;
+      if (typeof direct === 'string') return direct;
+    }
+    return null;
+  }
+
+  // Build spelling id -> language code lookup (lowercase keys — glob loader lowercases IDs)
+  const langOf = new Map<string, string>();
+  for (const s of allSpellings) {
+    const lc = s.data.languageCode;
+    if (typeof lc === 'string' && lc.length > 0) {
+      langOf.set(s.id.toLowerCase(), lc);
+    }
+  }
+
+  function langsFor(entry: EntryLike): { source?: string; target?: string } {
+    let source: string | undefined;
+    let target: string | undefined;
+    const sourceSpellingId = refId(entry.data.sourceSpelling);
+    const targetSpellingId = refId(entry.data.targetSpelling);
+    if (sourceSpellingId) {
+      const key = sourceSpellingId.toLowerCase();
+      if (langOf.has(key)) source = langOf.get(key)!;
+    }
+    if (targetSpellingId) {
+      const key = targetSpellingId.toLowerCase();
+      if (langOf.has(key)) target = langOf.get(key)!;
+    }
+    return { source, target };
+  }
+
+  const byLang = new Map<string, { asSource: EntryLike[]; asTarget: EntryLike[] }>();
+  for (const e of all) {
+    const { source, target } = langsFor(e);
+    if (source) {
+      if (!byLang.has(source)) byLang.set(source, { asSource: [], asTarget: [] });
+      byLang.get(source)!.asSource.push(e);
+    }
+    if (target) {
+      if (!byLang.has(target)) byLang.set(target, { asSource: [], asTarget: [] });
+      byLang.get(target)!.asTarget.push(e);
+    }
+  }
+
+  return [...byLang.keys()].sort().map((code) => ({
+    params: { code },
+    props: {
+      code,
+      asSource: byLang.get(code)!.asSource,
+      asTarget: byLang.get(code)!.asTarget,
+    },
+  }));
+}) satisfies GetStaticPaths;
+
+const { code, asSource, asTarget } = Astro.props as {
+  code: string;
+  asSource: EntryLike[];
+  asTarget: EntryLike[];
+};
+const total = asSource.length + asTarget.length;
+---
+
+<Layout title={`Systems for language ${code}`}>
+  <p class="text-sm text-ink-subtle mb-2">
+    <a href="/register">← Register</a>
+  </p>
+  <p class="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle mb-3">ISO 639</p>
+  <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">
+    Language <span class="font-mono text-blue dark:text-blue-bright">{code}</span>
+  </h1>
+  <p class="text-ink-muted max-w-2xl mb-2 leading-relaxed">
+    Every system in the register whose source or target spelling system uses this ISO 639 language code.
+  </p>
+  <p class="text-sm text-ink-muted mb-10">
+    {total} system{total === 1 ? '' : 's'} · {asSource.length} as source · {asTarget.length} as target
+  </p>
+
+  {total === 0 ? (
+    <p class="text-ink-muted">No systems reference this language code.</p>
+  ) : (
+    <div class="space-y-12">
+      {asSource.length > 0 && (
+        <section>
+          <p class="eyebrow mb-3">As source language ({asSource.length})</p>
+          <ul class="divide-y divide-rule border-y border-rule">
+            {asSource.map((entry) => (
+              <li>
+                <a href={`/register/system-code/i/${entry.id}`} class="grid grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-3 group">
+                  <span class="font-mono text-sm md:text-base text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">{String(entry.data.code ?? entry.id)}</span>
+                  <span class="hidden sm:block text-ink-muted text-sm truncate text-right max-w-[24rem]">{String(entry.data.name ?? '')}</span>
+                  <span class="justify-self-end"><RegistrationBadge status={entry.data.registrationStatus} /></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {asTarget.length > 0 && (
+        <section>
+          <p class="eyebrow mb-3">As target language ({asTarget.length})</p>
+          <ul class="divide-y divide-rule border-y border-rule">
+            {asTarget.map((entry) => (
+              <li>
+                <a href={`/register/system-code/i/${entry.id}`} class="grid grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-3 group">
+                  <span class="font-mono text-sm md:text-base text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">{String(entry.data.code ?? entry.id)}</span>
+                  <span class="hidden sm:block text-ink-muted text-sm truncate text-right max-w-[24rem]">{String(entry.data.name ?? '')}</span>
+                  <span class="justify-self-end"><RegistrationBadge status={entry.data.registrationStatus} /></span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+    </div>
+  )}
+</Layout>
