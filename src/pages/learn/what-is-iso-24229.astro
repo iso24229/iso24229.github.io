@@ -4,64 +4,193 @@ import { externalLinks } from '../../config';
 ---
 
 <Layout title="What is ISO 24229?">
-  <article class="prose max-w-none">
-    <p class="text-sm text-ink-subtle"><a href="/learn">← Learn</a></p>
-    <h1 class="text-4xl font-semibold tracking-tight mb-6">What is ISO 24229?</h1>
+  <p class="text-sm text-ink-subtle mb-2"><a href="/learn">← Learn</a></p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-6">What is ISO 24229?</h1>
 
-    <p class="text-lg text-ink-muted mb-8">
-      ISO 24229 is the international standard for written language
-      conversion systems — it identifies any
-      <em>written form</em> of any language — the language itself, the script
-      it's written in, and the system used to convert it to another script.
+  {/* ── Purpose ──────────────────────────────────────────────── */}
+  <section class="mb-12">
+    <p class="eyebrow mb-3">Purpose</p>
+    <p class="text-lg text-ink-muted max-w-2xl leading-relaxed mb-6">
+      ISO 24229 assigns every written language conversion system — a romanisation, a transliteration, a transcription, an orthographic reform — a single, unambiguous, machine-readable code. The standard does not define <em>how</em> conversions should be done; that is the job of each competent authority. Its purpose is to make existing conversions <strong>identifiable</strong>, so that when data flows between libraries, gazetteers, corpora, and software, the conversion method is explicit, auditable, and traceable.
+    </p>
+    <p class="text-lg text-ink-muted max-w-2xl leading-relaxed">
+      Without ISO 24229, the same romanisation system is called different things in different databases. With it, every system has a globally unique identifier that composes with <a href={externalLinks.iso639Standard} class="underline">ISO 639</a> (language) and <a href={externalLinks.iso15924Standard} class="underline">ISO 15924</a> (script) to describe any written form of any language.
+    </p>
+  </section>
+
+  {/* ── When do you need each standard? ──────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">Three standards, three questions</p>
+    <h2 class="max-w-2xl mb-6">When do you need each?</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
+      These standards are not steps in a sequence. They answer three different, orthogonal questions. Most projects need only one or two; some need all three.
     </p>
 
-    <section class="grid gap-6 md:grid-cols-3 my-10">
-      <div class="p-6 border border-line rounded">
-        <p class="text-xs font-mono text-ink-subtle mb-2">STEP 1</p>
-        <h2 class="text-xl font-semibold mb-1">
-          <a href={externalLinks.iso639Standard} class="underline">ISO 639</a>
-        </h2>
-        <p class="text-sm text-ink-muted">Identifies the <em>language</em>.</p>
-        <p class="mt-3 font-mono text-accent">zho — Chinese</p>
+    <div class="space-y-6 max-w-2xl">
+      <div class="border-l-2 border-gold-deep dark:border-gold-bright pl-6">
+        <h3 class="text-lg font-semibold mb-2">
+          <a href={externalLinks.iso639Standard} class="underline">ISO 639</a> — What language?
+        </h3>
+        <p class="text-ink-muted leading-relaxed mb-3">
+          Use ISO 639 when you need to identify a <strong>language</strong>, regardless of how it is written. A library catalogue marks a book as Chinese (<span class="font-mono">zho</span>). A software locale selects the English UI (<span class="font-mono">eng</span>). A linguistic database tags entries by language family. You do not need ISO 639 if you only care about the script or the conversion method.
+        </p>
+        <p class="text-sm text-ink-subtle font-mono">Examples: zho (Chinese), eng (English), ara (Arabic), rus (Russian), heb (Hebrew)</p>
       </div>
-      <div class="p-6 border border-line rounded">
-        <p class="text-xs font-mono text-ink-subtle mb-2">STEP 2</p>
-        <h2 class="text-xl font-semibold mb-1">
-          <a href={externalLinks.iso15924Standard} class="underline">ISO 15924</a>
-        </h2>
-        <p class="text-sm text-ink-muted">Identifies the <em>script</em>.</p>
-        <p class="mt-3 font-mono text-accent">Hani — Han (Hanzi, Kanji, Hanja)</p>
+
+      <div class="border-l-2 border-blue dark:border-blue-bright pl-6">
+        <h3 class="text-lg font-semibold mb-2">
+          <a href={externalLinks.iso15924Standard} class="underline">ISO 15924</a> — What script?
+        </h3>
+        <p class="text-ink-muted leading-relaxed mb-3">
+          Use ISO 15924 when you need to identify a <strong>script</strong> (writing system), independently of which language it represents. A font renderer needs to know the text uses Han characters (<span class="font-mono">Hani</span>). A Unicode tool checks whether input is in Cyrillic (<span class="font-mono">Cyrl</span>) or Latin (<span class="font-mono">Latn</span>). A digital archive tags documents by script for searchability. You do not need ISO 15924 if you only care about the language or the conversion method.
+        </p>
+        <p class="text-sm text-ink-subtle font-mono">Examples: Latn (Latin), Cyrl (Cyrillic), Hani (Han / Hanzi / Kanji / Hanja), Arab (Arabic), Hebr (Hebrew)</p>
       </div>
-      <div class="p-6 border border-line rounded bg-surface-raised">
-        <p class="text-xs font-mono text-ink-subtle mb-2">STEP 3</p>
-        <h2 class="text-xl font-semibold mb-1">
-          <a href={externalLinks.iso24229Standard} class="underline">ISO 24229</a>
-        </h2>
-        <p class="text-sm text-ink-muted">Identifies the <em>conversion system</em>.</p>
-        <p class="mt-3 font-mono text-accent">acadsin:zho-Hani:Latn:2002</p>
+
+      <div class="border-l-2 border-ink pl-6">
+        <h3 class="text-lg font-semibold mb-2">
+          <a href={externalLinks.iso24229Standard} class="underline">ISO 24229</a> — Which conversion system?
+        </h3>
+        <p class="text-ink-muted leading-relaxed mb-3">
+          Use ISO 24229 when you need to identify <strong>which specific system</strong> was (or should be) used to convert text from one script or spelling to another. A library catalogue records that a title was romanised using Wade-Giles, not Pinyin. A passport specifies ICAO 9303 transliteration. A gazetteer cites the BGN/PCGN 1979 system for Chinese place names. You do not need ISO 24229 if you just need to know the language or the script.
+        </p>
+        <p class="text-sm text-ink-subtle font-mono break-all">Examples: acadsin:zho-Hani:Latn:2002 (Tongyong Pinyin), UN:ara-Arab:Latn:2017 (UN Arabic romanisation), ICAO:Arab:Latn:2015 (ICAO 9303)</p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <h2 class="text-2xl font-semibold mt-12 mb-4">The problem ISO 24229 solves</h2>
-    <p>
-      A library catalogue record in Tokyo, a government gazetteer in Canberra,
-      and a linguistic corpus in Berkeley might all reference the
-      same Chinese romanization system — but each calls it something
-      different. ISO 24229 gives every system a single, unambiguous,
-      machine-readable identifier so data can flow between them without
-      loss.
+  {/* ── How they compose ─────────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">How they compose</p>
+    <h2 class="max-w-2xl mb-6">One code, built from all three.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
+      An ISO 24229 code does not replace ISO 639 and ISO 15924 — it <em>references</em> them within its own structure. Each four-segment code embeds language and script identifiers from the other two standards, then adds the authority and an identifying segment.
     </p>
 
-    <h2 class="text-2xl font-semibold mt-12 mb-4">Where the register sits</h2>
-    <p>
-      The standard itself defines the rules. The <em>register</em> —
-      this website — is the authoritative list of every system that has
-      been assigned a code. The register is operated under <a href={externalLinks.iso19135Standard} class="underline">ISO 19135</a>
-      (procedures for registration of items of geographic information).
+    <div class="p-6 md:p-8 border border-rule rounded bg-paper-raised mb-6">
+      <p class="font-mono text-lg md:text-2xl lg:text-3xl break-all leading-tight">
+        <span class="text-gold-deep dark:text-gold-bright">BGN-PCGN</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">chn-Hans</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Latn</span><span class="text-ink-subtle">:</span><span class="text-ink">1979</span>
+      </p>
+      <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-sm">
+        <div>
+          <p class="eyebrow text-gold-deep dark:text-gold-bright mb-1">Titular</p>
+          <p class="text-ink-muted"><span class="font-mono">BGN-PCGN</span> — authority identifier (ISO 24229/AG)</p>
+        </div>
+        <div>
+          <p class="eyebrow text-blue dark:text-blue-bright mb-1">Source spelling</p>
+          <p class="text-ink-muted"><span class="font-mono">chn</span> from ISO 639, <span class="font-mono">Hans</span> from ISO 15924</p>
+        </div>
+        <div>
+          <p class="eyebrow text-blue dark:text-blue-bright mb-1">Target spelling</p>
+          <p class="text-ink-muted"><span class="font-mono">Latn</span> from ISO 15924 (script only)</p>
+        </div>
+        <div>
+          <p class="eyebrow text-ink-muted mb-1">Identifying</p>
+          <p class="text-ink-muted"><span class="font-mono">1979</span> — year of adoption</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-sm text-ink-muted max-w-2xl">
+      BGN/PCGN 1979 Agreement — Romanisation of Chinese. The code tells you: the US Board on Geographic Names and the Permanent Committee on Geographical Names for British Official Use jointly manage this system; it converts Mandarin Chinese in simplified Han script into Latin script; it was adopted in 1979. All of that in one line.
     </p>
 
-    <p class="mt-8 text-ink-muted">
-      Next: <a href="/learn/code-structure" class="underline">Anatomy of a code →</a>
+    <p class="mt-6">
+      <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Full code structure →</a>
     </p>
-  </article>
+  </section>
+
+  {/* ── The problem it solves ────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">The problem</p>
+    <h2 class="max-w-2xl mb-6">The same system, called by six different names.</h2>
+    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
+      <p>
+        A library catalogue in Tokyo, a gazetteer in Canberra, and a corpus in Berkeley might all reference the same Chinese romanisation system — but each calls it something different. One says "Wade-Giles", another says "Wade–Giles romanisation", a third says "Modified Wade-Giles (1912)". A fourth simply says "romanised" with no system specified.
+      </p>
+      <p>
+        Without a standard identifier, this ambiguity propagates. A search for "Beijing" misses records romanised as "Pei-ching". A data migration cannot tell which romanisation rules to reverse. A citation cannot specify which system was applied to a transliterated title.
+      </p>
+      <p>
+        ISO 24229 solves this by giving every system a single, structured, globally unique code. <span class="font-mono text-sm">Var:zho-Hani:Latn:WG-1912</span> is Wade-Giles, unambiguously, in every database that uses it.
+      </p>
+    </div>
+  </section>
+
+  {/* ── Use cases ────────────────────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">Use cases</p>
+    <h2 class="max-w-2xl mb-8">Where written language conversion shows up.</h2>
+
+    <div class="max-w-2xl space-y-10">
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Library catalogues (MARC records)</h3>
+        <p class="text-ink-muted leading-relaxed">
+          A catalogue entry for a Chinese book may include a romanised title for discoverability. But which romanisation? Wade-Giles? Pinyin? ALA-LC? Without ISO 24229, the record just says "romanised" — ambiguous. With it, <span class="font-mono text-sm">Var:zho-Hani:Latn:WG-1912</span> tells you exactly which system was applied. Cross-catalogue search becomes reliable: if two libraries used different systems, the code lets you reconcile "Beijing" with "Pei-ching".
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Geographical names (gazetteers)</h3>
+        <p class="text-ink-muted leading-relaxed">
+          National mapping agencies romanise endonymic place names for international use. The UN recommends specific systems for each country. ISO 24229 codes let you cite which system was applied: <span class="font-mono text-sm">UN:mon-Mong-CN:Latn:1977</span> (UN romanisation of Mongolian in China, 1977). Different romanisation systems produce different Latin spellings of the same place — ISO 24229 makes the choice explicit, which matters for border disputes and naming sensitivities.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Passports and travel documents (ICAO 9303)</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Machine-readable passports transliterate personal names from the holder's native script into Latin per ICAO Document 9303. The ISO 24229 code <span class="font-mono text-sm">ICAO:Arab:Latn:2015</span> identifies this system unambiguously. Immigration systems that match names across scripts need to know the conversion rules — without the code, a name match can silently fail.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Linguistic research and corpora</h3>
+        <p class="text-ink-muted leading-relaxed">
+          A parallel corpus of Arabic-to-English text may romanise the Arabic for readability. Which romanisation? ALA-LC? BGN/PCGN? ISO/R 233? The choice affects phonological analysis. ISO 24229 codes let researchers cite the system precisely, making the corpus reproducible. Interlinear glossing in linguistics papers often romanises the source language — the code makes the glossing self-documenting.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Software localisation (i18n)</h3>
+        <p class="text-ink-muted leading-relaxed">
+          A localisation pipeline may need to convert user-generated content between scripts (e.g. Serbian can be written in both Cyrillic and Latin). Which transliteration? Search systems that index multilingual content need to normalise text — the normalisation method is a conversion system, and ISO 24229 gives it a code that the software can resolve to concrete rules.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Government and diplomatic correspondence</h3>
+        <p class="text-ink-muted leading-relaxed">
+          Treaty texts and diplomatic notes transliterate names and terms. The conversion system used can affect legal interpretation — "Kim" and "Gim" are the same Korean name under different romanisations. ISO 24229 codes make the system explicit and citable in legal documents.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Digital humanities and text encoding</h3>
+        <p class="text-ink-muted leading-relaxed">
+          TEI (Text Encoding Initiative) documents may include multiple transliterations of the same passage. ISO 24229 codes let each transliteration be tagged with its system, making the encoding self-documenting and machine-processable.
+        </p>
+      </div>
+
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Data migration and system integration</h3>
+        <p class="text-ink-muted leading-relaxed">
+          When merging two databases that used different romanisation systems, you need to know which system each used. ISO 24229 codes make this metadata explicit, enabling automated reconciliation rather than manual deduplication.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── Where the register sits ──────────────────────────────── */}
+  <section class="rule-section mb-12">
+    <p class="eyebrow mb-3">The register</p>
+    <h2 class="max-w-2xl mb-6">The authoritative list.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      The standard defines the rules for constructing codes. The <em>register</em> — this website — is the authoritative list of every system that has been assigned a code. It is operated under <a href={externalLinks.iso19135Standard} class="underline">ISO 19135</a> (procedures for registration of items of geographic information). Every entry in the register has a lifecycle: proposed, stable, deprecated, or withdrawn. Codes, once assigned, are reserved forever — even if the system is later deprecated, the code is never reused.
+    </p>
+  </section>
+
+  <p class="mt-12">
+    <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Next: Anatomy of a code →</a>
+  </p>
 </Layout>
