@@ -1,20 +1,26 @@
 ---
 /**
- * Sticky table of contents for multi-section pages.
- * Renders a left-sidebar nav with links to section IDs.
+ * Sticky table of contents with scroll-spy and optional hierarchy.
  *
  * Usage:
- * <TableOfContents items={[{id: 'purpose', label: 'Purpose'}, ...]} />
- * <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
- *   <TableOfContents items={tocItems} />
- *   <div class="max-w-2xl">
- *     ... page content with matching section IDs ...
- *   </div>
- * </div>
+ *   <TableOfContents items={[{id: 'purpose', label: 'Purpose'}, ...]} />
+ *
+ * With hierarchy:
+ *   <TableOfContents items={[
+ *     { id: 'compose', label: 'How they compose', children: [
+ *       { id: 'compose-rules', label: 'Construction rules' },
+ *       { id: 'compose-examples', label: 'Worked examples' },
+ *     ]},
+ *   ]} />
+ *
+ * The current section is highlighted via IntersectionObserver, with the
+ * rootMargin tuned so the "active" section is whichever heading sits
+ * near the top of the viewport. Re-initialises on Astro view-transitions.
  */
 export interface TocItem {
   id: string;
   label: string;
+  children?: TocItem[];
 }
 
 export interface Props {
@@ -24,20 +30,148 @@ export interface Props {
 const { items } = Astro.props;
 ---
 
-<aside class="hidden lg:block">
+<aside class="hidden lg:block toc-aside" data-toc>
   <div class="sticky top-[calc(var(--header-height)+1.5rem)]">
     <p class="eyebrow mb-3">On this page</p>
-    <ul class="space-y-1.5 text-sm">
+    <ul class="space-y-0.5 text-sm" data-toc-root>
       {items.map((item) => (
         <li>
           <a
             href={`#${item.id}`}
-            class="block py-1 border-l-2 border-rule pl-3 text-ink-muted hover:text-ink hover:border-gold-deep dark:hover:border-gold-bright transition-colors"
+            data-toc-link={item.id}
+            class="toc-link block py-1 border-l-2 border-rule pl-3 text-ink-muted hover:text-ink hover:border-gold-deep dark:hover:border-gold-bright transition-colors"
           >
             {item.label}
           </a>
+          {item.children && item.children.length > 0 && (
+            <ul class="mt-1 mb-1 ml-3 space-y-0.5 text-[0.875em] border-l border-rule pl-2.5">
+              {item.children.map((child) => (
+                <li>
+                  <a
+                    href={`#${child.id}`}
+                    data-toc-link={child.id}
+                    class="toc-link block py-0.5 pl-1 text-ink-subtle hover:text-ink transition-colors"
+                  >
+                    {child.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
         </li>
       ))}
     </ul>
   </div>
 </aside>
+
+<style is:global>
+  .toc-link.toc-active {
+    color: var(--color-ink) !important;
+    font-weight: 500;
+  }
+  /* Top-level links get a coloured left border when active */
+  ul[data-toc-root] > li > .toc-link.toc-active {
+    border-color: var(--color-gold) !important;
+  }
+  .dark ul[data-toc-root] > li > .toc-link.toc-active {
+    border-color: var(--color-gold-bright) !important;
+  }
+  /* When a child is active, lift its parent label colour too */
+  ul[data-toc-root] > li:has(> ul .toc-link.toc-active) > .toc-link {
+    color: var(--color-ink) !important;
+    border-color: color-mix(in srgb, var(--color-gold) 50%, var(--color-rule)) !important;
+  }
+  .dark ul[data-toc-root] > li:has(> ul .toc-link.toc-active) > .toc-link {
+    border-color: color-mix(in srgb, var(--color-gold-bright) 50%, var(--color-rule)) !important;
+  }
+</style>
+
+<script>
+  function initTocScrollSpy() {
+    const toc = document.querySelector('[data-toc]');
+    if (!toc) return;
+
+    const linkEls = Array.from(
+      toc.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'),
+    );
+    if (linkEls.length === 0) return;
+
+    const links = new Map<string, HTMLAnchorElement>();
+    for (const a of linkEls) {
+      const id = a.dataset.tocLink;
+      if (id) links.set(id, a);
+    }
+
+    const sections = new Map<string, HTMLElement>();
+    for (const id of links.keys()) {
+      const el = document.getElementById(id);
+      if (el) sections.set(id, el);
+    }
+    if (sections.size === 0) return;
+
+    const visibleTop = new Map<string, number>();
+    let currentId: string | null = null;
+
+    const applyActive = (id: string | null) => {
+      if (id === currentId) return;
+      currentId = id;
+      for (const a of links.values()) {
+        a.classList.toggle('toc-active', a.dataset.tocLink === id);
+      }
+    };
+
+    const recompute = () => {
+      let best: { id: string; top: number } | null = null;
+      for (const [id, top] of visibleTop) {
+        if (!best || top < best.top) best = { id, top };
+      }
+      if (best) {
+        applyActive(best.id);
+        return;
+      }
+      const scrollY = window.scrollY;
+      const headerOffset = 90;
+      let fallback: string | null = null;
+      let prevTop = -Infinity;
+      for (const [id, el] of sections) {
+        const top = el.getBoundingClientRect().top + scrollY - headerOffset;
+        if (top <= scrollY && top >= prevTop) {
+          prevTop = top;
+          fallback = id;
+        }
+      }
+      if (fallback) applyActive(fallback);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = (entry.target as HTMLElement).id;
+          if (entry.isIntersecting) {
+            visibleTop.set(id, entry.boundingClientRect.top);
+          } else {
+            visibleTop.delete(id);
+          }
+        }
+        recompute();
+      },
+      {
+        rootMargin: '-80px 0px -65% 0px',
+        threshold: [0, 1],
+      },
+    );
+
+    for (const el of sections.values()) observer.observe(el);
+    recompute();
+
+    (toc as HTMLElement).dataset.tocCleanup = '';
+    (window as any).__tocCleanup?.();
+    (window as any).__tocCleanup = () => {
+      observer.disconnect();
+      visibleTop.clear();
+      currentId = null;
+    };
+  }
+
+  document.addEventListener('astro:page-load', initTocScrollSpy);
+</script>

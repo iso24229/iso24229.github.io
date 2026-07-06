@@ -1,0 +1,99 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import RegistrationBadge from '../../../components/RegistrationBadge.astro';
+import StatusFacets from '../../../components/StatusFacets.astro';
+import { getCollection } from 'astro:content';
+import type { ItemClassSlug } from '../../../domain/items/RegisterItem';
+import { itemClassSlugs } from '../../../domain/registry/ItemClassRegistry';
+import { schemaWithRichData } from '../../../content.config';
+import {
+  isRegistrationStatus,
+  type RegistrationStatus,
+} from '../../../domain/registration/RegistrationStatus';
+import type { GetStaticPaths, InferGetStaticParamsType, InferGetStaticPropsType } from 'astro';
+
+interface EntryLike {
+  id: string;
+  data: Record<string, unknown>;
+}
+
+export const getStaticPaths = (async () => {
+  return Promise.all(
+    itemClassSlugs.map(async (itemClass) => {
+      const collection = await getCollection(itemClass);
+      const entries: EntryLike[] = collection.map((c) => ({
+        id: c.id,
+        data: c.data as Record<string, unknown>,
+      }));
+      return {
+        params: { itemClass },
+        props: { entries },
+      };
+    }),
+  );
+}) satisfies GetStaticPaths;
+
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { itemClass } = Astro.params as Params;
+const { entries } = Astro.props as Props & { entries: EntryLike[] };
+
+const title = schemaWithRichData[itemClass as ItemClassSlug].title;
+
+const counts = new Map<RegistrationStatus, number>();
+for (const e of entries) {
+  const s = e.data.registrationStatus;
+  if (isRegistrationStatus(s)) counts.set(s, (counts.get(s) ?? 0) + 1);
+}
+const distinctStatuses = [...counts.keys()].length;
+const pageSize = 20;
+const pageCount = Math.max(1, Math.ceil(entries.length / pageSize));
+---
+
+<Layout title={`${title} — all`}>
+  <p class="text-sm text-ink-subtle mb-2">
+    <a href="/register">← Register</a>
+  </p>
+  <div class="flex items-baseline justify-between mb-6 gap-4">
+    <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
+    <p class="text-sm text-ink-muted shrink-0">{entries.length} entries · showing all</p>
+  </div>
+
+  {distinctStatuses > 0 && (
+    <StatusFacets itemClass={itemClass!} counts={counts} total={entries.length} activeStatus={null} />
+  )}
+
+  <p class="mb-6 text-sm">
+    <a href={`/register/${itemClass}/p/1`} class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">
+      ← Paginated view ({pageCount} page{pageCount === 1 ? '' : 's'})
+    </a>
+  </p>
+
+  {
+    entries.length === 0 ? (
+      <p class="text-ink-muted">No entries yet.</p>
+    ) : (
+      <ul class="divide-y divide-rule border-y border-rule">
+        {entries.map((entry) => (
+          <li>
+            <a
+              href={`/register/${itemClass}/i/${entry.id}`}
+              class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-3 group"
+            >
+              <span class="font-mono text-sm md:text-base text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">
+                {entry.data.code ? String(entry.data.code) : (entry.data.uuid ?? entry.id)}
+              </span>
+              <span class="hidden sm:block text-ink-muted text-sm truncate text-right max-w-[28rem]">
+                {entry.data.name ?? entry.data.codeStatus ?? entry.data.systemStatus ?? ''}
+              </span>
+              <span class="justify-self-end">
+                <RegistrationBadge status={entry.data.registrationStatus} />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Layout>
