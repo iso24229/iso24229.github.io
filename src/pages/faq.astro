@@ -1,51 +1,101 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
 
 const faqs = [
   {
     q: "Why does ISO 24229 exist?",
-    a: "To give every written-language conversion system — a romanization, a transliteration, a transcription — a single unambiguous identifier so that data can flow between library catalogues, gazetteers, linguistic corpora, and software localisation pipelines without loss.",
+    a: "To give every written language conversion system — including transliteration, transcription, romanization, and same-script orthography changes — a single unambiguous identifier so that data can flow between library catalogues, gazetteers, linguistic corpora, and software localisation pipelines without loss.",
+    audience: "General",
+  },
+  {
+    q: "What does \"written language conversion\" cover?",
+    a: "It is the umbrella term ISO 24229 uses for any transformation of written text from one spelling system to another. That includes script conversion (transliteration, transcription, romanization) AND conversion without changing script — e.g. re-spelling a foreign name in your own alphabet, or applying a new orthography to a language.",
+    audience: "General",
   },
   {
     q: "How is this different from ISO 639 or ISO 15924?",
     a: "ISO 639 identifies languages. ISO 15924 identifies scripts. ISO 24229 identifies the systems that convert text from one (language, script) pair into another. The three standards are designed to compose: a single ISO 24229 code cites ISO 639 and ISO 15924 codes for its source and target.",
+    audience: "General",
+  },
+  {
+    q: "Is this the same thing as BCP 47?",
+    a: "No. BCP 47 composes language tags from ISO 639 + ISO 15924 + ISO 3166 codes — it identifies a language variant, not how to convert between variants. ISO 24229 picks up where BCP 47 leaves off: given two variants, which system do you use to convert?",
+    audience: "General",
   },
   {
     q: "Who maintains the register?",
-    a: "CalConnect and Ribose Inc. operate the Registration Authority on behalf of ISO/TC 46/WG 3. An Advisory Group convened by Mr. Peeter Päll (Estonia) reviews all submissions.",
+    a: "CalConnect is the Registration Authority (ISO 24229/RA), designated by ISO/TC 46/WG 3. The register is operated by Ribose, a CalConnect member. An Advisory Group (ISO 24229/AG) of 4–12 experts, including a representative of ISO/TC 46, reviews submissions.",
+    audience: "General",
+  },
+  {
+    q: "How does the Advisory Group make decisions?",
+    a: "Per Annex A of the standard: as a rule, decisions are made by consensus. If a vote is needed, a decision is approved when more than two-thirds of members vote for it.",
+    audience: "Managers",
   },
   {
     q: "Is use of the register free?",
     a: "Yes. The register data is published under an open licence. The standard itself (ISO 24229) is sold by ISO in the usual way.",
+    audience: "General",
   },
   {
-    q: "How do I find a transliteration system?",
+    q: "Where does the data come from?",
+    a: "Three sources. The register itself lives at github.com/iso24229/iso24229-register. The ISO 639 and ISO 15924 reference datasets are auto-synced weekly from the Library of Congress, SIL, and the Unicode Consortium — see github.com/iso24229/iso639-data and github.com/iso24229/iso15924-data.",
+    audience: "General",
+  },
+  {
+    q: "How do I find a conversion system?",
     a: "Browse the register from the top nav, or filter by authority, source language, or script. Each system-code page shows the source and target spelling, the authority, the lifecycle status, and any related systems.",
+    audience: "Users",
   },
   {
     q: "What does a code like `UN:ara-Arab:Latn:2017` mean?",
-    a: "Four colon-separated segments. `UN` is the titular segment (the United Nations). `ara-Arab` is the source spelling — Arabic language in Arabic script. `Latn` is the target — Latin script (with no specific language). `2017` is the identifying segment — the year of adoption.",
+    a: "Four colon-separated segments. `UN` is the titular segment (the United Nations). `ara-Arab` is the source spelling system — Arabic language in Arabic script. `Latn` is the target — Latin script (with no specific language). `2017` is the identifying segment — the year of adoption.",
+    audience: "Users",
+  },
+  {
+    q: "What about systems with no clear authority?",
+    a: "The \"Varia systems\" (Var) authority is managed by the Advisory Group for written language conversion systems that need representation but do not have a clear extant authority. Example: the Wade-Giles Chinese transcription is encoded as `Var:zho-Hani:Latn:WG-1912`.",
+    audience: "Users",
   },
   {
     q: "Can I rely on `proposed` codes in production?",
-    a: "Proposed codes have been submitted but not yet reviewed by the Advisory Group. They may be renamed, restructured, or rejected. Stable codes are safe to depend on; their identifiers are reserved forever.",
+    a: "Proposed codes have been submitted but not yet reviewed by the Advisory Group. They may be renamed, restructured, or rejected. Stable codes are safe to depend on; their identifiers are reserved forever, even if later deprecated or withdrawn.",
+    audience: "Users",
   },
   {
     q: "How do I cite a register entry?",
-    a: "Cite the system-code's UUID (which is also its URL path on this site) and the version date of the register. Example: `acadsin:zho-Hani:Latn:2002, ISO 24229 Registry, accessed YYYY-MM-DD`.",
+    a: "Cite the system-code's UUID (which is also its URL path on this site) and the date you accessed the register. Example: `acadsin:zho-Hani:Latn:2002, ISO 24229 register, accessed YYYY-MM-DD`.",
+    audience: "Users",
+  },
+  {
+    q: "Can I get the data in bulk?",
+    a: "Yes. Site-wide dumps are published at /data/register.jsonld, /data/register.ttl, and /data/register.rdf. Per-item downloads are available in the same three formats from each entry's page.",
+    audience: "Users",
+  },
+  {
+    q: "What if my language or script isn't in ISO 639 or ISO 15924?",
+    a: "You'll need to apply to the relevant Registration Authority first. ISO 639 has multiple parts maintained by different agencies (LOC for -2 and -5, SIL for -3); ISO 15924 is maintained by the Unicode Consortium. ISO 24229 codes can only reference codes that already exist in those standards.",
+    audience: "Users",
   },
   {
     q: "How do I add a new system to my authority?",
-    a: "Open a registration issue from the Apply section. You'll need the source/target ISO 639 and ISO 15924 codes, a specification document, real-world usage evidence, and a 200+ word justification.",
+    a: "Open a registration issue from the Apply section. You'll need the source/target ISO 639 and ISO 15924 codes, a specification document, real-world usage evidence, and a justification. The /apply/validate/ page checks your codes before submission.",
+    audience: "Authorities",
   },
   {
     q: "My authority is not listed. How do we join?",
-    a: "Apply via the New authority path under Apply. You'll need authority name and address, two named authorised persons, and evidence of competence (an institutional track record in managing conversion systems).",
+    a: "Apply via the New authority path under Apply. The standard requires the authority to be a competent, recognized institution with standardized processes for managing conversion systems. You'll need authority name and address, and (in our deployment) two named authorised persons for accountability.",
+    audience: "Authorities",
   },
   {
     q: "How long does approval take?",
-    a: "Submissions are batched onto the agenda of the next bimonthly AG meeting. You'll typically hear back within 8–10 weeks of submission.",
+    a: "Submissions are batched onto the agenda of the next AG meeting. We operate a bimonthly cadence (an operational choice, not mandated by the standard); you'll typically hear back within 8–10 weeks of submission.",
+    audience: "Authorities",
+  },
+  {
+    q: "How do I request deprecation of a code?",
+    a: "Open an issue on github.com/iso24229/iso24229-register. The AG reviews deprecation requests at its next meeting. Deprecated codes are reserved for backwards compatibility — they are never reused.",
+    audience: "Authorities",
   },
 ];
 ---
@@ -59,7 +109,7 @@ const faqs = [
         <details class="group border-b border-line py-4">
           <summary class="flex items-baseline justify-between gap-4 cursor-pointer list-none">
             <h2 class="text-lg font-medium">{item.q}</h2>
-            <span class="text-ink-subtle group-open:rotate-45 transition-transform">+</span>
+            <span class="text-ink-subtle text-xs uppercase tracking-wide mr-2">{item.audience}</span>
           </summary>
           <p class="mt-4 text-ink-muted">{item.a}</p>
         </details>
