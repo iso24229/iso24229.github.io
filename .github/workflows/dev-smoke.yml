@@ -1,0 +1,80 @@
+name: Dev server smoke test
+
+# Catches regressions where a code or config change causes the Astro
+# dev server to spin at high CPU (e.g. file watchers following
+# symlinks into sibling git repos, infinite HMR loops, runaway
+# generators). The test starts `pnpm dev`, lets it idle, then asserts
+# the dev process is consuming < 25% CPU.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v6
+        with:
+          version: '11'
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Start dev server in background
+        run: |
+          pnpm dev > /tmp/dev.log 2>&1 &
+          echo $! > /tmp/dev.pid
+          # Wait for the dev server to claim a port
+          for i in $(seq 1 60); do
+            if grep -q "Local" /tmp/dev.log 2>/dev/null; then break; fi
+            sleep 1
+          done
+          cat /tmp/dev.log
+
+      - name: Hit a few pages
+        run: |
+          PORT=$(grep -oE 'localhost:[0-9]+' /tmp/dev.log | head -1 | cut -d: -f2)
+          echo "Dev port: $PORT"
+          curl -s -o /dev/null -w "GET /: %{http_code} in %{time_total}s\n" --max-time 30 "http://localhost:$PORT/"
+          curl -s -o /dev/null -w "GET /learn: %{http_code} in %{time_total}s\n" --max-time 30 "http://localhost:$PORT/learn"
+          curl -s -o /dev/null -w "GET /faq: %{http_code} in %{time_total}s\n" --max-time 30 "http://localhost:$PORT/faq"
+
+      - name: Idle for 30 seconds
+        run: sleep 30
+
+      - name: Assert dev process is not spinning
+        run: |
+          PID=$(cat /tmp/dev.pid)
+          # Top-level pnpm PID; find the actual node process
+          NODE_PID=$(pgrep -P "$PID" -f node | head -1 || echo "$PID")
+          echo "Dev node PID: $NODE_PID"
+          ps -o pid,pcpu,pmem,etime,command -p "$NODE_PID"
+          CPU=$(ps -o pcpu= -p "$NODE_PID" | awk '{print int($1)}')
+          echo "CPU: $CPU%"
+          if [ "$CPU" -gt 25 ]; then
+            echo "FAIL: dev server is consuming ${CPU}% CPU after 30s idle. Likely a file-watcher spin."
+            echo "--- last 50 lines of dev log ---"
+            tail -50 /tmp/dev.log
+            exit 1
+          fi
+          echo "OK: dev server is stable at ${CPU}% CPU."
+
+      - name: Tear down
+        if: always()
+        run: |
+          if [ -f /tmp/dev.pid ]; then
+            kill -9 "$(cat /tmp/dev.pid)" 2>/dev/null || true
+          fi
+          pkill -f "astro/bin/astro" 2>/dev/null || true

@@ -1,22 +1,29 @@
 #!/usr/bin/env tsx
 /**
- * Prepare external data sources for the build.
+ * Prepare external data sources for the build (CI case only).
  *
  * For each source listed in `external-sources.yaml`:
  *
- * - Local dev: if a sibling clone exists at the configured `localPath`,
- *   symlink it into `.cache/external/<name>/`. Changes in the sibling
- *   repo are picked up on the next page load — no copy step.
- * - CI / fallback: `git clone --depth 1 --branch <ref>` into
- *   `.cache/external/<name>/`. Uses `GITHUB_TOKEN` for private repos.
+ * - If a sibling clone exists at the configured `localPath`, do
+ *   nothing — `resolveSourcePath()` reads from the sibling directly.
+ *   No symlink, no copy. The sibling is the source of truth.
  *
- * Idempotent: if the cache directory already exists and is a valid git
- * checkout, the source is skipped. If it exists as a stale or partial
- * checkout (e.g. restored from CI cache), it is removed and re-cloned.
+ * - Otherwise (typically CI), `git clone --depth 1 --branch <ref>`
+ *   into `.cache/external/<name>/`. Uses ISO24229_CI_PAT_TOKEN (or
+ *   fallback GITHUB_TOKEN) for private repos.
  *
- * This script never modifies the source repositories.
+ * We deliberately do NOT symlink `.cache/external/<name>` to the
+ * sibling. Earlier versions did, and every file-walking tool that
+ * followed the symlink (Vite, TypeScript, Astro content collections)
+ * ended up watching or type-checking the sibling's `.git` internals,
+ * causing CPU spin and build failures. See commit history of
+ * astro.config.ts and prepare-external.mts.
+ *
+ * This script is idempotent: existing valid clones are kept; stale or
+ * partial checkouts are removed and re-cloned. It never modifies the
+ * source repositories.
  */
-import { mkdir, rm, lstat, symlink, access, readlink } from 'node:fs/promises';
+import { mkdir, rm, access } from 'node:fs/promises';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -47,44 +54,6 @@ async function pathExists(p: string): Promise<boolean> {
   }
 }
 
-async function isSymlink(p: string): Promise<boolean> {
-  try {
-    const stat = await lstat(p);
-    return stat.isSymbolicLink();
-  } catch {
-    return false;
-  }
-}
-
-async function prepareFromLocal(source: ExternalSource): Promise<boolean> {
-  const linkPath = join(CACHE_ROOT, source.name);
-  const siblingResolved = resolve(source.localPath);
-
-  if (await isSymlink(linkPath)) {
-    const target = await readlink(linkPath);
-    if (target === siblingResolved) {
-      console.log(`✓ ${source.name} → ${siblingResolved} (symlinked, sibling)`);
-      return true;
-    }
-    // Pointed at the wrong place — remove and re-link.
-    await rm(linkPath, { recursive: true, force: true });
-  }
-
-  if (!existsSync(siblingResolved)) {
-    return false;
-  }
-
-  if (await pathExists(linkPath)) {
-    // Stale directory from a prior clone — remove before symlinking.
-    await rm(linkPath, { recursive: true, force: true });
-  }
-
-  await mkdir(CACHE_ROOT, { recursive: true });
-  await symlink(siblingResolved, linkPath, 'dir');
-  console.log(`✓ ${source.name} → ${siblingResolved} (symlinked, fresh)`);
-  return true;
-}
-
 /**
  * Returns the access token to use for cloning private sources, if any.
  *
@@ -92,7 +61,7 @@ async function prepareFromLocal(source: ExternalSource): Promise<boolean> {
  * 1. ISO24229_CI_PAT_TOKEN — PAT scoped to read the iso24229 org's
  *    private repos. Set as a secret in the website repo's CI.
  * 2. GITHUB_TOKEN — fallback for environments where the default
- *    Actions token has cross-repo read access (e.g. via org settings).
+ *    Actions token has cross-repo read access (e.g. via org setting).
  */
 function privateSourceToken(): string | undefined {
   return process.env.ISO24229_CI_PAT_TOKEN ?? process.env.GITHUB_TOKEN;
@@ -115,16 +84,20 @@ function prepareFromClone(source: ExternalSource): void {
 }
 
 async function main(): Promise<void> {
-  await mkdir(CACHE_ROOT, { recursive: true });
   for (const source of externalSources) {
-    const linked = await prepareFromLocal(source);
-    if (linked) continue;
+    const siblingResolved = resolve(source.localPath);
 
+    // Local dev: sibling clone present — nothing to do. resolveSourcePath
+    // reads from it directly.
+    if (existsSync(siblingResolved)) {
+      console.log(`✓ ${source.name} → ${siblingResolved} (sibling)`);
+      continue;
+    }
+
+    // CI / fallback: clone into the cache.
+    await mkdir(CACHE_ROOT, { recursive: true });
     const dest = join(CACHE_ROOT, source.name);
 
-    // Always start from a clean directory in CI. The Actions cache may
-    // restore a stale checkout from a previous run; rm ensures the new
-    // clone succeeds.
     if (await pathExists(dest)) {
       console.log(`· ${source.name}: removing stale cache directory`);
       await rm(dest, { recursive: true, force: true });
