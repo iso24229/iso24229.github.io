@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths, InferGetStaticParamsType, InferGetStaticPropsType } from 'astro';
+
+interface NewsFrontmatter {
+  title: string;
+  date: Date;
+  summary: string;
+  author?: string;
+  tags: string[];
+}
+
+interface NewsEntry {
+  id: string;
+  data: NewsFrontmatter;
+}
+
+export const getStaticPaths = (async () => {
+  const posts = (await getCollection('news')) as unknown as NewsEntry[];
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+
+const { slug } = Astro.params as Params;
+const { post } = Astro.props as { post: NewsEntry };
+
+const all = ((await getCollection('news')) as unknown as NewsEntry[]).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const idx = all.findIndex((p) => p.id === slug);
+const newer = idx > 0 ? all[idx - 1] : undefined;
+const older = idx >= 0 && idx < all.length - 1 ? all[idx + 1] : undefined;
+
+function fmtDate(d: Date): string {
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+// Re-fetch the full entry (with body) for rendering.
+const fullEntry = (await getCollection('news')).find((p) => p.id === slug)!;
+const { Content } = await render(fullEntry);
+---
+
+<Layout title={post.data.title} description={post.data.summary}>
+  <article class="max-w-3xl">
+    <p class="text-sm text-ink-subtle mb-2"><a href="/news">← News</a></p>
+
+    <header class="mb-8">
+      <p class="text-xs font-mono uppercase text-ink-subtle">
+        {fmtDate(post.data.date)}
+        {post.data.author && <span> · {post.data.author}</span>}
+      </p>
+      <h1 class="mt-2 text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
+        {post.data.title}
+      </h1>
+      {post.data.tags.length > 0 && (
+        <ul class="mt-4 flex flex-wrap gap-2">
+          {post.data.tags.map((tag) => (
+            <li class="badge">{tag}</li>
+          ))}
+        </ul>
+      )}
+    </header>
+
+    <div class="prose prose-neutral max-w-none">
+      <Content />
+    </div>
+
+    {
+      (newer || older) && (
+        <nav class="mt-16 pt-6 border-t border-line grid grid-cols-2 gap-4 text-sm">
+          {newer ? (
+            <a href={`/news/${newer.id}/`} class="underline">← {newer.data.title}</a>
+          ) : <span />}
+          {older ? (
+            <a href={`/news/${older.id}/`} class="underline text-right">{older.data.title} →</a>
+          ) : <span />}
+        </nav>
+      )
+    }
+  </article>
+</Layout>
