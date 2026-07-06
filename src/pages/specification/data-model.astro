@@ -336,18 +336,9 @@ import { externalLinks } from '../../config';
     </div>
   </section>
 
-  {/* ── Note on schema alignment ────────────────────────────── */}
-  <section class="rule-section mb-12">
-    <div class="max-w-2xl p-5 border border-gold-deep dark:border-gold-bright rounded bg-paper-raised">
-      <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Schema alignment note</p>
-      <p class="text-sm text-ink-muted leading-relaxed">
-        The register's YAML schema and JSON Schemas currently use placeholder values for codeStatus (<span class="font-mono">stable, proposed, deprecated, withdrawn</span>), systemStatus (<span class="font-mono">stable, experimental, historical</span>), and relation types (<span class="font-mono">alias, successor, predecessor</span>). These will be aligned with the standard's actual values (codeStatus: <span class="font-mono">preferred, deprecated</span>; systemStatus: <span class="font-mono">current, former, inactive</span>; relation types: <span class="font-mono">basedOn, basisFor, aliasOf, adoptedFrom, supersedes, supersededBy, relatedTo</span>) in a follow-up schema migration.
-      </p>
-    </div>
-  </section>
-
-  <div class="rule-section grid gap-4 md:grid-cols-2">
+  <div class="rule-section grid gap-4 md:grid-cols-3">
     <Card href="/specification/annex-a" title="Annex A — Terms of Reference" body="The RA's mandate per the standard." />
-    <Card href="/learn/examples" title="Worked examples" body="Nine real systems decoded." />
+    <Card href="/learn/code-structure" title="Conversion system codes" body="Complete structure and construction rules from §4." />
+    <Card href="/learn/authorities" title="Conversion system authorities" body="Requirements, competency, and identifier rules from §5." />
   </div>
 </Layout>
