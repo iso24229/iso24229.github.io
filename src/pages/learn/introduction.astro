@@ -1,14 +1,27 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { externalLinks } from '../../config';
+import TableOfContents from '../../components/TableOfContents.astro';
+const tocItems = [
+  { id: 'purpose', label: 'Purpose' },
+  { id: 'standards', label: 'Three standards' },
+  { id: 'compose', label: 'How they compose' },
+  { id: 'problem', label: 'The problem' },
+  { id: 'use-cases', label: 'Use cases' },
+  { id: 'register', label: 'The register' },
+];
 ---
 
 <Layout title="Introduction">
   <p class="text-sm text-ink-subtle mb-2"><a href="/learn">← Learn</a></p>
   <h1 class="text-4xl font-semibold tracking-tight mb-6">Introduction</h1>
 
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
+
   {/* ── Purpose ──────────────────────────────────────────────── */}
-  <section class="mb-12">
+  <section id="purpose" class="mb-12">
     <p class="eyebrow mb-3">Purpose</p>
     <p class="text-lg text-ink-muted max-w-2xl leading-relaxed mb-6">
       ISO 24229 assigns every written language conversion system — a romanisation, a transliteration, a transcription, an orthographic reform — a single, unambiguous, machine-readable code. The standard does not define <em>how</em> conversions should be done; that is the job of each competent authority. Its purpose is to make existing conversions <strong>identifiable</strong>, so that when data flows between libraries, gazetteers, corpora, and software, the conversion method is explicit, auditable, and traceable.
@@ -19,7 +32,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── When do you need each standard? ──────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="standards" class="rule-section mb-12">
     <p class="eyebrow mb-3">Three standards, three questions</p>
     <h2 class="max-w-2xl mb-6">When do you need each?</h2>
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
@@ -60,7 +73,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── How they compose ─────────────────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="compose" class="rule-section mb-12">
     <p class="eyebrow mb-3">How they compose</p>
     <h2 class="max-w-2xl mb-6">One code, built from all three.</h2>
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
@@ -101,7 +114,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── The problem it solves ────────────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="problem" class="rule-section mb-12">
     <p class="eyebrow mb-3">The problem</p>
     <h2 class="max-w-2xl mb-6">The same system, called by six different names.</h2>
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
@@ -118,7 +131,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── Use cases ────────────────────────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="use-cases" class="rule-section mb-12">
     <p class="eyebrow mb-3">Use cases</p>
     <h2 class="max-w-2xl mb-8">Where written language conversion shows up.</h2>
 
@@ -166,10 +179,6 @@ import { externalLinks } from '../../config';
       </div>
 
       <div>
-        <h3 class="text-lg font-semibold mb-2">Digital humanities and text encoding</h3>
-        <p class="text-ink-muted leading-relaxed">
-
-      <div>
         <h3 class="text-lg font-semibold mb-2">Data migration and system integration</h3>
         <p class="text-ink-muted leading-relaxed">
           When merging two databases that used different romanisation systems, you need to know which system each used. ISO 24229 codes make this metadata explicit, enabling automated reconciliation rather than manual deduplication.
@@ -179,7 +188,7 @@ import { externalLinks } from '../../config';
   </section>
 
   {/* ── Where the register sits ──────────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="register" class="rule-section mb-12">
     <p class="eyebrow mb-3">The register</p>
     <h2 class="max-w-2xl mb-6">The authoritative list.</h2>
     <p class="text-ink-muted max-w-2xl leading-relaxed">
@@ -190,4 +199,6 @@ import { externalLinks } from '../../config';
   <p class="mt-12">
     <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Next: Anatomy of a code →</a>
   </p>
+    </div>
+  </div>
 </Layout>

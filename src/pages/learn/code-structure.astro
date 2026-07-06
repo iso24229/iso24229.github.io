@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
 import { externalLinks } from '../../config';
 
 const specExamples = [
@@ -28,6 +29,17 @@ const authorityExamples = [
   { id: 'ICAO', name: 'International Civil Aviation Organization' },
   { id: 'UN', name: 'United Nations' },
 ];
+const tocItems = [
+  { id: 'structure', label: 'Structure' },
+  { id: 'construction', label: 'Construction rules' },
+  { id: 'titular', label: 'Titular segment' },
+  { id: 'spelling', label: 'Source & target' },
+  { id: 'identifying', label: 'Identifying segment' },
+  { id: 'requirements', label: 'Requirements' },
+  { id: 'deprecation', label: 'Deprecation' },
+  { id: 'user-assigned', label: 'User-assigned' },
+  { id: 'examples', label: 'Examples' },
+];
 ---
 
 <Layout title="Conversion system codes">
@@ -38,8 +50,12 @@ const authorityExamples = [
     Every written language conversion system in the register receives a unique code constructed from four colon-separated segments. This page covers the complete structure, construction rules, and all sub-clauses of §4 of ISO 24229.
   </p>
 
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
+
   {/* ── §4.1 Structure ──────────────────────────────────────── */}
-  <section class="mb-12">
+  <section id="structure" class="mb-12">
     <p class="eyebrow mb-3">§4.1 Structure</p>
     <h2 class="mb-4">Four segments.</h2>
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-6">
@@ -53,7 +69,7 @@ const authorityExamples = [
   </section>
 
   {/* ── §4.1.2 Construction rules ───────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="construction" class="rule-section mb-12">
     <p class="eyebrow mb-3">§4.1.2 Construction rules</p>
     <h2 class="mb-4">Permitted characters and separators.</h2>
     <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
@@ -74,7 +90,7 @@ const authorityExamples = [
   </section>
 
   {/* ── §4.1.3 Titular segment ──────────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="titular" class="rule-section mb-12">
     <p class="eyebrow mb-3">§4.1.3 Titular segment</p>
     <h2 class="mb-4">Who manages the system.</h2>
     <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
@@ -125,7 +141,7 @@ const authorityExamples = [
   </section>
 
   {/* ── §4.1.6 Identifying segment ──────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="identifying" class="rule-section mb-12">
     <p class="eyebrow mb-3">§4.1.6 Identifying segment</p>
     <h2 class="mb-4">Which version, which year, which standard.</h2>
     <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
@@ -172,7 +188,7 @@ const authorityExamples = [
   </section>
 
   {/* ── §4.3 Deprecation ────────────────────────────────────── */}
-  <section class="rule-section mb-12">
+  <section id="deprecation" class="rule-section mb-12">
     <p class="eyebrow mb-3">§4.3 Deprecation</p>
     <h2 class="mb-4">When codes are retired.</h2>
     <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
@@ -240,5 +256,7 @@ const authorityExamples = [
     <a href="/learn/examples" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Worked examples with segment breakdowns →</a>
     <a href="/learn/authorities" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Conversion system authorities →</a>
     <a href="/specs/data-model" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Data model →</a>
+  </div>
+    </div>
   </div>
 </Layout>
