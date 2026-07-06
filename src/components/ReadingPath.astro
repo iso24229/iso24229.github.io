@@ -1,0 +1,42 @@
+---
+/**
+ * Vertical reading-path navigation. Replaces card grids with an
+ * editorial guide that leads the reader through content in order.
+ *
+ * Each item: number, title, description, href, optional tag.
+ * Connected by a vertical rule.
+ */
+export interface PathItem {
+  n: number;
+  href: string;
+  title: string;
+  desc: string;
+  tag?: string;
+}
+
+export interface Props {
+  items: PathItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<ol class="reading-path">
+  {items.map((item) => (
+    <li class="path-item group">
+      <a href={item.href} class="flex gap-5 md:gap-6 items-start py-5 border-b border-rule last:border-0 transition-colors hover:bg-paper-raised/50 -mx-3 px-3 rounded-sm">
+        <span class="shrink-0 flex items-center justify-center w-9 h-9 rounded-full border border-rule text-sm font-mono text-ink-subtle group-hover:border-gold-deep dark:group-hover:border-gold-bright group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">
+          {item.n}
+        </span>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-baseline justify-between gap-3">
+            <h3 class="text-base md:text-lg font-semibold tracking-tight group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">{item.title}</h3>
+            {item.tag && <span class="shrink-0 eyebrow">{item.tag}</span>}
+          </div>
+          <p class="mt-1 text-sm text-ink-muted leading-relaxed">{item.desc}</p>
+        </div>
+        <span class="shrink-0 mt-1 text-ink-subtle group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors" aria-hidden="true">→</span>
+      </a>
+    </li>
+  ))}
+</ol>

@@ -1,0 +1,65 @@
+---
+/**
+ * SVG governance hierarchy diagram.
+ * Shows: ISO → RA (CalConnect) → AG → Authorities → Systems
+ * Uses currentColor + CSS vars for theming.
+ */
+---
+
+<svg viewBox="0 0 600 320" class="w-full h-auto max-w-lg" role="img" aria-label="Governance hierarchy: ISO designates CalConnect as Registration Authority, which appoints the Advisory Group, which oversees conversion system authorities and their systems.">
+  <style>
+    .gd-box { fill: var(--color-paper-raised); stroke: var(--color-rule); stroke-width: 1; }
+    .gd-box-accent { fill: color-mix(in srgb, var(--color-gold) 8%, var(--color-paper-raised)); stroke: var(--color-gold); stroke-width: 1.5; }
+    .gd-box-blue { fill: color-mix(in srgb, var(--color-blue) 8%, var(--color-paper-raised)); stroke: var(--color-blue); stroke-width: 1; }
+    .gd-line { stroke: var(--color-rule); stroke-width: 1; fill: none; }
+    .gd-label { font-family: var(--font-sans); font-size: 13px; font-weight: 600; fill: var(--color-ink); text-anchor: middle; }
+    .gd-sub { font-family: var(--font-sans); font-size: 10px; fill: var(--color-ink-subtle); text-anchor: middle; }
+    .gd-num { font-family: var(--font-mono); font-size: 9px; fill: var(--color-ink-subtle); text-anchor: middle; letter-spacing: 0.1em; }
+  </style>
+
+  {/* ISO at top */}
+  <rect x="225" y="10" width="150" height="44" rx="4" class="gd-box" />
+  <text x="300" y="30" class="gd-num">DESIGNATES</text>
+  <text x="300" y="45" class="gd-label">ISO</text>
+
+  {/* Line down to RA */}
+  <line x1="300" y1="54" x2="300" y2="80" class="gd-line" />
+
+  {/* RA */}
+  <rect x="200" y="80" width="200" height="50" rx="4" class="gd-box-accent" />
+  <text x="300" y="100" class="gd-num" fill="var(--color-gold-deep)">REGISTRATION AUTHORITY</text>
+  <text x="300" y="118" class="gd-label">CalConnect</text>
+
+  {/* Line down to AG */}
+  <line x1="300" y1="130" x2="300" y2="155" class="gd-line" />
+
+  {/* AG */}
+  <rect x="225" y="155" width="150" height="44" rx="4" class="gd-box" />
+  <text x="300" y="172" class="gd-num">APPOINTS</text>
+  <text x="300" y="188" class="gd-label">Advisory Group</text>
+  <text x="300" y="200" class="gd-sub">4–12 experts</text>
+
+  {/* Lines branching to authorities */}
+  <line x1="300" y1="210" x2="300" y2="225" class="gd-line" />
+  <line x1="120" y1="225" x2="480" y2="225" class="gd-line" />
+  <line x1="120" y1="225" x2="120" y2="240" class="gd-line" />
+  <line x1="240" y1="225" x2="240" y2="240" class="gd-line" />
+  <line x1="360" y1="225" x2="360" y2="240" class="gd-line" />
+  <line x1="480" y1="225" x2="480" y2="240" class="gd-line" />
+
+  {/* Authority boxes */}
+  <rect x="60" y="240" width="120" height="36" rx="4" class="gd-box-blue" />
+  <text x="120" y="262" class="gd-label">BGN-PCGN</text>
+
+  <rect x="180" y="240" width="120" height="36" rx="4" class="gd-box-blue" />
+  <text x="240" y="262" class="gd-label">ALA-LC</text>
+
+  <rect x="300" y="240" width="120" height="36" rx="4" class="gd-box-blue" />
+  <text x="360" y="262" class="gd-label">UN</text>
+
+  <rect x="420" y="240" width="120" height="36" rx="4" class="gd-box-blue" />
+  <text x="480" y="262" class="gd-label">DIN · ICAO</text>
+
+  {/* Systems label */}
+  <text x="300" y="300" class="gd-sub">Each authority manages one or more written language conversion systems</text>
+</svg>
