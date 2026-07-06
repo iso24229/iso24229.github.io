@@ -1,6 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Card from '../../components/Card.astro';
 import { getCollection } from 'astro:content';
 import { itemClassSlugs } from '../../domain/registry/ItemClassRegistry';
 import { schemaWithRichData } from '../../content.config';
@@ -8,27 +7,52 @@ import { schemaWithRichData } from '../../content.config';
 const counts = await Promise.all(
   itemClassSlugs.map(async (slug) => ({
     slug,
+    title: schemaWithRichData[slug].title,
+    description: schemaWithRichData[slug].description,
     count: (await getCollection(slug)).length,
   })),
 );
+
+const total = counts.reduce((sum, c) => sum + c.count, 0);
+const authorities = counts.find((c) => c.slug === 'authority')?.count ?? 0;
+const systems = counts.find((c) => c.slug === 'system-code')?.count ?? 0;
 ---
 
-<Layout title="Register">
-  <h1 class="text-4xl font-semibold tracking-tight mb-6">Register</h1>
-  <p class="text-ink-muted max-w-2xl mb-10">
-    The register is organised into item classes per the ISO 24229 data model.
-    Click any class to browse its entries.
-  </p>
+<Layout title="Content">
+  <section class="mb-12">
+    <p class="eyebrow mb-4">Content</p>
+    <h1 class="mb-6">Browse the register.</h1>
+    <p class="text-lg text-ink-muted max-w-2xl leading-relaxed mb-8">
+      The register contains every written language conversion system, authority, and spelling system that has been assigned an ISO 24229 code.
+    </p>
+    <div class="flex flex-wrap gap-x-8 gap-y-2 text-sm">
+      <span class="text-ink-muted"><span class="font-mono text-ink font-semibold">{total}</span> total entries</span>
+      <span class="text-ink-muted"><span class="font-mono text-ink font-semibold">{systems}</span> conversion systems</span>
+      <span class="text-ink-muted"><span class="font-mono text-ink font-semibold">{authorities}</span> authorities</span>
+    </div>
+  </section>
 
-  <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-    {
-      counts.map(({ slug, count }) => (
-        <Card
-          href={`/register/${slug}/p/1`}
-          title={schemaWithRichData[slug].title}
-          body={count === 0 ? 'No entries yet.' : `${count} ${count === 1 ? 'entry' : 'entries'}.`}
-        />
-      ))
-    }
-  </div>
+  <section>
+    <p class="eyebrow mb-4">Item classes</p>
+    <ul class="border-t border-rule">
+      {counts.map((c) => (
+        <li class="border-b border-rule">
+          <a href={`/register/${c.slug}/p/1`} class="flex items-baseline justify-between gap-4 py-4 group">
+            <div class="flex-1 min-w-0">
+              <h2 class="text-lg font-semibold tracking-tight group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">{c.title}</h2>
+              {c.description && <p class="text-sm text-ink-muted mt-0.5">{c.description}</p>}
+            </div>
+            <span class="shrink-0 font-mono text-sm text-ink-subtle">{c.count}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Authorities</p>
+    <p class="text-sm">
+      <a href="/register/authority" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Browse the authority directory →</a>
+    </p>
+  </section>
 </Layout>

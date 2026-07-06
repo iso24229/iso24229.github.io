@@ -1,15 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+import GovernanceDiagram from '../components/GovernanceDiagram.astro';
 import { externalLinks } from '../config';
 ---
 
 <Layout title="About">
-  {/* ── Hero: what the standard is ─────────────────────────── */}
+  {/* ── Hero ────────────────────────────────────────────────── */}
   <section class="mb-16">
     <p class="eyebrow mb-4">About</p>
     <h1 class="max-w-4xl mb-6">The international standard for written language conversion systems.</h1>
-    <p class="text-lg text-ink-muted max-w-2xl leading-relaxed mb-6">
+    <p class="text-lg text-ink-muted max-w-2xl leading-relaxed">
       ISO 24229 gives every system that converts text from one script or spelling to another — transliteration, transcription, romanisation, and orthographic reform alike — a single, unambiguous identifier. This website is the official register, operated by CalConnect as Registration Authority, designated by ISO.
     </p>
   </section>
@@ -31,7 +31,7 @@ import { externalLinks } from '../config';
     </div>
   </section>
 
-  {/* ── What the standard defines ─────────────────────────────── */}
+  {/* ── Scope ──────────────────────────────────────────────────── */}
   <section class="rule-section">
     <p class="eyebrow mb-3">Scope</p>
     <h2 class="max-w-2xl mb-6">What the standard defines.</h2>
@@ -44,14 +44,19 @@ import { externalLinks } from '../config';
     </ul>
   </section>
 
-  {/* ── Registration Authority ──────────────────────────────── */}
+  {/* ── Governance ─────────────────────────────────────────────── */}
   <section class="rule-section">
-    <p class="eyebrow mb-3">Registration Authority</p>
-    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
+    <p class="eyebrow mb-3">Governance</p>
+    <h2 class="max-w-2xl mb-6">How the register is managed.</h2>
+    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed mb-8">
       <p>
         <a href={externalLinks.calconnect} class="underline">CalConnect</a> is the Registration Authority (ISO 24229/RA), designated by ISO. The register is operated by <a href={externalLinks.ribose} class="underline">Ribose</a>. An Advisory Group (ISO 24229/AG) of 4–12 experts — including a representative of ISO/TC 46 — reviews submissions at its bimonthly meeting. As a rule, decisions are made by consensus; if a vote is needed, a decision is approved when more than two-thirds of members vote for it.
       </p>
     </div>
+    <GovernanceDiagram />
+    <p class="mt-6 text-sm">
+      <a href="/specification/governance" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Full governance and lifecycle →</a>
+    </p>
   </section>
 
   {/* ── Logo + philosophy ──────────────────────────────────── */}
@@ -74,30 +79,25 @@ import { externalLinks } from '../config';
       <p>
         At the centre of the ISO 24229 logomark sits a circle divided into two halves. This is the semantic core — the invariant meaning that exists before any script is chosen, before any pen meets paper. Meaning, in its essence, does not change when it crosses from one writing system to another. The concept of <em>water</em> is the same whether written <span class="font-mono">水</span> in Hanzi, <span class="font-mono">мөрөн</span> in Cyrillic, or <span class="font-mono">usma</span> in Latin. The two halves of the core acknowledge that meaning is always dual: it lives both in the intention of the writer and in the comprehension of the reader, and these two are never quite identical.
       </p>
-
       <p>
         Around this core, two concentric circles trace the periphery of expression. These are the writing systems — the scripts, orthographies, and conventions that give visible form to meaning. The inner ring is the source: the system from which a conversion begins. The outer ring is the target: the system into which meaning is refracted. Between them lies the act of conversion itself, the space where ISO 24229 operates.
       </p>
-
       <p>
         Both the semantic centre and the expressive rings are set at an angle — a rotation governed by the golden ratio. This is not decoration. It is the logomark's deepest statement: meaning and its written expression are never perfectly aligned. They drift. The angle between them is the inherent bias of every transliteration, every transcription, every romanisation. When Arabic flows into Latin, when Cyrillic flows into Latin, when Hanzi flows into Pinyin, something is preserved and something is refracted — bent slightly, like light passing through water.
       </p>
-
       <p>
         ISO 24229 exists to make this refraction <strong>visible</strong>. Every code in the register is a named, identifiable conversion path. By assigning each system a unique code, the standard transforms an otherwise opaque transformation into an auditable, citable act. The register does not eliminate drift — that is impossible — but it makes drift <em>transparent</em>.
       </p>
-
       <p>
         The concentric rings acknowledge that expression is layered, that conversion is never lossless, and that the path from meaning to written form is always mediated. The golden ratio — nature's proportion of growth and harmony — suggests that this mediation is not a defect to be corrected but a natural property of written language, as fundamental as the angle of sunlight through a prism.
       </p>
-
       <p>
         The ISO 24229 register is, in this sense, an atlas of refraction: a comprehensive, maintained catalogue of the known ways that meaning bends as it passes from one script to another. By naming each path, we shed light on the original authentic meaning — not by freezing it in a single form, but by making every transformation traceable.
       </p>
     </div>
   </section>
 
-  {/* ── The colours ──────────────────────────────────────────── */}
+  {/* ── Colours ──────────────────────────────────────────────── */}
   <section class="rule-section">
     <p class="eyebrow mb-3">The colours</p>
     <h2 class="max-w-2xl mb-6">Gold and blue, held in tension.</h2>
@@ -108,19 +108,6 @@ import { externalLinks } from '../config';
       <p>
         Where gold and blue meet, at the angle of the golden ratio, the two colours do not merge into green. They hold their distinction. This is intentional: meaning and expression are not the same thing, and ISO 24229's purpose is to keep them legibly separate — to ensure that every reader can tell which is which, even when they are tightly interleaved.
       </p>
-    </div>
-  </section>
-
-  {/* ── Explore ─────────────────────────────────────────────── */}
-  <section class="rule-section">
-    <p class="eyebrow mb-3">Explore</p>
-    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-6">
-      <Card href="/learn/what-is-iso-24229" title="What is ISO 24229?" body="How the standard works and what a code means." />
-      <Card href="/learn/glossary" title="Glossary" body="Defined terms from §3 of the standard." />
-      <Card href="/learn/comparison" title="Comparison" body="How ISO 24229 relates to BCP 47, ALA-LC, ICAO, UN systems." />
-      <Card href="/faq" title="FAQ" body="Common questions, briefly answered." />
-      <Card href="/specification" title="Specification" body="Annex A Terms of Reference and ISO 19135 compliance." />
-      <Card href="/apply" title="Submit a system" body="For authorities adding new conversion systems." />
     </div>
   </section>
 </Layout>
