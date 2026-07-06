@@ -21,40 +21,127 @@ const posts = ((await getCollection('news')) as unknown as NewsEntry[])
 function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
+
+function fmtShort(d: Date): string {
+  return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
+function isoDate(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
+const [lead, ...rest] = posts;
+const byYear = new Map<number, NewsEntry[]>();
+for (const p of rest) {
+  const y = p.data.date.getFullYear();
+  if (!byYear.has(y)) byYear.set(y, []);
+  byYear.get(y)!.push(p);
+}
+const years = [...byYear.keys()].sort((a, b) => b - a);
 ---
 
 <Layout title="News">
-  <h1 class="text-4xl font-semibold tracking-tight mb-2">News</h1>
-  <p class="text-ink-muted max-w-2xl mb-10">
-    Announcements from the ISO 24229 Registration Authority and Advisory
-    Group.
-  </p>
+  {/* ── Masthead ─────────────────────────────────────────────── */}
+  <section class="mb-16 pt-4">
+    <div class="flex items-baseline justify-between gap-6 mb-8">
+      <p class="eyebrow">Editorial</p>
+      <p class="text-sm text-ink-subtle">
+        {posts.length} post{posts.length === 1 ? '' : 's'} · since July 2026
+      </p>
+    </div>
+    <h1 class="max-w-4xl mb-6">News &amp; announcements.</h1>
+    <p class="text-lg md:text-xl text-ink-muted max-w-2xl leading-relaxed">
+      Updates from the Registration Authority and Advisory Group — register
+      operations, schema changes, reference-data syncs, and meeting minutes.
+    </p>
+  </section>
 
   {
     posts.length === 0 ? (
       <p class="text-ink-muted">No posts yet.</p>
     ) : (
-      <ul class="space-y-8 max-w-3xl">
-        {posts.map((post) => (
-          <li class="border-t border-line pt-6">
-            <p class="text-xs font-mono uppercase text-ink-subtle">
-              {fmtDate(post.data.date)}
-              {post.data.author && <span> · {post.data.author}</span>}
-            </p>
-            <h2 class="mt-1 text-2xl font-semibold tracking-tight">
-              <a href={`/news/${post.id}/`} class="hover:text-accent">{post.data.title}</a>
-            </h2>
-            <p class="mt-2 text-ink-muted">{post.data.summary}</p>
-            {post.data.tags.length > 0 && (
-              <ul class="mt-3 flex flex-wrap gap-2">
-                {post.data.tags.map((tag) => (
-                  <li class="badge">{tag}</li>
+      <>
+        {/* ── Lead story ─────────────────────────────────────────── */}
+        <article class="rule-section mb-20">
+          <p class="eyebrow text-gold-deep dark:text-gold-bright mb-5">Latest</p>
+          <p class="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle mb-4">
+            <time datetime={isoDate(lead.data.date)}>{fmtDate(lead.data.date)}</time>
+            {lead.data.author && <span> · {lead.data.author}</span>}
+          </p>
+          <h2 class="max-w-3xl mb-5">
+            <a href={`/news/${lead.id}/`} class="hover:text-gold-deep dark:hover:text-gold-bright transition-colors">
+              {lead.data.title}
+            </a>
+          </h2>
+          <p class="text-lg text-ink-muted max-w-2xl leading-relaxed mb-6">
+            {lead.data.summary}
+          </p>
+          <div class="flex items-center gap-6 text-sm">
+            <a
+              href={`/news/${lead.id}/`}
+              class="inline-flex items-center gap-2 text-ink hover:text-gold-deep dark:hover:text-gold-bright"
+            >
+              Read in full
+              <span aria-hidden="true">→</span>
+            </a>
+            {lead.data.tags.length > 0 && (
+              <ul class="flex flex-wrap gap-x-4 gap-y-1 text-xs font-mono uppercase tracking-wider text-ink-subtle">
+                {lead.data.tags.map((tag) => (
+                  <li>{tag}</li>
                 ))}
               </ul>
             )}
-          </li>
-        ))}
-      </ul>
+          </div>
+        </article>
+
+        {/* ── Archive, grouped by year ──────────────────────────── */}
+        {rest.length > 0 && (
+          <section class="rule-section">
+            <p class="eyebrow mb-8">Archive</p>
+            <div class="max-w-4xl">
+              {years.map((year) => (
+                <div class="mb-12 last:mb-0">
+                  <div class="grid grid-cols-[5rem_1fr] gap-x-6 md:gap-x-10 border-t border-rule pt-6 mb-6">
+                    <h3 class="font-display text-2xl font-bold tracking-[-0.02em] text-ink-subtle">{year}</h3>
+                    <ul class="border-l border-rule">
+                      {byYear.get(year)!.map((post) => (
+                        <li class="border-b border-rule">
+                          <a
+                            href={`/news/${post.id}/`}
+                            class="grid grid-cols-[6.5rem_1fr] gap-x-6 md:gap-x-10 items-baseline py-5 pl-6 -ml-px hover:bg-paper-raised transition-colors group"
+                          >
+                            <time
+                              datetime={isoDate(post.data.date)}
+                              class="font-mono text-[0.7rem] uppercase tracking-[0.14em] text-ink-subtle pt-1"
+                            >
+                              {fmtShort(post.data.date)}
+                            </time>
+                            <span>
+                              <span class="block font-display text-lg md:text-xl font-semibold tracking-[-0.018em] text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">
+                                {post.data.title}
+                              </span>
+                              <span class="block mt-1.5 text-sm text-ink-muted leading-relaxed max-w-xl">
+                                {post.data.summary}
+                              </span>
+                              {post.data.tags.length > 0 && (
+                                <ul class="mt-2.5 flex flex-wrap gap-x-3 gap-y-1 text-[0.65rem] font-mono uppercase tracking-wider text-ink-subtle">
+                                  {post.data.tags.map((tag) => (
+                                    <li>{tag}</li>
+                                  ))}
+                                </ul>
+                              )}
+                            </span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </>
     )
   }
 </Layout>

@@ -40,6 +40,10 @@ function fmtDate(d: Date): string {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
+function isoDate(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
 // Re-fetch the full entry (with body) for rendering.
 const fullEntry = (await getCollection('news')).find((p) => p.id === slug)!;
 const { Content } = await render(fullEntry);
@@ -50,17 +54,17 @@ const { Content } = await render(fullEntry);
     <p class="text-sm text-ink-subtle mb-2"><a href="/news">← News</a></p>
 
     <header class="mb-8">
-      <p class="text-xs font-mono uppercase text-ink-subtle">
-        {fmtDate(post.data.date)}
+      <p class="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle">
+        <time datetime={isoDate(post.data.date)}>{fmtDate(post.data.date)}</time>
         {post.data.author && <span> · {post.data.author}</span>}
       </p>
-      <h1 class="mt-2 text-4xl md:text-5xl font-semibold tracking-tight leading-tight">
+      <h1 class="mt-4 max-w-3xl">
         {post.data.title}
       </h1>
       {post.data.tags.length > 0 && (
-        <ul class="mt-4 flex flex-wrap gap-2">
+        <ul class="mt-5 flex flex-wrap gap-x-4 gap-y-1 text-[0.7rem] font-mono uppercase tracking-[0.14em] text-ink-subtle">
           {post.data.tags.map((tag) => (
-            <li class="badge">{tag}</li>
+            <li>{tag}</li>
           ))}
         </ul>
       )}
