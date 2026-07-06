@@ -1,24 +1,24 @@
 ---
-import Layout from '../../../../../../layouts/Layout.astro';
-import RegistrationBadge from '../../../../../../components/RegistrationBadge.astro';
-import StatusFacets from '../../../../../../components/StatusFacets.astro';
+import Layout from '../../../../../layouts/Layout.astro';
+import RegistrationBadge from '../../../../../components/RegistrationBadge.astro';
+import StatusFacets from '../../../../../components/StatusFacets.astro';
 import { getCollection } from 'astro:content';
-import type { ItemClassSlug } from '../../../../../../domain/items/RegisterItem';
-import { itemClassSlugs } from '../../../../../../domain/registry/ItemClassRegistry';
-import { schemaWithRichData } from '../../../../../../content.config';
+import type { ItemClassSlug } from '../../../../../domain/items/RegisterItem';
+import { itemClassSlugs } from '../../../../../domain/registry/ItemClassRegistry';
+import { schemaWithRichData } from '../../../../../content.config';
 import {
   REGISTRATION_STATUS_META,
   isRegistrationStatus,
   type RegistrationStatus,
-} from '../../../../../../domain/registration/RegistrationStatus';
-import type { InferGetStaticPropsType, InferGetStaticParamsType, GetStaticPaths, PaginateFunction } from 'astro';
+} from '../../../../../domain/registration/RegistrationStatus';
+import type { GetStaticPaths, InferGetStaticParamsType, InferGetStaticPropsType } from 'astro';
 
 interface EntryLike {
   id: string;
   data: Record<string, unknown>;
 }
 
-export const getStaticPaths = (({ paginate }: { paginate: PaginateFunction }) => {
+export const getStaticPaths = (async () => {
   return Promise.all(
     itemClassSlugs.map(async (itemClass) => {
       const collection = await getCollection(itemClass);
@@ -31,32 +31,29 @@ export const getStaticPaths = (({ paginate }: { paginate: PaginateFunction }) =>
         const s = e.data.registrationStatus;
         if (isRegistrationStatus(s)) counts.set(s, (counts.get(s) ?? 0) + 1);
       }
-      const paths: ReturnType<typeof paginate> = [];
-      for (const [status] of counts) {
-        const filtered = allEntries.filter((e) => e.data.registrationStatus === status);
-        const p = paginate(filtered, {
-          pageSize: 20,
-          params: { itemClass, status },
-          props: { allEntries },
-        });
-        paths.push(...p);
-      }
-      return paths;
+      return [...counts.entries()].map(([status]) => ({
+        params: { itemClass, status },
+        props: {
+          entries: allEntries.filter((e) => e.data.registrationStatus === status),
+          allEntries,
+        },
+      }));
     }),
-  ).then((all) => all.flat() as ReturnType<typeof paginate>);
+  ).then((all) => all.flat());
 }) satisfies GetStaticPaths;
 
 type Params = InferGetStaticParamsType<typeof getStaticPaths>;
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
 const { itemClass, status } = Astro.params as Params;
-const { page, allEntries } = Astro.props as Props & { allEntries: EntryLike[] };
-const entries: EntryLike[] = page.data as unknown as EntryLike[];
+const { entries, allEntries } = Astro.props as Props & {
+  entries: EntryLike[];
+  allEntries: EntryLike[];
+};
 
 if (!isRegistrationStatus(status)) {
   return Astro.redirect('/register');
 }
-
 const activeStatus = status as RegistrationStatus;
 const title = schemaWithRichData[itemClass as ItemClassSlug].title;
 
@@ -65,22 +62,31 @@ for (const e of allEntries) {
   const s = e.data.registrationStatus;
   if (isRegistrationStatus(s)) counts.set(s, (counts.get(s) ?? 0) + 1);
 }
+
+const pageSize = 20;
+const pageCount = Math.max(1, Math.ceil(entries.length / pageSize));
 ---
 
-<Layout title={`${title} — ${REGISTRATION_STATUS_META[activeStatus].label}`}>
+<Layout title={`${title} — ${REGISTRATION_STATUS_META[activeStatus].label} (all)`}>
   <p class="text-sm text-ink-subtle mb-2">
     <a href="/register">← Register</a>
   </p>
   <div class="flex items-baseline justify-between mb-6 gap-4">
     <h1 class="text-3xl font-semibold tracking-tight">{title}</h1>
-    <p class="text-sm text-ink-muted shrink-0">{page.total} entries</p>
+    <p class="text-sm text-ink-muted shrink-0">{entries.length} entries · showing all</p>
   </div>
 
   <StatusFacets itemClass={itemClass!} counts={counts} total={allEntries.length} activeStatus={activeStatus} />
 
-  <p class="text-sm text-ink-muted max-w-2xl mb-6 leading-relaxed">
+  <p class="text-sm text-ink-muted max-w-2xl mb-4 leading-relaxed">
     <span class="font-medium text-ink">{REGISTRATION_STATUS_META[activeStatus].label}.</span>
     {REGISTRATION_STATUS_META[activeStatus].description}
+  </p>
+
+  <p class="mb-6 text-sm">
+    <a href={`/register/${itemClass}/status/${activeStatus}/p/1`} class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">
+      ← Paginated view ({pageCount} page{pageCount === 1 ? '' : 's'})
+    </a>
   </p>
 
   {
@@ -107,29 +113,6 @@ for (const e of allEntries) {
           </li>
         ))}
       </ul>
-    )
-  }
-
-  {
-    (page.url.prev || page.url.next) && (
-      <nav class="mt-8 flex flex-wrap items-center justify-between gap-3 text-sm">
-        <div class="flex gap-4">
-          {page.url.prev ? (
-            <a href={page.url.prev} class="underline">← Previous</a>
-          ) : (
-            <span class="text-ink-subtle">← Previous</span>
-          )}
-          <span class="text-ink-muted">Page {page.currentPage} of {page.lastPage}</span>
-          {page.url.next ? (
-            <a href={page.url.next} class="underline">Next →</a>
-          ) : (
-            <span class="text-ink-subtle">Next →</span>
-          )}
-        </div>
-        <a href={`/register/${itemClass}/status/${activeStatus}/all`} class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">
-          See all {page.total} →
-        </a>
-      </nav>
     )
   }
 </Layout>

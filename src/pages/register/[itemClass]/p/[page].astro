@@ -106,18 +106,23 @@ const distinctStatuses = [...counts.keys()].length;
 
   {
     (page.url.prev || page.url.next) && (
-      <nav class="flex justify-between mt-8 text-sm">
-        {page.url.prev ? (
-          <a href={page.url.prev} class="underline">← Previous</a>
-        ) : (
-          <span />
-        )}
-        <span class="text-ink-muted">Page {page.currentPage} of {page.lastPage}</span>
-        {page.url.next ? (
-          <a href={page.url.next} class="underline">Next →</a>
-        ) : (
-          <span />
-        )}
+      <nav class="mt-8 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div class="flex gap-4">
+          {page.url.prev ? (
+            <a href={page.url.prev} class="underline">← Previous</a>
+          ) : (
+            <span class="text-ink-subtle">← Previous</span>
+          )}
+          <span class="text-ink-muted">Page {page.currentPage} of {page.lastPage}</span>
+          {page.url.next ? (
+            <a href={page.url.next} class="underline">Next →</a>
+          ) : (
+            <span class="text-ink-subtle">Next →</span>
+          )}
+        </div>
+        <a href={`/register/${itemClass}/all`} class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">
+          See all {page.total} →
+        </a>
       </nav>
     )
   }
