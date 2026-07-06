@@ -49,6 +49,12 @@ export const navigation: NavItem[] = [
     audience: "user",
   },
   {
+    label: "News",
+    href: "/news",
+    description: "Announcements from the RA and Advisory Group.",
+    audience: "anyone",
+  },
+  {
     label: "Apply",
     href: "/apply",
     description: "Submit a new system or apply to register a new authority.",

@@ -306,6 +306,24 @@ export const collections = Object.entries(zodSchemas).reduce((acc, [k, v]) => {
   return acc;
 }, {} as Record<string, ReturnType<typeof def>>);
 
+/**
+ * News/announcements collection.
+ *
+ * Posts live in `src/content/news/<YYYY>-<MM>-<DD>-<slug>.md(x)`. The
+ * `slug` is derived from the filename, so the published URL is stable.
+ * Adding a post = adding a file.
+ */
+collections.news = defineCollection({
+  loader: glob({ pattern: '*.{md,mdx}', base: './src/content/news' }),
+  schema: z.object({
+    title: z.string().min(1),
+    date: z.coerce.date(),
+    summary: z.string().min(1),
+    author: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
 export const zodCollectionsWithRichData: Record<ItemClass, RichItemClassCollection> = Object.entries(schemaWithRichData).reduce((acc, [k, v]) => {
   acc[k as ItemClass] = {
     ...v,
