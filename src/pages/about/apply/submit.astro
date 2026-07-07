@@ -2,6 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import codeNames from '../../../data/code-names.json';
+import { countries } from '../../../data/countries';
 
 const authorities = (await getCollection('authority'))
   .map((c) => ({
@@ -44,12 +45,15 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
   <script type="application/json" id="lang-data" set:html={JSON.stringify(languages.map(([code, info]) => ({ value: code, label: info.name })))} />
   <script type="application/json" id="script-data" set:html={JSON.stringify(scripts.map(([code, info]) => ({ value: code, label: info.name })))} />
   <script type="application/json" id="system-data" set:html={JSON.stringify(systems.map((s) => ({ value: s.code, label: s.name })))} />
+  <script type="application/json" id="country-data" set:html={JSON.stringify(countries.map((c) => ({ value: c.code, label: c.name })))} />
 
   <style is:inline>
-    .cb-dropdown { position:absolute; top:calc(100% - 1px); left:0; right:0; max-height:240px; overflow-y:auto; z-index:50; background:var(--color-paper); border:1px solid var(--color-rule); border-radius:0 0 4px 4px; box-shadow:0 4px 12px rgba(0,0,0,0.12); display:none; }
+    .cb-dropdown { position:absolute; top:calc(100% - 1px); left:0; min-width:100%; width:max-content; max-width:30rem; max-height:240px; overflow-y:auto; z-index:50; background:var(--color-paper); border:1px solid var(--color-rule); border-radius:0 0 4px 4px; box-shadow:0 4px 12px rgba(0,0,0,0.12); display:none; }
     .cb-dropdown.visible { display:block; }
-    .cb-option { padding:0.375rem 0.75rem; cursor:pointer; display:flex; gap:0.5rem; align-items:baseline; }
+    .cb-option { padding:0.375rem 0.75rem; cursor:pointer; display:block; }
     .cb-option:hover, .cb-option.cb-active { background:var(--color-paper-raised); }
+    .cb-option-value { font-family:var(--font-mono); font-size:0.8125rem; color:var(--color-ink); word-break:break-all; }
+    .cb-option-label { font-size:0.6875rem; color:var(--color-ink-muted); margin-top:0.125rem; line-height:1.3; }
     .cb-error { display:none; font-size:0.75rem; color:#c0392b; margin-top:0.25rem; }
     .cb-error.visible { display:block; }
     .field-empty { border-color:var(--color-gold) !important; }
@@ -142,8 +146,8 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
           </div>
           <div>
             <label class="block eyebrow mb-1.5" for="source-country">Source country (optional)</label>
-            <input id="source-country" type="text" pattern="[A-Z]{2}" maxlength="2" placeholder="ET" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-            <p class="text-xs text-ink-subtle mt-1">ISO 3166-1 alpha-2.</p>
+            <input id="source-country" type="text" placeholder="Ethiopia" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" autocomplete="off" />
+            <p class="text-xs text-ink-subtle mt-1">ISO 3166-1 alpha-2. Type to search by country name or code.</p>
           </div>
           <div>
             <label class="block eyebrow mb-1.5" for="target-script">Target script (ISO 15924) *</label>
@@ -330,7 +334,7 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
           q = (q || '').toLowerCase().trim();
           const m = q ? options.filter(o => o.value.toLowerCase().includes(q) || o.label.toLowerCase().includes(q)).slice(0, 50) : options.slice(0, 50);
           activeIdx = -1;
-          dd.innerHTML = m.length ? m.map((o, i) => '<div class="cb-option" data-value="' + o.value + '" data-idx="' + i + '"><span style="font-family:var(--font-mono);font-size:.875rem;flex-shrink:0;width:4rem;">' + o.value + '</span><span style="font-size:.75rem;color:var(--color-ink-muted);">' + o.label + '</span></div>').join('') : '<div style="padding:.5rem .75rem;font-size:.875rem;color:var(--color-ink-subtle);">No matches</div>';
+          dd.innerHTML = m.length ? m.map((o, i) => '<div class="cb-option" data-value="' + o.value + '" data-idx="' + i + '"><div class="cb-option-value">' + o.value + '</div><div class="cb-option-label">' + o.label + '</div></div>').join('') : '<div style="padding:.5rem .75rem;font-size:.875rem;color:var(--color-ink-subtle);">No matches</div>';
           dd.classList.add('visible');
         }
         function hide() { dd.classList.remove('visible'); activeIdx = -1; }
@@ -384,9 +388,11 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
       const langOpts = JSON.parse(document.getElementById('lang-data')?.textContent || '[]');
       const scriptOpts = JSON.parse(document.getElementById('script-data')?.textContent || '[]');
       const sysOpts = JSON.parse(document.getElementById('system-data')?.textContent || '[]');
+      const countryOpts = JSON.parse(document.getElementById('country-data')?.textContent || '[]');
       attachCombobox(document.getElementById('source-language'), langOpts, 'Select a valid ISO 639 language code');
       attachCombobox(document.getElementById('source-script'), scriptOpts, 'Select a valid ISO 15924 script code');
       attachCombobox(document.getElementById('target-script'), scriptOpts, 'Select a valid ISO 15924 script code');
+      attachCombobox(document.getElementById('source-country'), countryOpts, 'Select a valid ISO 3166-1 alpha-2 country');
       // expose sysOpts for dynamic relation rows
       window.__sysOpts = sysOpts;
 
@@ -658,11 +664,15 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         typeSel.className = 'px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm shrink-0';
         typeSel.innerHTML = '<option value="">type…</option>' + RELATION_TYPES.map((t) => `<option value="${t}" ${type === t ? 'selected' : ''}>${t}</option>`).join('');
 
+        const targetWrap = document.createElement('div');
+        targetWrap.className = 'flex-1 relative';
+
         const targetInput = document.createElement('input');
         targetInput.type = 'text';
         targetInput.placeholder = 'search target system…';
         targetInput.value = target;
-        targetInput.className = 'flex-1 px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono';
+        targetInput.className = 'w-full px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono';
+        targetWrap.appendChild(targetInput);
 
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
@@ -671,7 +681,7 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         removeBtn.onclick = () => { row.remove(); regenerate(); };
 
         row.appendChild(typeSel);
-        row.appendChild(targetInput);
+        row.appendChild(targetWrap);
         row.appendChild(removeBtn);
         container.appendChild(row);
         attachCombobox(targetInput, window.__sysOpts || [], 'Select a valid system code from the list');
