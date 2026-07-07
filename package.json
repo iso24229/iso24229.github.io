@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "scripts": {
     "prepare-external": "tsx scripts/prepare-external.mts",
-    "prebuild": "tsx scripts/prepare-external.mts",
-    "predev": "tsx scripts/prepare-external.mts",
+    "prebuild": "tsx scripts/prepare-external.mts && tsx scripts/build-code-names.mts",
+    "predev": "tsx scripts/prepare-external.mts && tsx scripts/build-code-names.mts",
     "pretest": "tsx scripts/prepare-external.mts",
     "clean": "node scripts/clean.mjs",
     "dev": "astro dev",

@@ -2,6 +2,7 @@
 import Layout from '../../../../layouts/Layout.astro';
 import LifecycleGraph from '../../../../components/LifecycleGraph.astro';
 import RegistrationBadge from '../../../../components/RegistrationBadge.astro';
+import CodeChip from '../../../../components/CodeChip.astro';
 import { getCollection } from 'astro:content';
 import type { ItemClassSlug } from '../../../../domain/items/RegisterItem';
 import type { SystemCode } from '../../../../domain/items/SystemCode';
@@ -369,47 +370,55 @@ const abstractText = typeof entry.data.abstract === 'string' ? entry.data.abstra
           <dl class="border-t border-rule">
             <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
               <dt class="eyebrow pt-1">Source</dt>
-              <dd class="text-sm">
+              <dd class="space-y-2">
                 {sourceSpellingEntry ? (
-                  <a href={`/register/spelling-system/i/${sourceSpellingEntry.id}`} class="font-mono text-blue dark:text-blue-bright hover:underline">
-                    {sourceSpellingEntry.id}
-                  </a>
+                  <div>
+                    <a href={`/register/spelling-system/i/${sourceSpellingEntry.id}`} class="font-mono text-blue dark:text-blue-bright hover:underline">
+                      {sourceSpellingEntry.id}
+                    </a>
+                    <span class="ml-2 text-xs text-ink-subtle">spelling system</span>
+                  </div>
                 ) : (
                   <span class="font-mono text-ink">—</span>
                 )}
                 {sourceLanguage && (
-                  <span class="ml-3 text-ink-muted">
-                    <a href={`/register/iso639/${sourceLanguage}`} class="hover:underline">language: {sourceLanguage}</a>
-                  </span>
+                  <div>
+                    <CodeChip kind="language" code={sourceLanguage} codeHref={`/register/iso639/${sourceLanguage}`} />
+                  </div>
                 )}
                 {sourceScript && (
-                  <span class="ml-3 text-ink-muted">
-                    <a href={`/register/iso15924/${sourceScript}`} class="hover:underline">script: {sourceScript}</a>
-                  </span>
+                  <div>
+                    <CodeChip kind="script" code={sourceScript} codeHref={`/register/iso15924/${sourceScript}`} />
+                  </div>
                 )}
               </dd>
             </div>
             <div class="grid grid-cols-[140px_1fr] gap-4 py-3 border-b border-rule">
               <dt class="eyebrow pt-1">Target</dt>
-              <dd class="text-sm">
+              <dd class="space-y-2">
                 {targetSpellingEntry ? (
-                  <a href={`/register/spelling-system/i/${targetSpellingEntry.id}`} class="font-mono text-blue dark:text-blue-bright hover:underline">
-                    {targetSpellingEntry.id}
-                  </a>
+                  <div>
+                    <a href={`/register/spelling-system/i/${targetSpellingEntry.id}`} class="font-mono text-blue dark:text-blue-bright hover:underline">
+                      {targetSpellingEntry.id}
+                    </a>
+                    <span class="ml-2 text-xs text-ink-subtle">spelling system</span>
+                  </div>
                 ) : targetScript ? (
-                  <span class="font-mono text-ink">{targetScript}</span>
+                  <div>
+                    <CodeChip kind="script" code={targetScript} codeHref={`/register/iso15924/${targetScript}`} />
+                  </div>
                 ) : (
                   <span class="font-mono text-ink">—</span>
                 )}
                 {targetLanguage && (
-                  <span class="ml-3 text-ink-muted">
-                    <a href={`/register/iso639/${targetLanguage}`} class="hover:underline">language: {targetLanguage}</a>
-                  </span>
+                  <div>
+                    <CodeChip kind="language" code={targetLanguage} codeHref={`/register/iso639/${targetLanguage}`} />
+                  </div>
                 )}
-                {targetScript && (
-                  <span class="ml-3 text-ink-muted">
-                    <a href={`/register/iso15924/${targetScript}`} class="hover:underline">script: {targetScript}</a>
-                  </span>
+                {targetScript && targetSpellingEntry && (
+                  <div>
+                    <CodeChip kind="script" code={targetScript} codeHref={`/register/iso15924/${targetScript}`} />
+                  </div>
                 )}
               </dd>
             </div>
