@@ -2,26 +2,41 @@
 import Layout from '../../../layouts/Layout.astro';
 import { externalLinks } from '../../../config';
 
-const proposalFormHref = 'https://github.com/iso24229/proposals/issues/new?template=system-proposal.yml';
 const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
 ---
 
 <Layout title="Apply">
   <p class="eyebrow mb-4">Apply</p>
-  <h1 class="text-4xl md:text-5xl font-display font-bold tracking-[-0.035em] mb-6">Propose a system.</h1>
+  <h1 class="text-4xl md:text-5xl font-display font-bold tracking-[-0.035em] mb-6">Propose.</h1>
 
   <p class="text-lg md:text-xl text-ink-muted max-w-2xl leading-relaxed mb-10">
-    Anyone with a GitHub account can propose a new conversion system, a new authority, or a change to an existing entry. Every proposal enters the same lifecycle: submission, Registration Authority review, Advisory Group deliberation, decision.
+    Two proposal types: a <strong class="text-ink">new system</strong> under an existing authority (or Varia), or a <strong class="text-ink">new authority</strong> that will manage its own systems. Both enter the same lifecycle: submission, Registration Authority review, Advisory Group deliberation, decision.
   </p>
 
-  <div class="flex flex-wrap items-center gap-x-6 gap-y-3 mb-12">
-    <a href="/about/apply/submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-sm bg-ink text-paper text-sm font-medium hover:bg-ink-muted transition-colors">
-      Use the interactive form (recommended)
-      <span aria-hidden="true">→</span>
-    </a>
-    <a href={proposalFormHref} class="text-sm text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright underline">
-      Or open a raw GitHub issue form
-    </a>
+  {/* ── Two paths ─────────────────────────────────────────── */}
+  <div class="grid md:grid-cols-2 gap-6 mb-12 max-w-4xl">
+    <div class="border border-rule rounded-sm p-6 hover:border-gold dark:hover:border-gold-bright transition-colors">
+      <p class="eyebrow text-gold-deep dark:text-gold-bright mb-3">Most common</p>
+      <h2 class="font-display text-xl font-semibold tracking-[-0.012em] mb-2">Propose a system</h2>
+      <p class="text-sm text-ink-muted leading-relaxed mb-4">
+        A new writing system conversion system under an existing authority (ALA-LC, BGN/PCGN, UN, etc.), or under Varia if there's no clear authority.
+      </p>
+      <a href="/about/apply/submit" class="inline-flex items-center gap-2 text-sm font-medium text-blue dark:text-blue-bright hover:text-gold-deep dark:hover:text-gold-bright">
+        Open system proposal form
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+    <div class="border border-rule rounded-sm p-6 hover:border-gold dark:hover:border-gold-bright transition-colors">
+      <p class="eyebrow text-gold-deep dark:text-gold-bright mb-3">For new bodies</p>
+      <h2 class="font-display text-xl font-semibold tracking-[-0.012em] mb-2">Propose an authority</h2>
+      <p class="text-sm text-ink-muted leading-relaxed mb-4">
+        A new conversion system authority — a national body, standards organisation, or institution that will manage its own systems. Requires two authorised persons per Annex A.4.
+      </p>
+      <a href="/about/apply/submit-authority" class="inline-flex items-center gap-2 text-sm font-medium text-blue dark:text-blue-bright hover:text-gold-deep dark:hover:text-gold-bright">
+        Open authority proposal form
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
   </div>
 
   {/* ── Lifecycle ───────────────────────────────────────────── */}
@@ -35,7 +50,7 @@ const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
         <div>
           <p class="font-display text-lg font-semibold tracking-[-0.012em]">Submission</p>
           <p class="text-ink-muted mt-1.5 leading-relaxed">
-            You fill out the <a href="/about/apply/submit" class="underline">interactive form</a> on this site, which validates each field, generates a live code preview, and produces ready-to-paste Markdown with a SHA-256 integrity checksum. The output opens a new issue in <a href={proposalBrowseHref} class="underline"><span class="font-mono">iso24229/proposals</span></a> — a public GitHub repo. (You can also use the <a href={proposalFormHref} class="underline">raw GitHub issue form</a> if you prefer, but you'll lose the validation and checksum.) The form requires identification (your GitHub account), an authority (existing approved, new, or Varia), the four code segments, a defining reference, three independent demonstrative sources, and a justification.
+            You fill out the <a href="/about/apply/submit" class="underline">interactive form</a> on this site, which validates each field, generates a live code preview, and produces ready-to-paste Markdown with a SHA-256 integrity checksum. The output opens a new issue in <a href={proposalBrowseHref} class="underline"><span class="font-mono">iso24229/proposals</span></a> — a public GitHub repo. Only the interactive form is accepted: validated, structured data with an integrity checksum. The form requires identification (your GitHub account), an authority (existing approved, new, or Varia), the four code segments, a defining reference, three independent demonstrative sources, and a justification.
           </p>
         </div>
       </li>
@@ -133,12 +148,19 @@ const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
       <li><strong class="text-ink">New authority</strong> — submitter provides official contact details; the AG verifies the contact before approving.</li>
       <li><strong class="text-ink">Varia authority (<span class="font-mono">Var</span>)</strong> — anyone may propose. The AG itself is the de facto authority for these systems (typically historic systems with no clear current owner, e.g. Wade-Giles).</li>
     </ul>
+    <p class="text-sm text-ink-subtle italic mt-6 max-w-2xl leading-relaxed">
+      The Registration Authority may reassign the proposed authority during administrative review — for example, moving a system from a proposed authority to <span class="font-mono">Var</span>, or to a different existing authority, based on the evidence submitted. The proposer's choice is a recommendation, not a guarantee.
+    </p>
   </section>
 
-  <p class="mt-12">
+  <div class="mt-12 flex flex-wrap gap-4">
     <a href="/about/apply/submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-sm bg-ink text-paper text-sm font-medium hover:bg-ink-muted transition-colors">
-      Use the interactive form
+      Propose a system
       <span aria-hidden="true">→</span>
     </a>
-  </p>
+    <a href="/about/apply/submit-authority" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-sm border border-ink text-ink text-sm font-medium hover:bg-paper-raised transition-colors">
+      Propose an authority
+      <span aria-hidden="true">→</span>
+    </a>
+  </div>
 </Layout>
