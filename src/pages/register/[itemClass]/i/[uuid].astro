@@ -137,7 +137,7 @@ if (isSystemCode) {
   if (authorityId) {
     const all = (await getCollection('authority')) as unknown as RawEntry[];
     authorityEntry = all
-      .filter((a) => a.id === authorityId)
+      .filter((a) => a.id.toLowerCase() === authorityId.toLowerCase())
       .map((a) => ({ id: a.id, data: a.data as Record<string, unknown> }))[0] ?? null;
   }
 
@@ -178,16 +178,16 @@ if (isSystemCode) {
     const allSystems = (await getCollection('system-code')) as unknown as RawEntry[];
     allSystemsForCrossLink = allSystems.map((s) => ({ id: s.id, data: s.data as Record<string, unknown> }));
     for (const rid of relationIds) {
-      const rel = allRelations.find((r) => r.id === rid);
+      const rel = allRelations.find((r) => r.id.toLowerCase() === rid.toLowerCase());
       if (!rel) continue;
       const relData = rel.data as Record<string, unknown>;
-      const targetSysId = refId(relData.targetSystem) ?? '';
-      const target = allSystems.find((s) => s.id === targetSysId);
+      const targetSysRef = refId(relData.targetSystem) ?? '';
+      const target = allSystems.find((s) => s.id.toLowerCase() === targetSysRef.toLowerCase());
       relations.push({
         uuid: rel.id,
         type: String(relData.type ?? ''),
-        targetSystem: targetSysId,
-        targetName: target ? String((target.data as Record<string, unknown>).name ?? targetSysId) : targetSysId,
+        targetSystem: target?.id ?? targetSysRef,
+        targetName: target ? String((target.data as Record<string, unknown>).name ?? target.id) : targetSysRef,
       });
     }
   }
