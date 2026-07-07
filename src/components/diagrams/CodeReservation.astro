@@ -1,0 +1,60 @@
+---
+// Reservation lifecycle: how a code element moves from active →
+// reserved (after deprecation or alteration) and the conditions
+// under which it can be reallocated.
+const ink = 'var(--color-ink, #14161a)';
+const inkMuted = 'var(--color-ink-muted, #4a4d56)';
+const inkSubtle = 'var(--color-ink-subtle, #7a7d86)';
+const gold = 'var(--color-gold, #d28529)';
+const rule = 'var(--color-rule, #d5d3c9)';
+---
+<svg viewBox="0 0 760 280" class="w-full h-auto" role="img" aria-label="Code element reservation lifecycle.">
+  <style>
+    .lbl { font-family: var(--font-sans, system-ui, sans-serif); }
+    .mono { font-family: var(--font-mono, monospace); }
+    .step { fill: var(--color-paper-raised); stroke: var(--color-rule); stroke-width: 1; }
+    .step-active { fill: color-mix(in srgb, #2a8a3e 8%, transparent); stroke: #2a8a3e; stroke-width: 1.5; }
+    .step-reserved { fill: color-mix(in srgb, var(--color-gold, #d28529) 8%, transparent); stroke: var(--color-gold, #d28529); stroke-width: 1.5; }
+    .step-special { fill: color-mix(in srgb, var(--color-blue, #5374b9) 8%, transparent); stroke: var(--color-blue, #5374b9); stroke-width: 1.5; }
+    .arrow { stroke: var(--color-ink-muted, #4a4d56); stroke-width: 1.2; fill: none; marker-end: url(#reserve-arrow); }
+  </style>
+  <defs>
+    <marker id="reserve-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 0, 8 4, 0 8" fill={inkMuted} />
+    </marker>
+  </defs>
+
+  {/* Active state */}
+  <rect x="40" y="40" width="160" height="64" rx="4" class="step-active" />
+  <text x="120" y="64" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>active</text>
+  <text x="120" y="80" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>code in use</text>
+  <text x="120" y="94" text-anchor="middle" class="mono" font-size="9" fill={inkSubtle}>e.g. acadsin:zho-Hani:Latn:2002</text>
+
+  {/* Deprecation */}
+  <rect x="300" y="40" width="160" height="64" rx="4" class="step-reserved" />
+  <text x="380" y="64" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>reserved (limited)</text>
+  <text x="380" y="80" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>after deprecation</text>
+  <text x="380" y="94" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>or alteration (A.4.1)</text>
+
+  {/* Indeterminate */}
+  <rect x="560" y="40" width="160" height="64" rx="4" class="step-special" />
+  <text x="640" y="64" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>reserved (indefinite)</text>
+  <text x="640" y="80" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>international law or</text>
+  <text x="640" y="94" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>exceptional requests (A.5.3)</text>
+
+  <path d="M 200 72 L 295 72" class="arrow" />
+  <text x="247" y="64" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>deprecated</text>
+
+  <path d="M 460 72 L 555 72" class="arrow" />
+  <text x="507" y="64" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>exceptional</text>
+
+  {/* Reallocation rules */}
+  <rect x="40" y="160" width="680" height="100" rx="4" fill="var(--color-paper-raised)" stroke={rule} stroke-width="1" />
+  <text x="60" y="184" class="lbl" font-size="12" font-weight="600" fill={ink}>Reallocation rules (A.5.4)</text>
+  <text x="60" y="204" class="lbl" font-size="10" fill={inkMuted}>• Reserved code elements <tspan font-weight="600" fill={ink}>should not be reallocated indefinitely</tspan> (A.5.2).</text>
+  <text x="60" y="222" class="lbl" font-size="10" fill={inkMuted}>• Before reallocation, the AG <tspan font-weight="600" fill={ink}>shall consult</tspan> the authority on whose behalf the code was reserved.</text>
+  <text x="60" y="240" class="lbl" font-size="10" fill={inkMuted}>• Consideration shall be given to difficulties that can arise from reallocation.</text>
+
+  <path d="M 380 104 L 380 160" class="arrow" />
+  <path d="M 640 104 L 640 160" class="arrow" />
+</svg>
