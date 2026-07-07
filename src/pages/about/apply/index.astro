@@ -136,6 +136,36 @@ const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
     </ul>
   </section>
 
+  {/* ── Varia (Var) explanation ──────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Varia — when to use it</p>
+    <h2 class="max-w-2xl mb-6">Don't propose a new authority if Varia fits.</h2>
+    <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+      <p>
+        The <strong class="text-ink">Varia authority</strong> (<span class="font-mono">Var</span>) is a special authority managed by the Advisory Group itself. It exists for systems that need a code in the register but have no clear extant authority to own them. Anyone can propose a system under <span class="font-mono">Var</span> — no authorization required.
+      </p>
+      <p>
+        <strong class="text-ink">Use Varia when:</strong>
+      </p>
+      <ul class="list-disc pl-6 space-y-1.5">
+        <li>The system is historic — the original authority no longer exists (e.g. Wade-Giles, encoded as <span class="font-mono">Var:zho-Hani:Latn:WG-1912</span>).</li>
+        <li>The system is in wide public use but has no single owner — e.g. a de facto standard that emerged organically across many libraries.</li>
+        <li>You are not the authority and don't represent it, but the system deserves a code.</li>
+      </ul>
+      <p class="mt-4">
+        <strong class="text-ink">Propose a new authority instead when:</strong>
+      </p>
+      <ul class="list-disc pl-6 space-y-1.5">
+        <li>You represent an institution that actively maintains conversion systems and will submit more in the future.</li>
+        <li>The authority has a formal governance process for maintaining its systems.</li>
+        <li>The authority can designate two authorised persons (per Annex A.4).</li>
+      </ul>
+      <p class="mt-4 text-sm text-ink-subtle italic">
+        The RA may move a system from Varia to a proper authority (or vice versa) during review. Proposing under Varia is the fastest path to getting a code — it doesn't require authority verification.
+      </p>
+    </div>
+  </section>
+
   {/* ── Integrity controls ─────────────────────────────────── */}
   <section class="rule-section">
     <p class="eyebrow mb-3">Integrity controls</p>
