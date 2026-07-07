@@ -46,7 +46,7 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
   <script type="application/json" id="system-data" set:html={JSON.stringify(systems.map((s) => ({ value: s.code, label: s.name })))} />
 
   <style is:inline>
-    .cb-dropdown { position:absolute; top:100%; left:0; right:0; max-height:240px; overflow-y:auto; z-index:50; background:var(--color-paper); border:1px solid var(--color-rule); border-radius:4px; box-shadow:0 4px 12px rgba(0,0,0,0.12); display:none; }
+    .cb-dropdown { position:absolute; top:calc(100% - 1px); left:0; right:0; max-height:240px; overflow-y:auto; z-index:50; background:var(--color-paper); border:1px solid var(--color-rule); border-radius:0 0 4px 4px; box-shadow:0 4px 12px rgba(0,0,0,0.12); display:none; }
     .cb-dropdown.visible { display:block; }
     .cb-option { padding:0.375rem 0.75rem; cursor:pointer; display:flex; gap:0.5rem; align-items:baseline; }
     .cb-option:hover, .cb-option.cb-active { background:var(--color-paper-raised); }
@@ -313,6 +313,8 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
       // ── Combobox: searchable select with strict validation ──
       function attachCombobox(input, options, errMsg) {
         if (!input || !options || !options.length) return;
+        if (input.dataset.cbAttached) return;
+        input.dataset.cbAttached = '1';
         const wrap = input.parentNode;
         if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
         const dd = document.createElement('div');
@@ -322,7 +324,7 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         err.className = 'cb-error';
         err.textContent = errMsg || 'Please select a valid option from the list';
         input.parentNode.insertBefore(err, input.nextSibling);
-        let selVal = '', activeIdx = -1;
+        let selVal = '', activeIdx = -1, selecting = false;
 
         function render(q) {
           q = (q || '').toLowerCase().trim();
@@ -345,7 +347,7 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
           if (i >= 0 && i < opts.length) { opts[i].classList.add('cb-active'); opts[i].scrollIntoView({ block: 'nearest' }); activeIdx = i; }
         }
         input.addEventListener('focus', () => render(input.value));
-        input.addEventListener('input', () => { selVal = ''; render(input.value); validate(); });
+        input.addEventListener('input', () => { if (selecting) return; selVal = ''; render(input.value); validate(); });
         input.addEventListener('keydown', (e) => {
           const opts = dd.querySelectorAll('.cb-option');
           if (!dd.classList.contains('visible') || !opts.length) return;
@@ -357,7 +359,15 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         dd.addEventListener('mousedown', (e) => e.preventDefault());
         dd.addEventListener('click', (e) => {
           const opt = e.target.closest('.cb-option');
-          if (opt) { input.value = opt.dataset.value; selVal = opt.dataset.value; hide(); validate(); input.dispatchEvent(new Event('input', { bubbles: true })); }
+          if (opt) {
+            selecting = true;
+            input.value = opt.dataset.value;
+            selVal = opt.dataset.value;
+            hide();
+            validate();
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            selecting = false;
+          }
         });
         input.addEventListener('blur', () => { setTimeout(() => { hide(); validate(); }, 150); });
       }
