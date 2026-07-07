@@ -5,7 +5,7 @@ describe('external-sources config', () => {
   it('lists three sources', () => {
     expect(externalSources).toHaveLength(3);
     const names = externalSources.map((s) => s.name);
-    expect(names).toEqual(['iso639-data', 'iso15924-data', 'iso24229-register']);
+    expect(names).toEqual(['iso639-data', 'iso15924-data', 'register']);
   });
 
   it('all sources are pinned to a ref', () => {
@@ -17,7 +17,7 @@ describe('external-sources config', () => {
   it('only the register is private', () => {
     expect(sourceByName('iso639-data').private).toBe(false);
     expect(sourceByName('iso15924-data').private).toBe(false);
-    expect(sourceByName('iso24229-register').private).toBe(true);
+    expect(sourceByName('register').private).toBe(true);
   });
 
   it('resolveSourcePath prefers a sibling clone when present', () => {

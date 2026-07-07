@@ -23,8 +23,8 @@ sources:
     localPath: ../iso15924-data
     private: false
 
-  - name: iso24229-register
-    repoUrl: https://github.com/iso24229/iso24229-register
+  - name: register
+    repoUrl: https://github.com/iso24229/register
     ref: main
-    localPath: ../iso24229-register
+    localPath: ../register
     private: true
