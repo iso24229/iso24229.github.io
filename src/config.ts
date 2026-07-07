@@ -100,9 +100,8 @@ export const operatingAuthorities: OperatingAuthority[] = [
     role: "Operator",
     href: externalLinks.ribose,
     logo: {
-      light: "/assets/logos/ribose.svg",
-      dark: "/assets/logos/ribose.svg",
+      light: "/assets/logos/ribose-light.svg",
+      dark: "/assets/logos/ribose-dark.svg",
     },
-    invertInDark: true,
   },
 ];
