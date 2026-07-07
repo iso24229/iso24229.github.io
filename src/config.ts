@@ -33,6 +33,9 @@ export interface NavItem {
   description: string;
   /** Audience this section primarily serves. */
   audience: "newcomer" | "user" | "authority" | "manager" | "anyone";
+  /** Visual treatment — "default" renders as a plain link, "cta" as a
+   * prominent button-style CTA. Use sparingly, at most one entry. */
+  variant?: "default" | "cta";
 }
 
 export const navigation: NavItem[] = [
@@ -59,6 +62,13 @@ export const navigation: NavItem[] = [
     href: "/about",
     description: "What ISO 24229 is, who operates the register, and how it works.",
     audience: "newcomer",
+  },
+  {
+    label: "Propose",
+    href: "/about/apply",
+    description: "Submit a new conversion system, authority, or change.",
+    audience: "authority",
+    variant: "cta",
   },
 ];
 
