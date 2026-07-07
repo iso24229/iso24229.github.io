@@ -10,7 +10,7 @@ export const siteDescription =
 /** Repository links that the UI needs. */
 export const repoUrls = {
   website: "https://github.com/iso24229/iso24229.github.io",
-  register: "https://github.com/iso24229/iso24229-register",
+  register: "https://github.com/iso24229/register",
   iso639Data: "https://github.com/iso24229/iso639-data",
   iso15924Data: "https://github.com/iso24229/iso15924-data",
 } as const;

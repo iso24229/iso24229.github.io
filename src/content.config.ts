@@ -196,7 +196,7 @@ const commonTraits = {
   ...timestampable,
 };
 
-const registerRoot = resolveSourcePath('iso24229-register');
+const registerRoot = resolveSourcePath('register');
 
 const def = (schema: z.ZodType, itemClass: string) => defineCollection({
   schema,
