@@ -13,8 +13,8 @@ include = [
   "dist/**/*.html"
 ]
 
-# Exclude patterns for URLs
-exclude = [
+# Exclude path patterns (file paths, not URLs)
+exclude_path = [
   ".git",
   ".github",
   "node_modules",
@@ -24,12 +24,27 @@ exclude = [
   "dist/CNAME",
 ]
 
-# Exclude URL patterns (external + internal)
-# - localhost: dev only
-# - go.microsoft.com, astexplorer.net: rate-limited / flaky
-# - github.com/iso24229/iso24229-register/blob/main/<path>: branch may be ahead of clone
+# Exclude URL patterns (regex). Run on every link, external + internal.
+# - localhost / 127.0.0.1: dev only
+# - iso.org: behind Cloudflare, 403s automated requests regardless of UA
+# - github.com/iso24229/register: private repo, 404 to unauthenticated
+# - github.com/iso24229/proposals/issues/new: requires GitHub auth to view
+exclude = [
+  "^https?://localhost:4321",
+  "^https?://127\\.0\\.0\\.1",
+  "^https?://www\\.iso\\.org/",
+  "^https://github\\.com/iso24229/register",
+  "^https://github\\.com/iso24229/proposals/issues/new",
+]
+
 exclude_loopback = true
 
-[[exclude_urls]]
-"localhost:4321" = true
-"^https?://127\\.0\\.0\\.1" = true
+# Be tolerant of well-known CDN behaviour
+accept = ["100..=399", "429"]
+
+# Fewer retries, faster failure
+max_retries = 1
+timeout = 10
+
+# More concurrency to scan many pages quickly
+max_concurrency = 32

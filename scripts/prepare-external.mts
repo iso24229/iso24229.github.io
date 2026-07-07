@@ -108,7 +108,7 @@ async function main(): Promise<void> {
     } catch (err) {
       // The register is private and may not have auth in some
       // environments; the site still builds for the reference data.
-      if (source.name === 'iso24229-register') {
+      if (source.name === 'register') {
         console.warn(
           `! ${source.name}: clone failed (${(err as Error).message}). Continuing — register data will be empty.`,
         );
