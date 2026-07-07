@@ -227,6 +227,19 @@ const specificationUrls: string[] = Array.isArray(specificationRaw)
   ? specificationRaw.filter((u): u is string => typeof u === 'string' && u.length > 0)
   : [];
 
+interface ReferenceEntry { id: string; citation: string; url?: string | null }
+const referencesRaw = entry.data.references;
+const references: ReferenceEntry[] = Array.isArray(referencesRaw)
+  ? referencesRaw
+      .filter((r): r is Record<string, unknown> => typeof r === 'object' && r !== null)
+      .map((r) => ({
+        id: String(r.id ?? ''),
+        citation: String(r.citation ?? ''),
+        url: typeof r.url === 'string' ? r.url : null,
+      }))
+      .filter((r) => r.id && r.citation)
+  : [];
+
 const codeStatusId = refId(entry.data.codeStatus) ?? '';
 const systemStatusId = refId(entry.data.systemStatus) ?? '';
 const uri = typeof entry.data.uri === 'string' ? entry.data.uri : '';
@@ -412,6 +425,46 @@ const abstractText = typeof entry.data.abstract === 'string' ? entry.data.abstra
         </section>
       )}
 
+      {/* References (defining + supporting) */}
+      {isSystemCode && references.length > 0 && (
+        <section>
+          <p class="eyebrow mb-3">References</p>
+          <p class="text-sm text-ink-subtle max-w-2xl mb-4 leading-relaxed">
+            The first entry is the defining citation for this system. Subsequent entries are supporting material.
+          </p>
+          <ol class="border-t border-rule">
+            {references.map((r, i) => {
+              const isUnresolved = /^\[unresolved citation:/.test(r.citation);
+              const isDefining = i === 0;
+              return (
+                <li class="grid grid-cols-[2rem_1fr] gap-x-3 py-3 border-b border-rule items-baseline">
+                  <span class="font-mono text-xs text-ink-subtle tabular-nums pt-0.5">
+                    {isDefining ? '★' : String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span>
+                    <span class:list={[
+                      'block text-sm leading-relaxed',
+                      isUnresolved ? 'text-ink-subtle italic' : 'text-ink',
+                    ]}>
+                      {r.citation}
+                    </span>
+                    <span class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-subtle">
+                      <span class="font-mono">id: {r.id}</span>
+                      {r.url && (
+                        <a href={r.url} target="_blank" rel="noopener" class="text-blue dark:text-blue-bright underline break-all font-mono">
+                          {r.url}
+                        </a>
+                      )}
+                      {isDefining && <span class="badge badge-accepted">defining</span>}
+                    </span>
+                  </span>
+                </li>
+              );
+            })}
+          </ol>
+        </section>
+      )}
+
       {/* Examples */}
       {isSystemCode && examples.length > 0 && (
         <section>
@@ -480,10 +533,12 @@ const abstractText = typeof entry.data.abstract === 'string' ? entry.data.abstra
             const isUri = key === 'uri';
             const isExamples = key === 'examples';
             const isSpecification = key === 'specification';
+            const isReferences = key === 'references';
             // Skip fields already rendered in curated sections above
             if (isSystemCode && (isAbstract || isDescription || isUri)) return null;
             if (isSystemCode && isExamples && examples.length > 0) return null;
             if (isSystemCode && isSpecification && specificationUrls.length > 0) return null;
+            if (isSystemCode && isReferences && references.length > 0) return null;
             return (
               <div class="grid grid-cols-[160px_1fr] gap-4 py-3 border-b border-rule">
                 <dt class="text-xs font-medium text-ink-muted pt-1">{fieldLabel(key)}</dt>
