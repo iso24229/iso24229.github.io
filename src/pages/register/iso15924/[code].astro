@@ -84,14 +84,17 @@ const info = lookupScript(code);
   <p class="text-sm text-ink-subtle mb-2">
     <a href="/register">← Register</a>
   </p>
-  <p class="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle mb-3">ISO 15924</p>
-  <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">
-    Script <span class="font-mono text-blue dark:text-blue-bright">{code}</span>
+  <p class="font-mono text-xs uppercase tracking-[0.18em] text-ink-subtle mb-3">ISO 15924 · script code</p>
+  <h1 class="text-3xl md:text-4xl lg:text-5xl font-display font-bold tracking-[-0.035em] leading-[1.05] mb-3">
+    {info ? info.name : code}
   </h1>
+  <p class="font-mono text-base md:text-lg text-ink-muted mb-2">
+    <span class="text-ink-subtle">code:</span>
+    <span class="text-blue dark:text-blue-bright">{code}</span>
+  </p>
 
   {info && (
     <div class="max-w-2xl mb-2">
-      <p class="text-xl text-ink font-display font-semibold tracking-[-0.018em]">{info.name}</p>
       <p class="mt-2 text-sm text-ink-muted leading-relaxed">
         Defined by <a href={info.url} target="_blank" rel="noopener" class="text-blue dark:text-blue-bright underline">ISO 15924 at the Unicode Consortium <span aria-hidden="true">↗</span></a>.
       </p>

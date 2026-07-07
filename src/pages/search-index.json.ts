@@ -68,7 +68,7 @@ export const GET: APIRoute = async () => {
     { type: 'page', id: 'page:specs', href: '/specs', title: 'Specification', description: 'The formal data model, governance, and Annex A Terms of Reference.' },
     { type: 'page', id: 'page:specs-data-model', href: '/specs/data-model', title: 'Data model', description: 'The conceptual entities, attributes, and relationships defined in §6 of ISO 24229.' },
     { type: 'page', id: 'page:specs-governance', href: '/specs/governance', title: 'Governance and lifecycle', description: 'How the register is managed: authority, decision-making, lifecycle of codes.' },
-    { type: 'page', id: 'page:specs-annex-a', href: '/specs/annex-a', title: 'Annex A — Terms of Reference', description: 'The ToR for the Registration Authority and Advisory Group.' },
+    { type: 'page', id: 'page:specs-annex-a', href: '/specs/ag-tor', title: 'Annex A — Terms of Reference', description: 'The ToR for the Registration Authority and Advisory Group.' },
     { type: 'page', id: 'page:specs-iso-19135', href: '/specs/iso-19135', title: 'ISO 19135 compliance', description: 'How the register conforms to ISO 19135 procedures for registration of geographic items.' },
     { type: 'page', id: 'page:about', href: '/about', title: 'About', description: 'The international standard for written language conversion systems, the URN pattern, the logomark, and the colour palette.' },
     { type: 'page', id: 'page:news', href: '/news', title: 'News', description: 'Announcements from the Registration Authority and Advisory Group.' },

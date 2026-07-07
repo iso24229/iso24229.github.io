@@ -7,23 +7,25 @@
 /* ──────────────────────────────────────────────────────────────────
  * Design tokens — single source of truth.
  *
- * Palette derived from the ISO 24229 logomark (a gold + blue sphere):
- *   gold   #ffcd38 → #fec340 → #d28529  (light to dark)
- *   blue   #dee7f5 → #a0b6dc → #6587c5 → #5374b9 → #3a5a9c
+ * Palette: copper (warm core) + aubergine (cool rings), chosen to
+ * avoid any national-flag colour pairing.
+ *   copper     #7a2e0e → #c2410c → #e87a35  (deep → mid → bright)
+ *   aubergine  #3a2050 → #5b3a7d → #8b5fa6  (deep → mid → bright)
  *
  * The logomark is the only place colour is used liberally; the rest of
- * the UI uses ink-on-paper with gold as the single editorial accent
- * and blue for structural elements (links, focus rings).
+ * the UI uses ink-on-paper with copper as the single editorial accent
+ * and aubergine for structural elements (links, focus rings).
  * ────────────────────────────────────────────────────── */
 
 @theme {
-  /* Brand */
-  --color-gold: #d28529;
-  --color-gold-bright: #ffcd38;
-  --color-gold-deep: #a86513;
-  --color-blue: #5374b9;
-  --color-blue-bright: #a0b6dc;
-  --color-blue-deep: #3a5a9c;
+  /* Brand — copper (warm core) + aubergine (cool rings).
+   * Chosen to avoid any national-flag colour pairing. */
+  --color-gold: #c2410c;
+  --color-gold-bright: #e87a35;
+  --color-gold-deep: #7a2e0e;
+  --color-blue: #5b3a7d;
+  --color-blue-bright: #8b5fa6;
+  --color-blue-deep: #3a2050;
 
   /* Ink + paper (light is default) */
   --color-paper: #fbfaf6;

@@ -11,6 +11,8 @@ const tocItems = [{ "id": "purpose",
   "label": "Governance" },
   { "id": "uris",
   "label": "URIs" },
+  { "id": "reference-standards",
+  "label": "Reference standards" },
   { "id": "logomark",
   "label": "The logomark" },
   { "id": "colours",
@@ -98,6 +100,44 @@ const tocItems = [{ "id": "purpose",
     </div>
   </section>
 
+  {/* ── Reference standards ─────────────────────────────────── */}
+  <section id="reference-standards" class="rule-section">
+    <p class="eyebrow mb-3">Reference standards</p>
+    <h2 class="max-w-2xl mb-6">ISO 24229 is one of three ISO standards that together identify any written form of any language. The other two have their own registration authorities.</h2>
+    <div class="max-w-2xl space-y-6 text-ink-muted leading-relaxed">
+
+      <div class="border-l-2 border-blue/50 dark:border-blue-bright/50 pl-5">
+        <p class="font-display text-base font-semibold text-ink mb-1">ISO 639 — language codes</p>
+        <p class="text-sm mb-2">Maintained by a single Maintenance Agency under ISO, with publication delegated to three Language Coding Agencies (LCAs):</p>
+        <ul class="text-sm space-y-1 pl-1">
+          <li><strong class="text-ink">Infoterm</strong> — Set 1 (ISO 639-1, two-letter codes for major national languages)</li>
+          <li><strong class="text-ink">Library of Congress</strong> — Set 2 (ISO 639-2, three-letter codes) and Set 5 (ISO 639-5, language families)</li>
+          <li><strong class="text-ink">SIL International</strong> — Set 3 (ISO 639-3, all individual living, extinct, and ancient languages)</li>
+        </ul>
+        <p class="text-xs mt-2"><a href="https://www.iso.org/iso-639-language-code" class="text-blue dark:text-blue-bright underline">ISO 639 standard page ↗</a></p>
+      </div>
+
+      <div class="border-l-2 border-blue/50 dark:border-blue-bright/50 pl-5">
+        <p class="font-display text-base font-semibold text-ink mb-1">ISO 15924 — script codes</p>
+        <p class="text-sm mb-2">Maintained by the <strong class="text-ink">Unicode Consortium</strong>, appointed by ISO as the Registration Authority. Markus Scherer serves as Registrar. The Unicode Consortium receives and reviews applications for new script codes and changes to existing ones, maintains the authoritative list, processes updates, and publishes a Notice of Changes.</p>
+        <p class="text-xs mt-2"><a href="https://www.unicode.org/iso15924/" class="text-blue dark:text-blue-bright underline">ISO 15924 Registration Authority at the Unicode Consortium ↗</a></p>
+      </div>
+
+      <div class="border-l-2 border-gold/60 dark:border-gold-bright/60 pl-5">
+        <p class="font-display text-base font-semibold text-ink mb-1">ISO 24229 — this register</p>
+        <p class="text-sm">Maintained by <strong class="text-ink">CalConnect</strong> as the Registration Authority (ISO 24229/RA), designated by ISO. The register is operated by <strong class="text-ink">Ribose</strong>. An Advisory Group (ISO 24229/AG) of 4–12 experts — including a representative of ISO/TC 46 — reviews all submissions.</p>
+        <p class="text-xs mt-2"><a href="/specs/governance" class="text-blue dark:text-blue-bright underline">Full governance and lifecycle →</a></p>
+      </div>
+
+    </div>
+
+    <div class="mt-8 max-w-2xl border-l-2 border-blue/40 dark:border-blue-bright/40 pl-4 py-2">
+      <p class="text-sm text-ink-muted leading-relaxed">
+        <strong class="text-ink">Reference data only.</strong> This register indexes ISO 639 and ISO 15924 codes so that systems can reference stable identifiers, but it is <strong>not</strong> the authoritative source for either. For canonical definitions, follow the links above to the relevant registration authority.
+      </p>
+    </div>
+  </section>
+
   {/* ── Logo + philosophy ──────────────────────────────────── */}
   <section id="logomark" class="rule-section">
     <div class="flex flex-col md:flex-row items-start gap-12 mb-10">
@@ -139,13 +179,16 @@ const tocItems = [{ "id": "purpose",
   {/* ── Colours ──────────────────────────────────────────────── */}
   <section id="colours" class="rule-section">
     <p class="eyebrow mb-3">The colours</p>
-    <h2 class="max-w-2xl mb-6">Gold and blue, held in tension.</h2>
+    <h2 class="max-w-2xl mb-6">Copper and aubergine, held in tension.</h2>
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
       <p>
-        The logomark's palette is drawn from two opposing forces. <strong>Gold</strong> — warm, luminous, the colour of things held precious — marks the semantic core. It is the colour of meaning itself: invariant, valuable, the thing that persists across conversion. <strong>Blue</strong> — cool, structural, the colour of systems and rules — marks the concentric rings of expression. It is the colour of the written form: engineered, conventional, subject to reform.
+        The logomark's palette is drawn from two opposing forces, and deliberately avoids the colour combinations of national flags. <strong>Copper</strong> — warm, metallic, the colour of things cast and stamped — marks the semantic core. It is the colour of meaning itself: invariant, valuable, the thing that persists across conversion. <strong>Aubergine</strong> — cool, regal, the colour of things rare and considered — marks the concentric rings of expression. It is the colour of the written form: engineered, conventional, subject to reform.
       </p>
       <p>
-        Where gold and blue meet, at the angle of the golden ratio, the two colours do not merge into green. They hold their distinction. This is intentional: meaning and expression are not the same thing, and ISO 24229's purpose is to keep them legibly separate — to ensure that every reader can tell which is which, even when they are tightly interleaved.
+        Where copper and aubergine meet, at the angle of the golden ratio, the two colours do not merge into brown. They hold their distinction. This is intentional: meaning and expression are not the same thing, and ISO 24229's purpose is to keep them legibly separate — to ensure that every reader can tell which is which, even when they are tightly interleaved.
+      </p>
+      <p class="text-sm text-ink-subtle italic mt-4">
+        Editorial note: copper and aubergine were chosen precisely because no major national flag uses this pairing. An international register must remain colour-theoretically neutral.
       </p>
     </div>
   </section>

@@ -1,0 +1,94 @@
+---
+// Process flowchart: how a new conversion system moves from proposal
+// to publication. Steps: proposer submits → RA verifies format → AG
+// reviews at bimonthly meeting → AG decides (consensus or 2/3 vote)
+// → RA publishes → status changes from proposed → accepted.
+const W = 760, H = 480;
+const gold = 'var(--color-gold, #d28529)';
+const goldDeep = 'var(--color-gold-deep, #a86513)';
+const blue = 'var(--color-blue, #5374b9)';
+const green = '#2a8a3e';
+const red = '#b94a4a';
+const ink = 'var(--color-ink, #14161a)';
+const inkMuted = 'var(--color-ink-muted, #4a4d56)';
+const inkSubtle = 'var(--color-ink-subtle, #7a7d86)';
+const rule = 'var(--color-rule, #d5d3c9)';
+---
+<svg viewBox={`0 0 ${W} ${H}`} class="w-full h-auto" role="img" aria-label="Registration process: proposer submits, RA verifies format, AG reviews and decides, RA publishes.">
+  <style>
+    .lbl { font-family: var(--font-sans, system-ui, sans-serif); }
+    .mono { font-family: var(--font-mono, monospace); }
+    .arrow { stroke: var(--color-ink-muted, #4a4d56); stroke-width: 1.2; fill: none; marker-end: url(#flow-arrow); }
+    .arrow-reject { stroke: #b94a4a; stroke-width: 1.2; fill: none; marker-end: url(#flow-arrow-reject); }
+    .step { fill: var(--color-paper-raised); stroke: var(--color-rule); stroke-width: 1; }
+    .step-gold { fill: color-mix(in srgb, var(--color-gold, #d28529) 8%, transparent); stroke: var(--color-gold, #d28529); stroke-width: 1.5; }
+    .step-blue { fill: color-mix(in srgb, var(--color-blue, #5374b9) 8%, transparent); stroke: var(--color-blue, #5374b9); stroke-width: 1.5; }
+    .step-green { fill: color-mix(in srgb, #2a8a3e 8%, transparent); stroke: #2a8a3e; stroke-width: 1.5; }
+    .step-red { fill: color-mix(in srgb, #b94a4a 8%, transparent); stroke: #b94a4a; stroke-width: 1.5; }
+  </style>
+  <defs>
+    <marker id="flow-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 0, 8 4, 0 8" fill={inkMuted} />
+    </marker>
+    <marker id="flow-arrow-reject" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 0, 8 4, 0 8" fill={red} />
+    </marker>
+  </defs>
+
+  {/* Step 1: Proposer submits */}
+  <rect x="280" y="20" width="200" height="60" rx="4" class="step" />
+  <text x="380" y="44" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>1. Proposal submitted</text>
+  <text x="380" y="60" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>Authority or AG member opens</text>
+  <text x="380" y="72" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>a GitHub issue with the spec</text>
+
+  <path d="M 380 80 L 380 110" class="arrow" />
+
+  {/* Step 2: RA verifies */}
+  <rect x="280" y="110" width="200" height="60" rx="4" class="step-gold" />
+  <text x="380" y="134" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>2. RA verifies format</text>
+  <text x="380" y="150" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>schema validation +</text>
+  <text x="380" y="162" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>spelling-system resolution</text>
+
+  <path d="M 380 170 L 380 200" class="arrow" />
+
+  {/* Step 3: AG reviews */}
+  <rect x="280" y="200" width="200" height="60" rx="4" class="step-blue" />
+  <text x="380" y="222" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>3. AG review</text>
+  <text x="380" y="238" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>Bimonthly meeting.</text>
+  <text x="380" y="250" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>Consensus or 2/3 vote</text>
+
+  {/* Decision diamond */}
+  <path d="M 380 260 L 460 295 L 380 330 L 300 295 Z" fill="var(--color-paper-raised)" stroke={inkMuted} stroke-width="1.2" />
+  <text x="380" y="293" text-anchor="middle" class="lbl" font-size="11" font-weight="600" fill={ink}>approve?</text>
+
+  {/* Approved path → publish */}
+  <path d="M 380 330 L 380 360" class="arrow" />
+  <text x="386" y="350" class="lbl" font-size="10" fill={green}>yes</text>
+
+  <rect x="280" y="360" width="200" height="60" rx="4" class="step-green" />
+  <text x="380" y="384" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>4. RA publishes</text>
+  <text x="380" y="400" text-anchor="middle" class="mono" font-size="10" fill={inkMuted}>registrationStatus: accepted</text>
+  <text x="380" y="412" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>Effective immediately on publication</text>
+
+  {/* Rejected path → notAccepted */}
+  <path d="M 460 295 L 600 295 L 600 380 L 590 380" class="arrow-reject" />
+  <text x="478" y="288" class="lbl" font-size="10" fill={red}>no</text>
+
+  <rect x="590" y="360" width="140" height="60" rx="4" class="step-red" />
+  <text x="660" y="384" text-anchor="middle" class="lbl" font-size="12" font-weight="600" fill={ink}>notAccepted</text>
+  <text x="660" y="400" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>reserved,</text>
+  <text x="660" y="412" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>never reallocated</text>
+
+  {/* Left side: actors */}
+  <text x="40" y="50" class="lbl" font-size="10" font-weight="600" fill={ink}>PROPOSER</text>
+  <text x="40" y="64" class="lbl" font-size="9" fill={inkSubtle}>authority or AG member</text>
+  <line x1="40" y1="74" x2="240" y2="74" stroke={rule} stroke-width="1" stroke-dasharray="2 2" />
+
+  <text x="40" y="140" class="lbl" font-size="10" font-weight="600" fill={goldDeep}>REGISTRATION AUTHORITY</text>
+  <text x="40" y="154" class="lbl" font-size="9" fill={inkSubtle}>CalConnect (operated by Ribose)</text>
+  <line x1="40" y1="164" x2="240" y2="164" stroke={rule} stroke-width="1" stroke-dasharray="2 2" />
+
+  <text x="40" y="230" class="lbl" font-size="10" font-weight="600" fill={blue}>ADVISORY GROUP</text>
+  <text x="40" y="244" class="lbl" font-size="9" fill={inkSubtle}>4–12 experts + TC 46 rep</text>
+  <line x1="40" y1="254" x2="240" y2="254" stroke={rule} stroke-width="1" stroke-dasharray="2 2" />
+</svg>

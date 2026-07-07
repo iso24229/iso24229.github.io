@@ -1,0 +1,79 @@
+---
+// Visual hierarchy of who-controls-what in the ISO 24229 register.
+// ISO (standards body) → CalConnect (RA, designated by ISO) → Advisory Group
+// (appointed by RA) → individual conversion system authorities.
+const W = 760, H = 360;
+const goldDeep = 'var(--color-gold-deep, #a86513)';
+const goldBright = 'var(--color-gold-bright, #ffcd38)';
+const blue = 'var(--color-blue, #5374b9)';
+const inkSubtle = 'var(--color-ink-subtle, #7a7d86)';
+const inkMuted = 'var(--color-ink-muted, #4a4d56)';
+const ink = 'var(--color-ink, #14161a)';
+const rule = 'var(--color-rule, #d5d3c9)';
+---
+<svg viewBox={`0 0 ${W} ${H}`} class="w-full h-auto" role="img" aria-label="Governance hierarchy: ISO designates CalConnect as Registration Authority, which appoints the Advisory Group, which oversees individual authorities.">
+  <style>
+    .lbl { font-family: var(--font-sans, system-ui, sans-serif); }
+    .mono { font-family: var(--font-mono, monospace); }
+    .box { fill: var(--color-paper-raised, #f3f1ea); stroke: var(--color-rule, #d5d3c9); stroke-width: 1; }
+    .box-gold { fill: color-mix(in srgb, var(--color-gold, #d28529) 8%, transparent); stroke: var(--color-gold, #d28529); stroke-width: 1.5; }
+    .box-blue { fill: color-mix(in srgb, var(--color-blue, #5374b9) 8%, transparent); stroke: var(--color-blue, #5374b9); stroke-width: 1.5; }
+    .box-ink { fill: var(--color-paper-raised, #f3f1ea); stroke: var(--color-ink-muted, #4a4d56); stroke-width: 1.5; }
+    .connector { stroke: var(--color-ink-subtle, #7a7d86); stroke-width: 1; fill: none; }
+  </style>
+
+  {/* ISO at top */}
+  <rect x="320" y="20" width="120" height="56" rx="4" class="box-ink" />
+  <text x="380" y="44" text-anchor="middle" class="lbl" font-size="14" font-weight="700" fill={ink}>ISO</text>
+  <text x="380" y="62" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>standard setter</text>
+
+  {/* Vertical line down to RA */}
+  <path d="M 380 76 L 380 110" class="connector" />
+  <text x="386" y="96" class="lbl" font-size="9" fill={inkSubtle}>designates</text>
+
+  {/* RA: CalConnect */}
+  <rect x="280" y="110" width="200" height="68" rx="4" class="box-gold" />
+  <text x="380" y="134" text-anchor="middle" class="lbl" font-size="13" font-weight="700" fill={ink}>CalConnect</text>
+  <text x="380" y="150" text-anchor="middle" class="mono" font-size="10" fill={goldDeep}>ISO 24229/RA</text>
+  <text x="380" y="166" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>Registration Authority</text>
+
+  {/* Side annotation: Ribose operates */}
+  <path d="M 480 144 L 540 144" class="connector" stroke-dasharray="2 3" />
+  <text x="546" y="142" class="lbl" font-size="10" fill={inkMuted}>operated by</text>
+  <text x="546" y="156" class="lbl" font-size="11" font-weight="600" fill={ink}>Ribose</text>
+
+  {/* Vertical line down to AG */}
+  <path d="M 380 178 L 380 210" class="connector" />
+  <text x="386" y="196" class="lbl" font-size="9" fill={inkSubtle}>appoints</text>
+
+  {/* AG: Advisory Group */}
+  <rect x="270" y="210" width="220" height="68" rx="4" class="box-blue" />
+  <text x="380" y="234" text-anchor="middle" class="lbl" font-size="13" font-weight="700" fill={ink}>Advisory Group</text>
+  <text x="380" y="250" text-anchor="middle" class="mono" font-size="10" fill={blue}>ISO 24229/AG</text>
+  <text x="380" y="266" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>4–12 experts · consensus body</text>
+
+  {/* Branches out to authorities */}
+  <path d="M 380 278 L 380 300" class="connector" />
+  <path d="M 130 300 L 630 300" class="connector" />
+  <path d="M 130 300 L 130 320" class="connector" />
+  <path d="M 290 300 L 290 320" class="connector" />
+  <path d="M 470 300 L 470 320" class="connector" />
+  <path d="M 630 300 L 630 320" class="connector" />
+
+  {/* Authorities */}
+  <rect x="60" y="320" width="140" height="32" rx="3" class="box" />
+  <text x="130" y="334" text-anchor="middle" class="mono" font-size="10" fill={ink}>ALA-LC</text>
+  <text x="130" y="346" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>authority</text>
+
+  <rect x="220" y="320" width="140" height="32" rx="3" class="box" />
+  <text x="290" y="334" text-anchor="middle" class="mono" font-size="10" fill={ink}>BGN/PCGN</text>
+  <text x="290" y="346" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>authority</text>
+
+  <rect x="400" y="320" width="140" height="32" rx="3" class="box" />
+  <text x="470" y="334" text-anchor="middle" class="mono" font-size="10" fill={ink}>UN</text>
+  <text x="470" y="346" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>authority</text>
+
+  <rect x="560" y="320" width="140" height="32" rx="3" class="box" />
+  <text x="630" y="334" text-anchor="middle" class="mono" font-size="10" fill={ink}>Var</text>
+  <text x="630" y="346" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>varia authority</text>
+</svg>

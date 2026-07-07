@@ -1,0 +1,91 @@
+---
+// Flowchart: lifecycle of a registration-status field per ISO 19135.
+// proposed → accepted (after AG review). From accepted: superseded,
+// retired, or withdrawn. Proposed can also go to notAccepted.
+const W = 760, H = 360;
+const gold = 'var(--color-gold, #d28529)';
+const goldDeep = 'var(--color-gold-deep, #a86513)';
+const green = '#2a8a3e';
+const red = '#b94a4a';
+const blue = 'var(--color-blue, #5374b9)';
+const ink = 'var(--color-ink, #14161a)';
+const inkMuted = 'var(--color-ink-muted, #4a4d56)';
+const inkSubtle = 'var(--color-ink-subtle, #7a7d86)';
+const rule = 'var(--color-rule, #d5d3c9)';
+---
+<svg viewBox={`0 0 ${W} ${H}`} class="w-full h-auto" role="img" aria-label="Registration lifecycle: proposed → accepted. Accepted can later become superseded, retired, or withdrawn.">
+  <style>
+    .lbl { font-family: var(--font-sans, system-ui, sans-serif); }
+    .mono { font-family: var(--font-mono, monospace); }
+    .arrow { stroke: var(--color-ink-muted, #4a4d56); stroke-width: 1.2; fill: none; marker-end: url(#arrowhead); }
+    .arrow-dim { stroke: var(--color-ink-subtle, #7a7d86); stroke-width: 1; fill: none; stroke-dasharray: 3 3; marker-end: url(#arrowhead-dim); }
+  </style>
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 0, 8 4, 0 8" fill={inkMuted} />
+    </marker>
+    <marker id="arrowhead-dim" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <polygon points="0 0, 8 4, 0 8" fill={inkSubtle} />
+    </marker>
+  </defs>
+
+  {/* proposed (gold) */}
+  <rect x="40" y="150" width="140" height="60" rx="4" fill="color-mix(in srgb, #d28529 14%, transparent)" stroke={gold} stroke-width="1.5" />
+  <text x="110" y="174" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>proposed</text>
+  <text x="110" y="190" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>awaiting AG review</text>
+  <text x="110" y="202" text-anchor="middle" class="mono" font-size="8" fill={inkSubtle}>ISO 19135</text>
+
+  {/* accepted (green) */}
+  <rect x="310" y="150" width="140" height="60" rx="4" fill="color-mix(in srgb, #2a8a3e 14%, transparent)" stroke={green} stroke-width="1.5" />
+  <text x="380" y="174" text-anchor="middle" class="lbl" font-size="13" font-weight="600" fill={ink}>accepted</text>
+  <text x="380" y="190" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>in the register</text>
+  <text x="380" y="202" text-anchor="middle" class="mono" font-size="8" fill={inkSubtle}>default target</text>
+
+  {/* notAccepted (red) */}
+  <rect x="40" y="40" width="140" height="50" rx="4" fill="color-mix(in srgb, #b94a4a 14%, transparent)" stroke={red} stroke-width="1.5" />
+  <text x="110" y="62" text-anchor="middle" class="lbl" font-size="12" font-weight="600" fill={ink}>notAccepted</text>
+  <text x="110" y="78" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>rejected by AG</text>
+
+  {/* withdrawn (red) */}
+  <rect x="40" y="270" width="140" height="50" rx="4" fill="color-mix(in srgb, #b94a4a 14%, transparent)" stroke={red} stroke-width="1.5" />
+  <text x="110" y="292" text-anchor="middle" class="lbl" font-size="12" font-weight="600" fill={ink}>withdrawn</text>
+  <text x="110" y="308" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>rescinded by submitter</text>
+
+  {/* superseded (neutral) */}
+  <rect x="310" y="270" width="140" height="50" rx="4" fill="var(--color-paper-raised)" stroke={inkSubtle} stroke-width="1.5" />
+  <text x="380" y="292" text-anchor="middle" class="lbl" font-size="12" font-weight="600" fill={ink}>superseded</text>
+  <text x="380" y="308" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>replaced by newer</text>
+
+  {/* retired (neutral) */}
+  <rect x="580" y="270" width="140" height="50" rx="4" fill="var(--color-paper-raised)" stroke={inkSubtle} stroke-width="1.5" />
+  <text x="650" y="292" text-anchor="middle" class="lbl" font-size="12" font-weight="600" fill={ink}>retired</text>
+  <text x="650" y="308" text-anchor="middle" class="lbl" font-size="9" fill={inkMuted}>no longer active</text>
+
+  {/* Arrows */}
+  {/* proposed → accepted */}
+  <path d="M 180 180 L 305 180" class="arrow" />
+  <text x="242" y="172" text-anchor="middle" class="lbl" font-size="10" fill={inkMuted}>AG approves</text>
+
+  {/* proposed → notAccepted */}
+  <path d="M 110 150 L 110 95" class="arrow-dim" />
+  <text x="160" y="125" class="lbl" font-size="10" fill={inkSubtle}>AG rejects</text>
+
+  {/* proposed → withdrawn */}
+  <path d="M 110 210 L 110 265" class="arrow-dim" />
+
+  {/* accepted → superseded */}
+  <path d="M 350 210 L 350 265" class="arrow" />
+  <text x="290" y="245" class="lbl" font-size="10" fill={inkMuted}>supersededBy</text>
+
+  {/* accepted → retired */}
+  <path d="M 410 210 L 620 265" class="arrow" />
+  <text x="540" y="230" class="lbl" font-size="10" fill={inkMuted}>retire</text>
+
+  {/* accepted → withdrawn */}
+  <path d="M 250 200 L 180 270" class="arrow-dim" />
+
+  {/* Legend */}
+  <text x="580" y="50" class="lbl" font-size="11" font-weight="600" fill={ink}>ISO 19135 states</text>
+  <text x="580" y="68" class="lbl" font-size="9" fill={inkSubtle}>— solid: AG action</text>
+  <text x="580" y="82" class="lbl" font-size="9" fill={inkSubtle}>— dashed: submitter action</text>
+</svg>

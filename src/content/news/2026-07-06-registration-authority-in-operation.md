@@ -20,7 +20,7 @@ Ribose.
   existing authorities registering new systems and for new authorities
   applying to join. See [/apply](/apply).
 - **The specification section**, including the
-  [Terms of Reference (Annex A)](/specification/annex-a) and our
+  [Terms of Reference](/specs/ag-tor) and our
   [ISO 19135 compliance mapping](/specification/iso-19135).
 - **Reference data**, with weekly auto-sync of
   [ISO 639](https://github.com/iso24229/iso639-data) and
