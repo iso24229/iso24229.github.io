@@ -243,6 +243,27 @@ p {
   text-decoration-color: var(--color-gold-bright);
 }
 
+/* ── Header CTA button (works in both light + dark) ──────────── */
+.nav-cta {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease, color 0.15s ease;
+  background-color: #2c5a7a;
+  color: #ffffff;
+}
+.nav-cta:hover {
+  background-color: #45a7b5;
+}
+.dark .nav-cta {
+  background-color: #45a7b5;
+  color: #0c0e14;
+}
+.dark .nav-cta:hover {
+  background-color: #46b5ba;
+}
+
 .article code {
   font-family: var(--font-mono);
   font-size: 0.875em;

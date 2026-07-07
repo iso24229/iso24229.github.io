@@ -15,7 +15,7 @@ const isActive = (href: string): boolean =>
         class:list={[
           'px-3 py-2 text-sm font-medium rounded-sm transition-colors',
           item.variant === 'cta'
-            ? 'bg-gold-deep text-white hover:bg-gold ml-2 dark:bg-gold dark:text-ink dark:hover:bg-gold-bright'
+            ? 'nav-cta ml-2'
             : isActive(item.href)
               ? 'text-ink bg-paper-raised'
               : 'text-ink-muted hover:text-ink hover:bg-paper-raised/60',
@@ -57,7 +57,7 @@ const isActive = (href: string): boolean =>
             class:list={[
               'block px-3 py-2.5 text-sm font-medium rounded-sm transition-colors',
               item.variant === 'cta'
-                ? 'bg-gold-deep text-white hover:bg-gold dark:bg-gold dark:text-ink dark:hover:bg-gold-bright'
+                ? 'nav-cta'
                 : isActive(item.href)
                   ? 'text-ink bg-paper-raised'
                   : 'text-ink-muted hover:text-ink hover:bg-paper-raised/60',
