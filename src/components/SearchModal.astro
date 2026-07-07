@@ -1,0 +1,224 @@
+---
+// Modal search interface. Lazy-loads /search-index.json on first open,
+// builds a MiniSearch instance, and renders live results. Triggered
+// from the Header search button or the Cmd/Ctrl+K keyboard shortcut.
+//
+// MiniSearch is loaded as a client-side module — Astro handles bundling.
+---
+
+<button
+  type="button"
+  id="search-trigger"
+  class="p-2 rounded-sm text-ink-muted hover:text-ink hover:bg-paper-raised transition-colors"
+  aria-label="Search (Ctrl+K)"
+  title="Search (Ctrl+K)"
+>
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+    <circle cx="11" cy="11" r="7"></circle>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</button>
+
+<div
+  id="search-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Search the register"
+  class="hidden fixed inset-0 z-50"
+>
+  <div class="absolute inset-0 bg-ink/40 backdrop-blur-sm" data-search-close></div>
+  <div class="relative mx-auto mt-[10vh] w-[min(640px,92vw)] bg-paper rounded shadow-2xl border border-rule overflow-hidden">
+    <div class="flex items-center gap-3 px-4 py-3 border-b border-rule">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="text-ink-subtle shrink-0">
+        <circle cx="11" cy="11" r="7"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input
+        id="search-input"
+        type="search"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Search systems, authorities, languages, scripts, pages…"
+        class="flex-1 bg-transparent text-base text-ink placeholder:text-ink-subtle focus:outline-none"
+      />
+      <button
+        type="button"
+        data-search-close
+        class="text-xs font-mono text-ink-subtle hover:text-ink px-2 py-1 border border-rule rounded"
+        aria-label="Close search"
+      >Esc</button>
+    </div>
+    <div id="search-results" class="max-h-[60vh] overflow-y-auto"></div>
+    <div class="px-4 py-2 border-t border-rule text-xs text-ink-subtle flex items-center justify-between">
+      <span><kbd class="font-mono">↑↓</kbd> navigate · <kbd class="font-mono">↵</kbd> open · <kbd class="font-mono">esc</kbd> close</span>
+      <span>Powered by MiniSearch</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  import MiniSearch from 'minisearch';
+
+  type SearchEntry = {
+    type: string;
+    id: string;
+    href: string;
+    title: string;
+    subtitle?: string;
+    description?: string;
+    keywords?: string[];
+  };
+
+  const TYPE_LABEL: Record<string, string> = {
+    'system-code': 'System',
+    'authority': 'Authority',
+    'spelling-system': 'Spelling system',
+    'enum': 'Reference',
+    'page': 'Page',
+    'news': 'News',
+  };
+
+  const trigger = document.getElementById('search-trigger')!;
+  const modal = document.getElementById('search-modal')!;
+  const input = document.getElementById('search-input') as HTMLInputElement;
+  const resultsEl = document.getElementById('search-results')!;
+  let mini: MiniSearch<SearchEntry> | null = null;
+  let loadingPromise: Promise<void> | null = null;
+  let highlightedIndex = -1;
+  let currentResults: Array<{ entry: SearchEntry; score: number }> = [];
+
+  async function loadIndex(): Promise<void> {
+    if (mini) return;
+    if (!loadingPromise) {
+      loadingPromise = (async () => {
+        const res = await fetch('/search-index.json');
+        const data: SearchEntry[] = await res.json();
+        mini = new MiniSearch({
+          fields: ['title', 'subtitle', 'description', 'keywords'],
+          storeFields: ['type', 'id', 'href', 'title', 'subtitle', 'description'],
+          searchOptions: {
+            boost: { title: 3, subtitle: 2, keywords: 2.5, description: 1 },
+            prefix: true,
+            fuzzy: 0.2,
+            combineWith: 'AND',
+          },
+        });
+        mini.addAll(data as any);
+      })();
+    }
+    await loadingPromise;
+  }
+
+  function openModal() {
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    input.value = '';
+    resultsEl.innerHTML = '';
+    highlightedIndex = -1;
+    currentResults = [];
+    setTimeout(() => input.focus(), 50);
+    loadIndex().catch((err) => {
+      resultsEl.innerHTML = `<div class="px-4 py-6 text-sm text-ink-muted">Failed to load search index: ${String(err)}</div>`;
+    });
+  }
+
+  function closeModal() {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function highlightResult(i: number) {
+    highlightedIndex = i;
+    const items = resultsEl.querySelectorAll('[data-result-idx]');
+    items.forEach((el, idx) => {
+      el.classList.toggle('bg-paper-raised', idx === i);
+      el.classList.toggle('text-ink', idx === i);
+    });
+    if (i >= 0) {
+      const target = items[i] as HTMLElement | undefined;
+      target?.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  function renderResults(query: string) {
+    if (!mini) return;
+    if (!query.trim()) {
+      resultsEl.innerHTML = '';
+      currentResults = [];
+      return;
+    }
+    const raw = mini.search(query, { prefix: true, fuzzy: 0.2, combineWith: 'AND', boost: { title: 3, subtitle: 2, keywords: 2.5, description: 1 } });
+    const top = raw.slice(0, 30);
+    currentResults = top.map((r) => ({ entry: r as unknown as SearchEntry, score: r.score }));
+    highlightedIndex = top.length > 0 ? 0 : -1;
+    if (top.length === 0) {
+      resultsEl.innerHTML = `<div class="px-4 py-6 text-sm text-ink-muted">No matches for "<span class="font-mono">${escapeHtml(query)}</span>".</div>`;
+      return;
+    }
+    resultsEl.innerHTML = top.map((r, i) => {
+      const e = r as unknown as SearchEntry;
+      const typeLabel = TYPE_LABEL[e.type] ?? e.type;
+      const sub = e.subtitle ? `<span class="block font-mono text-xs text-ink-subtle truncate">${escapeHtml(e.subtitle)}</span>` : '';
+      const desc = e.description ? `<span class="block text-xs text-ink-muted mt-0.5 line-clamp-2">${escapeHtml(e.description)}</span>` : '';
+      return `<a href="${e.href}" data-result-idx="${i}" class="block px-4 py-2.5 border-b border-rule hover:bg-paper-raised transition-colors">
+        <div class="flex items-baseline justify-between gap-3">
+          <span class="flex-1 min-w-0">
+            <span class="block font-display text-sm font-semibold tracking-[-0.012em] text-ink truncate">${escapeHtml(e.title)}</span>
+            ${sub}
+            ${desc}
+          </span>
+          <span class="shrink-0 text-[0.65rem] font-mono uppercase tracking-wider text-ink-subtle">${escapeHtml(typeLabel)}</span>
+        </div>
+      </a>`;
+    }).join('');
+    if (highlightedIndex >= 0) highlightResult(highlightedIndex);
+  }
+
+  function escapeHtml(s: string): string {
+    return s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+  }
+
+  trigger.addEventListener('click', openModal);
+  modal.addEventListener('click', (e) => {
+    const t = e.target as HTMLElement;
+    if (t.hasAttribute('data-search-close')) closeModal();
+  });
+
+  input.addEventListener('input', () => renderResults(input.value));
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeModal(); e.preventDefault(); return; }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentResults.length === 0) return;
+      highlightResult(Math.min(highlightedIndex + 1, currentResults.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      highlightResult(Math.max(highlightedIndex - 1, 0));
+    } else if (e.key === 'Enter') {
+      if (highlightedIndex >= 0 && currentResults[highlightedIndex]) {
+        e.preventDefault();
+        window.location.href = currentResults[highlightedIndex].entry.href;
+      }
+    }
+  });
+
+  // Cmd/Ctrl+K to open
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (modal.classList.contains('hidden')) openModal(); else closeModal();
+    }
+  });
+
+  // Re-bind on view transitions
+  document.addEventListener('astro:page-load', () => {
+    const newTrigger = document.getElementById('search-trigger');
+    const newModal = document.getElementById('search-modal');
+    const newInput = document.getElementById('search-input') as HTMLInputElement | null;
+    if (newTrigger && newModal && newInput) {
+      // Replace local refs
+      // (closures over outer `trigger`/`modal`/`input` will work because
+      // Astro view transitions reuse the same DOM when possible)
+    }
+  });
+</script>

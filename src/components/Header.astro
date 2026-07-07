@@ -1,6 +1,7 @@
 ---
 import NavBar from './NavBar.astro';
 import ThemeControl from './ThemeControl.astro';
+import SearchModal from './SearchModal.astro';
 ---
 
 <header class="border-b border-rule bg-paper/95 backdrop-blur sticky top-0 z-40">
@@ -23,6 +24,7 @@ import ThemeControl from './ThemeControl.astro';
       </span>
     </a>
     <div class="flex items-center gap-1">
+      <SearchModal />
       <NavBar />
       <ThemeControl />
     </div>
