@@ -39,6 +39,11 @@ exclude = [
 
 exclude_loopback = true
 
+# Astro emits directory-style URLs (path/index.html), but internal links
+# don't always carry a trailing slash. Resolve them so directory links
+# like /register/system-code/i/<id> are recognised as valid.
+index_files = ["index.html"]
+
 # Be tolerant of well-known CDN behaviour
 accept = ["100..=399", "429"]
 
