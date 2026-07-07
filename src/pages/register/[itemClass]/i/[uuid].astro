@@ -227,17 +227,42 @@ const specificationUrls: string[] = Array.isArray(specificationRaw)
   ? specificationRaw.filter((u): u is string => typeof u === 'string' && u.length > 0)
   : [];
 
-interface ReferenceEntry { id: string; citation: string; url?: string | null }
+interface ReferenceEntry {
+  id: string;
+  label: string;
+  title: string;
+  publisher?: string | null;
+  date?: string | null;
+  url?: string | null;
+}
 const referencesRaw = entry.data.references;
 const references: ReferenceEntry[] = Array.isArray(referencesRaw)
   ? referencesRaw
       .filter((r): r is Record<string, unknown> => typeof r === 'object' && r !== null)
-      .map((r) => ({
-        id: String(r.id ?? ''),
-        citation: String(r.citation ?? ''),
-        url: typeof r.url === 'string' ? r.url : null,
-      }))
-      .filter((r) => r.id && r.citation)
+      .map((r) => {
+        const id = String(r.id ?? '');
+        const label = String(r.label ?? r.citation ?? id);
+        const title = String(r.title ?? r.citation ?? label);
+        return {
+          id,
+          label,
+          title,
+          publisher: typeof r.publisher === 'string' ? r.publisher : null,
+          date: typeof r.date === 'string' ? r.date : null,
+          url: typeof r.url === 'string' ? r.url : null,
+        };
+      })
+      .filter((r) => r.id && r.label && r.title)
+  : [];
+
+const notesRaw = entry.data.notes;
+const notes: string[] = Array.isArray(notesRaw)
+  ? notesRaw.filter((n): n is string => typeof n === 'string' && n.length > 0)
+  : [];
+
+const provenanceRaw = entry.data.provenance;
+const provenance: string[] = Array.isArray(provenanceRaw)
+  ? provenanceRaw.filter((n): n is string => typeof n === 'string' && n.length > 0)
   : [];
 
 const codeStatusId = refId(entry.data.codeStatus) ?? '';
@@ -434,27 +459,44 @@ const abstractText = typeof entry.data.abstract === 'string' ? entry.data.abstra
           </p>
           <ol class="border-t border-rule">
             {references.map((r, i) => {
-              const isUnresolved = /^\[unresolved citation:/.test(r.citation);
+              const isUnresolved = /^\[unresolved citation:/.test(r.title);
               const isDefining = i === 0;
               return (
-                <li class="grid grid-cols-[2rem_1fr] gap-x-3 py-3 border-b border-rule items-baseline">
+                <li class="grid grid-cols-[2rem_1fr] gap-x-3 py-4 border-b border-rule items-baseline">
                   <span class="font-mono text-xs text-ink-subtle tabular-nums pt-0.5">
                     {isDefining ? '★' : String(i + 1).padStart(2, '0')}
                   </span>
-                  <span>
-                    <span class:list={[
-                      'block text-sm leading-relaxed',
-                      isUnresolved ? 'text-ink-subtle italic' : 'text-ink',
-                    ]}>
-                      {r.citation}
+                  <span class="space-y-2">
+                    <span class="block">
+                      <span class:list={[
+                        'block font-display text-base md:text-lg font-semibold tracking-[-0.012em] leading-snug',
+                        isUnresolved ? 'text-ink-subtle italic' : 'text-ink',
+                      ]}>
+                        {r.label}
+                      </span>
+                      <span class="block text-sm text-ink-muted leading-relaxed mt-1">
+                        {r.title}
+                      </span>
                     </span>
-                    <span class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-subtle">
+                    {(r.publisher || r.date) && (
+                      <span class="block text-sm text-ink-muted">
+                        {r.publisher && <span>{r.publisher}</span>}
+                        {r.publisher && r.date && <span class="mx-1.5 text-ink-subtle">·</span>}
+                        {r.date && <span>{r.date}</span>}
+                      </span>
+                    )}
+                    {r.url && (
+                      <a
+                        href={r.url}
+                        target="_blank"
+                        rel="noopener"
+                        class="block text-blue dark:text-blue-bright underline break-all font-mono text-sm hover:text-gold-deep dark:hover:text-gold-bright transition-colors"
+                      >
+                        {r.url}
+                      </a>
+                    )}
+                    <span class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-subtle">
                       <span class="font-mono">id: {r.id}</span>
-                      {r.url && (
-                        <a href={r.url} target="_blank" rel="noopener" class="text-blue dark:text-blue-bright underline break-all font-mono">
-                          {r.url}
-                        </a>
-                      )}
                       {isDefining && <span class="badge badge-accepted">defining</span>}
                     </span>
                   </span>
@@ -462,6 +504,30 @@ const abstractText = typeof entry.data.abstract === 'string' ? entry.data.abstra
               );
             })}
           </ol>
+        </section>
+      )}
+
+      {/* Editorial notes */}
+      {isSystemCode && notes.length > 0 && (
+        <section>
+          <p class="eyebrow mb-3">Notes</p>
+          <ul class="border-l-2 border-blue/40 dark:border-blue-bright/40 pl-4 space-y-2">
+            {notes.map((n) => (
+              <li class="text-sm text-ink-muted leading-relaxed">{n}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {/* Provenance */}
+      {isSystemCode && provenance.length > 0 && (
+        <section>
+          <p class="eyebrow mb-3">Provenance</p>
+          <ul class="space-y-1">
+            {provenance.map((p_item) => (
+              <li class="text-sm text-ink-subtle italic">{p_item}</li>
+            ))}
+          </ul>
         </section>
       )}
 

@@ -164,15 +164,20 @@ const persons = (data.authorisedPersons ?? []) as Array<{ name: string; role: st
             <li>
               <a
                 href={`/register/system-code/i/${s.id}`}
-                class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-3 group"
+                class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-baseline gap-x-4 sm:gap-x-6 py-4 group"
               >
-                <span class="font-mono text-sm md:text-base text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">
-                  {String(s.data.code ?? s.id)}
+                <span class="min-w-0">
+                  <span class="block font-display text-base md:text-lg font-semibold tracking-[-0.012em] text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors leading-snug truncate">
+                    {String(s.data.name ?? s.data.code ?? s.id)}
+                  </span>
+                  <span class="block font-mono text-xs text-ink-subtle mt-0.5 truncate">
+                    {String(s.data.code ?? s.id)}
+                  </span>
                 </span>
-                <span class="hidden sm:block text-ink-muted text-sm truncate text-right max-w-[24rem]">
-                  {String(s.data.name ?? '')}
+                <span class="hidden sm:block text-ink-muted text-xs truncate text-right max-w-[20rem] pt-1">
+                  {String(s.data.identifyingSegment ?? '')}
                 </span>
-                <span class="justify-self-end">
+                <span class="justify-self-end pt-1">
                   <RegistrationBadge status={s.data.registrationStatus} />
                 </span>
               </a>
