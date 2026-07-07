@@ -55,7 +55,7 @@ export const GET: APIRoute = async () => {
 
   // ── Static pages (learn, specs, about, news index, register landing) ──
   const staticPages: SearchEntry[] = [
-    { type: 'page', id: 'page:home', href: '/', title: 'ISO 24229 Registry', description: 'The international standard for written language conversion systems.', keywords: ['home', 'iso 24229', 'registry', 'romanization', 'transliteration'] },
+    { type: 'page', id: 'page:home', href: '/', title: 'ISO 24229 Registry', description: 'The international standard for writing system conversion systems.', keywords: ['home', 'iso 24229', 'registry', 'romanization', 'transliteration'] },
     { type: 'page', id: 'page:learn', href: '/learn', title: 'Learn', description: 'Understand ISO 24229 — codes, definitions, examples, FAQ, and specification.' },
     { type: 'page', id: 'page:learn-introduction', href: '/learn/introduction', title: 'Introduction to ISO 24229', description: 'Purpose of the standard, how it composes with ISO 639 and ISO 15924, and the problems it solves.' },
     { type: 'page', id: 'page:learn-code-structure', href: '/learn/code-structure', title: 'Anatomy of a code', description: 'The four-segment colon-form structure of an ISO 24229 code.' },
@@ -70,11 +70,11 @@ export const GET: APIRoute = async () => {
     { type: 'page', id: 'page:specs-governance', href: '/specs/governance', title: 'Governance and lifecycle', description: 'How the register is managed: authority, decision-making, lifecycle of codes.' },
     { type: 'page', id: 'page:specs-annex-a', href: '/specs/ag-tor', title: 'Annex A — Terms of Reference', description: 'The ToR for the Registration Authority and Advisory Group.' },
     { type: 'page', id: 'page:specs-iso-19135', href: '/specs/iso-19135', title: 'ISO 19135 compliance', description: 'How the register conforms to ISO 19135 procedures for registration of geographic items.' },
-    { type: 'page', id: 'page:about', href: '/about', title: 'About', description: 'The international standard for written language conversion systems, the URN pattern, the logomark, and the colour palette.' },
+    { type: 'page', id: 'page:about', href: '/about', title: 'About', description: 'The international standard for writing system conversion systems, the URN pattern, the logomark, and the colour palette.' },
     { type: 'page', id: 'page:about-apply', href: '/about/apply', title: 'Apply — propose a system', description: 'How to propose a new conversion system, authority, or change. Submission form, RA review, AG deliberation, decision.' },
     { type: 'page', id: 'page:about-apply-submit', href: '/about/apply/submit', title: 'Submit a proposal (interactive form)', description: 'Validated interactive form that generates ready-to-paste Markdown with a SHA-256 integrity checksum for the Registration Authority to verify.' },
     { type: 'page', id: 'page:news', href: '/news', title: 'News', description: 'Announcements from the Registration Authority and Advisory Group.' },
-    { type: 'page', id: 'page:register', href: '/register', title: 'Browse the register', description: 'The register contains every written language conversion system, authority, and spelling system that has been assigned an ISO 24229 code.' },
+    { type: 'page', id: 'page:register', href: '/register', title: 'Browse the register', description: 'The register contains every writing system conversion system, authority, and spelling system that has been assigned an ISO 24229 code.' },
     { type: 'page', id: 'page:register-authority', href: '/register/authority', title: 'Authorities', description: 'Directory of conversion system authorities — the bodies that maintain registered systems.' },
   ];
   entries.push(...staticPages);
