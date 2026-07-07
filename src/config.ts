@@ -23,7 +23,7 @@ export const externalLinks = {
   iso15924Standard: "https://www.unicode.org/iso15924/",
   ferin: "https://ferin.org",
   calconnect: "https://www.calconnect.org",
-  ribose: "https://open.ribose.com",
+  ribose: "https://www.ribose.com",
 } as const;
 
 /** Top-level navigation. New sections = push an entry here. */
