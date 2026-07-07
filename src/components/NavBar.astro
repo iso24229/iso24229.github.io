@@ -14,9 +14,11 @@ const isActive = (href: string): boolean =>
         title={item.description}
         class:list={[
           'px-3 py-2 text-sm font-medium rounded-sm transition-colors',
-          isActive(item.href)
-            ? 'text-ink bg-paper-raised'
-            : 'text-ink-muted hover:text-ink hover:bg-paper-raised/60',
+          item.variant === 'cta'
+            ? 'bg-ink text-paper hover:bg-ink-muted ml-2'
+            : isActive(item.href)
+              ? 'text-ink bg-paper-raised'
+              : 'text-ink-muted hover:text-ink hover:bg-paper-raised/60',
         ]}
       >
         {item.label}
@@ -54,9 +56,11 @@ const isActive = (href: string): boolean =>
             title={item.description}
             class:list={[
               'block px-3 py-2.5 text-sm font-medium rounded-sm transition-colors',
-              isActive(item.href)
-                ? 'text-ink bg-paper-raised'
-                : 'text-ink-muted hover:text-ink hover:bg-paper-raised/60',
+              item.variant === 'cta'
+                ? 'bg-ink text-paper hover:bg-ink-muted'
+                : isActive(item.href)
+                  ? 'text-ink bg-paper-raised'
+                  : 'text-ink-muted hover:text-ink hover:bg-paper-raised/60',
             ]}
           >
             <span class="block font-display font-semibold tracking-[-0.012em]">{item.label}</span>
