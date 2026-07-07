@@ -2,13 +2,27 @@
 import Layout from '../../layouts/Layout.astro';
 import GovernanceDiagram from '../../components/GovernanceDiagram.astro';
 import { externalLinks } from '../../config';
+import { getCollection } from 'astro:content';
 import TableOfContents from '../../components/TableOfContents.astro';
+
+const authorities = (await getCollection('authority'))
+  .map((c) => ({
+    id: c.id,
+    identifier: String((c.data as Record<string, unknown>).authorityIdentifier ?? c.id),
+    name: String((c.data as Record<string, unknown>).name ?? c.id),
+  }))
+  .sort((a, b) => a.identifier.localeCompare(b.identifier));
+
+const variaAuthority = authorities.find((a) => a.identifier === 'Var') ?? null;
+const selfManagedAuthorities = authorities.filter((a) => a.identifier !== 'Var');
 const tocItems = [{ "id": "purpose",
   "label": "Purpose" },
   { "id": "scope",
   "label": "Scope" },
   { "id": "governance",
   "label": "Governance" },
+  { "id": "authorities",
+  "label": "Authorities in the register" },
   { "id": "uris",
   "label": "URIs" },
   { "id": "reference-standards",
@@ -76,6 +90,49 @@ const tocItems = [{ "id": "purpose",
     <p class="mt-6 text-sm">
       <a href="/specs/governance" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Full governance and lifecycle →</a>
     </p>
+  </section>
+
+  {/* ── Authorities directory ─────────────────────────────── */}
+  <section id="authorities" class="rule-section">
+    <p class="eyebrow mb-3">Authorities</p>
+    <h2 class="max-w-2xl mb-6">Who manages each entry.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
+      Most authorities maintain their own entries directly — they appoint two authorised persons (per Annex A.4) who can submit changes on the authority's behalf. The Varia authority (<span class="font-mono">Var</span>) is the exception: the Advisory Group itself manages it on behalf of the community, for systems that need representation but have no clear extant authority.
+    </p>
+
+    {variaAuthority && (
+      <div class="mb-8 border-l-2 border-gold/60 dark:border-gold-bright/60 pl-5 py-2">
+        <p class="font-display text-base font-semibold text-ink">Managed by the Advisory Group</p>
+        <p class="text-sm text-ink-muted mt-1 mb-3">For systems without a clear extant authority — typically historic systems, or systems in active use across many libraries with no single owner.</p>
+        <a href={`/register/authority/${variaAuthority.id}`} class="inline-flex items-baseline gap-3 group">
+          <span class="font-mono text-sm text-blue dark:text-blue-bright group-hover:underline">{variaAuthority.identifier}</span>
+          <span class="text-sm text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors">{variaAuthority.name}</span>
+        </a>
+      </div>
+    )}
+
+    <div>
+      <p class="font-display text-base font-semibold text-ink mb-3">Managed by the authority itself</p>
+      <p class="text-sm text-ink-muted mb-4">Each authority designates two authorised persons who can submit changes. The current directory lists {selfManagedAuthorities.length} authorities.</p>
+      <ul class="border-t border-rule">
+        {selfManagedAuthorities.slice(0, 24).map((a) => (
+          <li class="border-b border-rule">
+            <a href={`/register/authority/${a.id}`} class="flex items-baseline justify-between gap-4 py-2.5 group">
+              <span class="flex items-baseline gap-3 min-w-0">
+                <span class="font-mono text-sm text-blue dark:text-blue-bright group-hover:underline shrink-0">{a.identifier}</span>
+                <span class="text-sm text-ink group-hover:text-gold-deep dark:group-hover:text-gold-bright transition-colors truncate">{a.name}</span>
+              </span>
+              <span aria-hidden="true" class="text-ink-subtle text-xs shrink-0">→</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      {selfManagedAuthorities.length > 24 && (
+        <p class="mt-4 text-sm">
+          <a href="/register/authority" class="text-blue dark:text-blue-bright underline">Browse all {selfManagedAuthorities.length} authorities →</a>
+        </p>
+      )}
+    </div>
   </section>
 
   {/* ── URIs ─────────────────────────────────────────────────── */}
@@ -150,28 +207,24 @@ const tocItems = [{ "id": "purpose",
       />
       <div>
         <p class="eyebrow mb-3">The logomark</p>
-        <h2 class="max-w-xl">An atlas of refraction.</h2>
+        <h2 class="max-w-xl">What the shapes are.</h2>
       </div>
     </div>
 
-    <div class="max-w-2xl space-y-6 text-ink-muted leading-relaxed">
+    <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
       <p>
-        At the centre of the ISO 24229 logomark sits a circle divided into two halves. This is the semantic core — the invariant meaning that exists before any script is chosen, before any pen meets paper. Meaning, in its essence, does not change when it crosses from one writing system to another. The concept of <em>water</em> is the same whether written <span class="font-mono">水</span> in Hanzi, <span class="font-mono">мөрөн</span> in Cyrillic, or <span class="font-mono">usma</span> in Latin. The two halves of the core acknowledge that meaning is always dual: it lives both in the intention of the writer and in the comprehension of the reader, and these two are never quite identical.
+        The ISO 24229 logomark is built from two shapes that share a single origin: <strong class="text-ink">two half-spheres</strong> and <strong class="text-ink">three waves</strong> emanating outward.
       </p>
+      <ol class="list-decimal pl-6 space-y-3">
+        <li>
+          <strong class="text-ink">The two half-spheres.</strong> They share one origin point — a single meaning, a single thought — but diverge into two halves. The halves stand for the different concepts a meaning can generate across different languages: presence vs absence, definite vs indefinite, this-vs-that definitions that exist in one language but not another. One origin, two conceptions.
+        </li>
+        <li>
+          <strong class="text-ink">The three waves.</strong> Three concentric arcs radiate outward from the same origin. They stand for the three forms of expression any meaning can take: writing, reading, and speech. Three forms, all carried from the same source — and, because each can be re-expressed through any of the others, leading to potentially infinite kinds of expression.
+        </li>
+      </ol>
       <p>
-        Around this core, two concentric circles trace the periphery of expression. These are the writing systems — the scripts, orthographies, and conventions that give visible form to meaning. The inner ring is the source: the system from which a conversion begins. The outer ring is the target: the system into which meaning is refracted. Between them lies the act of conversion itself, the space where ISO 24229 operates.
-      </p>
-      <p>
-        Both the semantic centre and the expressive rings are set at an angle — a rotation governed by the golden ratio. This is not decoration. It is the logomark's deepest statement: meaning and its written expression are never perfectly aligned. They drift. The angle between them is the inherent bias of every transliteration, every transcription, every romanisation. When Arabic flows into Latin, when Cyrillic flows into Latin, when Hanzi flows into Pinyin, something is preserved and something is refracted — bent slightly, like light passing through water.
-      </p>
-      <p>
-        ISO 24229 exists to make this refraction <strong>visible</strong>. Every code in the register is a named, identifiable conversion path. By assigning each system a unique code, the standard transforms an otherwise opaque transformation into an auditable, citable act. The register does not eliminate drift — that is impossible — but it makes drift <em>transparent</em>.
-      </p>
-      <p>
-        The concentric rings acknowledge that expression is layered, that conversion is never lossless, and that the path from meaning to written form is always mediated. The golden ratio — nature's proportion of growth and harmony — suggests that this mediation is not a defect to be corrected but a natural property of written language, as fundamental as the angle of sunlight through a prism.
-      </p>
-      <p>
-        The ISO 24229 register is, in this sense, an atlas of refraction: a comprehensive, maintained catalogue of the known ways that meaning bends as it passes from one script to another. By naming each path, we shed light on the original authentic meaning — not by freezing it in a single form, but by making every transformation traceable.
+        The blank gap between the half-spheres (language) and the waves (script) is where ISO 24229 operates. The standard governs the bridge between language and script — the conversion path that lets a single meaning travel from one written form to another.
       </p>
     </div>
   </section>
@@ -179,16 +232,13 @@ const tocItems = [{ "id": "purpose",
   {/* ── Colours ──────────────────────────────────────────────── */}
   <section id="colours" class="rule-section">
     <p class="eyebrow mb-3">The colours</p>
-    <h2 class="max-w-2xl mb-6">Teal and mauve, held in tension.</h2>
+    <h2 class="max-w-2xl mb-6">Teal and mauve.</h2>
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
       <p>
-        The logomark's palette is drawn from two opposing forces, and deliberately avoids the colour combinations of national flags. <strong>Teal</strong> — cool yet present, the colour of water seen through glass — marks the semantic core. It is the colour of meaning itself: invariant, valuable, the thing that persists across conversion. <strong>Mauve</strong> — softer, more reflective, the colour of things seen at distance — marks the concentric rings of expression. It is the colour of the written form: engineered, conventional, subject to reform.
+        The two half-spheres are teal; the three waves are mauve. Teal carries the conceptual centre: cool enough to read as structural, warm enough not to disappear into the page. Mauve carries the radiating expressions: softer, more reflective, suggesting that written form is engineered and conventional rather than natural.
       </p>
       <p>
-        Where teal and mauve meet, at the angle of the golden ratio, the two colours do not merge into brown. They hold their distinction. This is intentional: meaning and expression are not the same thing, and ISO 24229's purpose is to keep them legibly separate — to ensure that every reader can tell which is which, even when they are tightly interleaved.
-      </p>
-      <p class="text-sm text-ink-subtle italic mt-4">
-        Editorial note: teal and mauve were chosen precisely because no major national flag uses this pairing. An international register must remain colour-theoretically neutral.
+        The two families never merge, so the eye can always tell meaning from expression — even where the waves and the half-spheres appear to overlap.
       </p>
     </div>
   </section>
