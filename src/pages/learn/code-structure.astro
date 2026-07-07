@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import { externalLinks } from '../../config';
+import { getCollection } from 'astro:content';
 
 const specExamples = [
   { n: 1, code: 'UN:ara-Arab:Latn:2017', abbrev: 'UN:ara:Latn:2017', desc: 'United Nations system for the romanization of Arabic, approved 2017.' },
@@ -14,6 +15,19 @@ const specExamples = [
   { n: 8, code: 'ESKT:udm-Cyrl:est-Latn:2021', abbrev: 'ESKT:udm:est:2021', desc: 'Estonian Language Committee\'s rules for rendering Udmurt names in Estonian texts, approved 2021.' },
   { n: 9, code: 'LV:eng-Latn:lav-Latn:2006', abbrev: 'LV:eng:lav:2006', desc: 'Official instructions in Latvia on rendering English proper names in Latvian, issued in 2006.' },
 ];
+
+const registeredSystems = await getCollection('system-code');
+const codeToEntryId = new Map<string, string>();
+for (const entry of registeredSystems) {
+  const code = (entry.data as { code?: string }).code;
+  if (typeof code === 'string') {
+    codeToEntryId.set(code.toLowerCase(), entry.id);
+  }
+}
+function entryUrlFor(code: string): string | null {
+  const id = codeToEntryId.get(code.toLowerCase());
+  return id ? `/register/system-code/i/${id}/` : null;
+}
 
 const spellingExamples = [
   { code: 'ind-Latn-pre1972', desc: 'Indonesian language using the pre-1972 orthography' },
@@ -232,20 +246,37 @@ const tocItems = [
   <section class="rule-section mb-12">
     <p class="eyebrow mb-3">§4.7 Examples of writing system conversion codes</p>
     <h2 class="mb-4">Nine systems from the standard.</h2>
-    <p class="text-sm text-ink-subtle mb-6">These examples are indicative and do not guarantee that such codes are registered.</p>
+    <p class="text-sm text-ink-subtle mb-6">These examples are indicative and do not guarantee that such codes are registered. Where an example has a register entry, the code links to it.</p>
     <div class="max-w-2xl space-y-5">
-      {specExamples.map((ex) => (
-        <div class="border-l-2 border-rule pl-5">
-          <p class="text-xs text-ink-subtle mb-1">Example {ex.n}</p>
-          <p class="font-mono text-base md:text-lg break-all">
+      {specExamples.map((ex) => {
+        const href = entryUrlFor(ex.code);
+        const segs = (
+          <>
             <span class="text-gold-deep dark:text-gold-bright">{ex.code.split(':')[0]}</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">{ex.code.split(':')[1]}</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">{ex.code.split(':')[2]}</span><span class="text-ink-subtle">:</span><span class="text-ink">{ex.code.split(':')[3]}</span>
-          </p>
-          {ex.abbrev && (
-            <p class="text-sm text-ink-subtle mt-1">Possible abbreviation: <span class="font-mono">{ex.abbrev}</span></p>
-          )}
-          <p class="text-sm text-ink-muted mt-1">{ex.desc}</p>
-        </div>
-      ))}
+          </>
+        );
+        return (
+          <div class="border-l-2 border-rule pl-5">
+            <p class="text-xs text-ink-subtle mb-1">
+              Example {ex.n}
+              {href && <span class="ml-2 text-gold-deep dark:text-gold-bright">· registered</span>}
+            </p>
+            <p class="font-mono text-base md:text-lg break-all">
+              {href ? (
+                <a href={href} class="underline decoration-rule decoration-1 underline-offset-4 hover:decoration-gold-deep dark:hover:decoration-gold-bright hover:text-gold-deep dark:hover:text-gold-bright transition-colors">
+                  {segs}
+                </a>
+              ) : (
+                <span>{segs}</span>
+              )}
+            </p>
+            {ex.abbrev && (
+              <p class="text-sm text-ink-subtle mt-1">Possible abbreviation: <span class="font-mono">{ex.abbrev}</span></p>
+            )}
+            <p class="text-sm text-ink-muted mt-1">{ex.desc}</p>
+          </div>
+        );
+      })}
     </div>
     <p class="mt-6 text-sm text-ink-muted max-w-2xl">
       Target spelling systems can also be language-specific. Example 8 denotes a system to represent Udmurt names in Estonian texts using the Estonian alphabet, not Latin as a whole.
