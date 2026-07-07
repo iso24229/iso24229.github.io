@@ -1,8 +1,8 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
+import codeNames from '../../../data/code-names.json';
 
-// Build dropdown options for approved authorities + spelling systems
 const authorities = (await getCollection('authority'))
   .map((c) => ({
     id: c.id,
@@ -10,6 +10,19 @@ const authorities = (await getCollection('authority'))
     name: String((c.data as Record<string, unknown>).name ?? c.id),
   }))
   .sort((a, b) => a.identifier.localeCompare(b.identifier));
+
+const scripts = Object.entries((codeNames as any).scripts ?? {}) as [string, { name: string; url: string }][];
+const languages = Object.entries((codeNames as any).languages ?? {}) as [string, { name: string; part: string; url: string }][];
+
+const systems = (await getCollection('system-code'))
+  .map((c) => ({
+    id: c.id,
+    code: String((c.data as Record<string, unknown>).code ?? c.id),
+    name: String((c.data as Record<string, unknown>).name ?? c.id),
+  }))
+  .sort((a, b) => a.code.localeCompare(b.code));
+
+const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'aliasOf', 'adoptedFrom', 'relatedTo'];
 ---
 
 <Layout title="Submit a proposal">
@@ -18,9 +31,31 @@ const authorities = (await getCollection('authority'))
   </p>
   <p class="eyebrow mb-3">Interactive submission form</p>
   <h1 class="text-3xl md:text-4xl font-display font-bold tracking-[-0.035em] mb-3">Submit a proposal.</h1>
-  <p class="text-base md:text-lg text-ink-muted max-w-2xl leading-relaxed mb-12">
+  <p class="text-base md:text-lg text-ink-muted max-w-2xl leading-relaxed mb-6">
     Fill in each field. The form validates as you type, generates a live preview of the proposed code, and produces ready-to-paste Markdown for a GitHub issue — with a SHA-256 integrity checksum the Registration Authority can verify.
   </p>
+  <div class="border-l-2 border-gold/60 dark:border-gold-bright/60 pl-4 py-2 mb-12 max-w-2xl">
+    <p class="text-sm text-ink-muted leading-relaxed">
+      <strong class="text-ink">GitHub account required.</strong> To submit this proposal you need a free GitHub account. When you click "Open GitHub issue" you'll be asked to sign in (or create an account). Your GitHub username becomes your verified identity for the proposal.
+    </p>
+  </div>
+
+  {/* ── Datalists for ISO code autocomplete ──────────────────── */}
+  <datalist id="lang-codes">
+    {languages.slice(0, 2000).map(([code, info]) => (
+      <option value={code}>{info.name}</option>
+    ))}
+  </datalist>
+  <datalist id="script-codes">
+    {scripts.map(([code, info]) => (
+      <option value={code}>{info.name}</option>
+    ))}
+  </datalist>
+  <datalist id="system-codes-list">
+    {systems.map((s) => (
+      <option value={s.code}>{s.name}</option>
+    ))}
+  </datalist>
 
   <div class="lg:grid lg:grid-cols-[1fr_320px] lg:gap-12">
     <form id="proposal-form" class="space-y-12">
@@ -94,12 +129,12 @@ const authorities = (await getCollection('authority'))
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
             <label class="block eyebrow mb-1.5" for="source-language">Source language (ISO 639) *</label>
-            <input id="source-language" type="text" required pattern="[a-z]{3}(-[a-z]{3})?" maxlength="7" placeholder="amh" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+            <input id="source-language" type="text" list="lang-codes" required pattern="[a-z]{3}(-[a-z]{3})?" maxlength="7" placeholder="amh" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
             <p class="text-xs text-ink-subtle mt-1">3-letter code. <a href="/register/iso639/" class="underline">Look up</a>.</p>
           </div>
           <div>
             <label class="block eyebrow mb-1.5" for="source-script">Source script (ISO 15924) *</label>
-            <input id="source-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Ethi" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+            <input id="source-script" type="text" list="script-codes" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Ethi" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
             <p class="text-xs text-ink-subtle mt-1">4-letter title-case. <a href="/register/iso15924/" class="underline">Look up</a>.</p>
           </div>
           <div>
@@ -109,7 +144,7 @@ const authorities = (await getCollection('authority'))
           </div>
           <div>
             <label class="block eyebrow mb-1.5" for="target-script">Target script (ISO 15924) *</label>
-            <input id="target-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Latn" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+            <input id="target-script" type="text" list="script-codes" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Latn" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
             <p class="text-xs text-ink-subtle mt-1">Usually <span class="font-mono">Latn</span> for romanizations.</p>
           </div>
         </div>
@@ -120,7 +155,7 @@ const authorities = (await getCollection('authority'))
         </div>
         <div>
           <label class="block eyebrow mb-1.5" for="system-name">System name (human-readable) *</label>
-          <input id="system-name" type="text" required placeholder="ALA-LC Romanization Table -- Amharic (2011)" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+          <input id="system-name" type="text" required placeholder="UNGEGN Romanization System -- Arabic (2017)" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
         </div>
         <div>
           <label class="block eyebrow mb-1.5" for="abstract">Abstract *</label>
@@ -177,8 +212,11 @@ const authorities = (await getCollection('authority'))
           <textarea id="examples" required rows="3" placeholder="One per line, format: input → output (optional remark)&#10;e.g.&#10;አማርኛ → amarəñya" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono"></textarea>
         </div>
         <div>
-          <label class="block eyebrow mb-1.5" for="relations">Relations to other systems (optional)</label>
-          <textarea id="relations" rows="2" placeholder="One per line, e.g. supersedes: alalc:amh-Ethi:Latn:1997" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono"></textarea>
+          <label class="block eyebrow mb-2">Relations to other systems (optional)</label>
+          <div id="relations-container" class="space-y-2"></div>
+          <button type="button" id="add-relation-btn" class="mt-2 text-sm text-blue dark:text-blue-bright hover:text-gold-deep dark:hover:text-gold-bright underline">
+            + Add relation
+          </button>
         </div>
       </fieldset>
 
@@ -394,7 +432,9 @@ const authorities = (await getCollection('authority'))
 
         section('Justification', data.justification);
         section('Example conversions', data.examples);
-        section('Relations to other systems (optional)', data.relations);
+        if (data.relations && data.relations.length > 0) {
+          section('Relations to other systems (optional)', data.relations.map((r) => `${r.type}: ${r.target}`).join('\n'));
+        }
 
         section('Submission terms', [
           '- [x] I confirm the information is accurate to the best of my knowledge',
@@ -441,6 +481,62 @@ const authorities = (await getCollection('authority'))
           issues.push('Source country must be 2 uppercase letters (e.g. "ET")');
         }
         return issues;
+      }
+
+      // ── Structured relations (dynamic rows) ──────────────
+      const RELATION_TYPES = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'aliasOf', 'adoptedFrom', 'relatedTo'];
+      let relRowCounter = 0;
+
+      function addRelationRow(type = '', target = '') {
+        const container = document.getElementById('relations-container');
+        if (!container) return;
+        const id = ++relRowCounter;
+        const row = document.createElement('div');
+        row.className = 'relation-row flex items-center gap-2';
+        row.dataset.relId = String(id);
+
+        const typeSel = document.createElement('select');
+        typeSel.className = 'px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm shrink-0';
+        typeSel.innerHTML = '<option value="">type…</option>' + RELATION_TYPES.map((t) => `<option value="${t}" ${type === t ? 'selected' : ''}>${t}</option>`).join('');
+
+        const targetInput = document.createElement('input');
+        targetInput.type = 'text';
+        targetInput.setAttribute('list', 'system-codes-list');
+        targetInput.placeholder = 'target system code';
+        targetInput.value = target;
+        targetInput.className = 'flex-1 px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono';
+
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = '✕';
+        removeBtn.className = 'shrink-0 px-2 py-1 text-sm text-ink-subtle hover:text-red-600';
+        removeBtn.onclick = () => { row.remove(); regenerate(); };
+
+        row.appendChild(typeSel);
+        row.appendChild(targetInput);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+
+        typeSel.addEventListener('change', regenerate);
+        targetInput.addEventListener('input', regenerate);
+      }
+
+      function collectRelations() {
+        const container = document.getElementById('relations-container');
+        if (!container) return [];
+        const rows = container.querySelectorAll('.relation-row');
+        const result = [];
+        rows.forEach((row) => {
+          const type = row.querySelector('select')?.value?.trim();
+          const target = row.querySelector('input')?.value?.trim();
+          if (type && target) result.push({ type, target });
+        });
+        return result;
+      }
+
+      const addRelBtn = document.getElementById('add-relation-btn');
+      if (addRelBtn) {
+        addRelBtn.addEventListener('click', () => addRelationRow());
       }
 
       // ── Regenerate (debounced) ─────────────────────────
@@ -491,7 +587,7 @@ const authorities = (await getCollection('authority'))
           demo3Usage: val('demo-3-usage'),
           justification: val('justification'),
           examples: val('examples'),
-          relations: val('relations'),
+          relations: collectRelations(),
         };
         data.code = buildCode(data);
 

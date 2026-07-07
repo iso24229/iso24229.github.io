@@ -8,9 +8,14 @@ import Layout from '../../../layouts/Layout.astro';
   </p>
   <p class="eyebrow mb-3">Interactive submission form</p>
   <h1 class="text-3xl md:text-4xl font-display font-bold tracking-[-0.035em] mb-3">Propose a new authority.</h1>
-  <p class="text-base md:text-lg text-ink-muted max-w-2xl leading-relaxed mb-12">
+  <p class="text-base md:text-lg text-ink-muted max-w-2xl leading-relaxed mb-6">
     Use this form to apply for registration of a new conversion system authority. Once approved by the Advisory Group, the authority can submit systems under its own identifier. Per Annex A.4, every authority designates exactly two authorised persons who can submit changes on its behalf.
   </p>
+  <div class="border-l-2 border-gold/60 dark:border-gold-bright/60 pl-4 py-2 mb-12 max-w-2xl">
+    <p class="text-sm text-ink-muted leading-relaxed">
+      <strong class="text-ink">GitHub account required.</strong> To submit this proposal you need a free GitHub account. When you click "Open GitHub issue" you'll be asked to sign in (or create an account). Your GitHub username becomes your verified identity for the proposal.
+    </p>
+  </div>
 
   <div class="lg:grid lg:grid-cols-[1fr_320px] lg:gap-12">
     <form id="authority-form" class="space-y-12">
@@ -42,11 +47,11 @@ import Layout from '../../../layouts/Layout.astro';
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Authority identification</legend>
         <div>
           <label class="block eyebrow mb-1.5" for="auth-name">Full authority name *</label>
-          <input id="auth-name" type="text" required placeholder="e.g. Academia Sinica" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+          <input id="auth-name" type="text" required placeholder="e.g. UNGEGN Working Group on Romanization Systems" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
         </div>
         <div>
           <label class="block eyebrow mb-1.5" for="auth-id">Proposed short identifier *</label>
-          <input id="auth-id" type="text" required pattern="[A-Za-z][A-Za-z0-9-]{1,15}" maxlength="16" placeholder="e.g. acadsin, BGN-PCGN, UN" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+          <input id="auth-id" type="text" required pattern="[A-Za-z][A-Za-z0-9-]{1,15}" maxlength="16" placeholder="e.g. ungeg, BGN-PCGN, UN" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
           <p class="text-xs text-ink-subtle mt-1">3–16 characters. Letters, digits, hyphens. Must start with a letter. The AG allocates the final identifier at its discretion.</p>
         </div>
         <div>
@@ -119,7 +124,7 @@ import Layout from '../../../layouts/Layout.astro';
         <p class="text-sm text-ink-muted">Provide at least one writing system conversion system that this authority manages (or intends to register once approved). The AG uses this to verify the authority's competence per §5.2.</p>
         <div class="space-y-2 p-4 border border-rule rounded-sm">
           <p class="eyebrow">System 1 *</p>
-          <input id="demo-sys-1-name" type="text" required placeholder="System name (e.g. ALA-LC Romanization of Amharic 2011)" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+          <input id="demo-sys-1-name" type="text" required placeholder="System name (e.g. UNGEGN Romanization of Arabic 2017)" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
           <input id="demo-sys-1-spec" type="text" placeholder="Specification URL or citation" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
         </div>
         <div class="space-y-2 p-4 border border-rule rounded-sm">
