@@ -7,10 +7,11 @@
 /* ──────────────────────────────────────────────────────────────────
  * Design tokens — single source of truth.
  *
- * Palette: copper (warm core) + aubergine (cool rings), chosen to
- * avoid any national-flag colour pairing.
- *   copper     #7a2e0e → #c2410c → #e87a35  (deep → mid → bright)
- *   aubergine  #3a2050 → #5b3a7d → #8b5fa6  (deep → mid → bright)
+ * Palette: teal (warm-leaning structural) + mauve (cool expressive),
+ * sampled from the official ISO 24229 logomark. Chosen to avoid any
+ * national-flag colour pairing.
+ *   teal   #2c5a7a → #447ea6 → #45a7b5 → #46b5ba  (deep → bright)
+ *   mauve  #5e3583 → #8b5fa6 → #a477b1 → #cea9d0  (deep → light)
  *
  * The logomark is the only place colour is used liberally; the rest of
  * the UI uses ink-on-paper with copper as the single editorial accent
@@ -18,14 +19,15 @@
  * ────────────────────────────────────────────────────── */
 
 @theme {
-  /* Brand — copper (warm core) + aubergine (cool rings).
-   * Chosen to avoid any national-flag colour pairing. */
-  --color-gold: #c2410c;
-  --color-gold-bright: #e87a35;
-  --color-gold-deep: #7a2e0e;
-  --color-blue: #5b3a7d;
-  --color-blue-bright: #8b5fa6;
-  --color-blue-deep: #3a2050;
+  /* Brand — teal (warm-leaning structural) + mauve (cool expressive),
+   * sampled from the official ISO 24229 logomark. Chosen to avoid
+   * any national-flag colour pairing. */
+  --color-gold: #45a7b5;
+  --color-gold-bright: #46b5ba;
+  --color-gold-deep: #2c5a7a;
+  --color-blue: #a477b1;
+  --color-blue-bright: #cea9d0;
+  --color-blue-deep: #5e3583;
 
   /* Ink + paper (light is default) */
   --color-paper: #fbfaf6;
