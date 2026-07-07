@@ -42,7 +42,7 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
 
   {/* ── Datalists for ISO code autocomplete ──────────────────── */}
   <datalist id="lang-codes">
-    {languages.slice(0, 2000).map(([code, info]) => (
+    {languages.map(([code, info]) => (
       <option value={code}>{info.name}</option>
     ))}
   </datalist>
@@ -306,6 +306,47 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         el.addEventListener('input', regenerate);
         el.addEventListener('change', regenerate);
       });
+
+      // ── Strict code validation (reject invalid values on blur) ──
+      function makeStrict(inputId, datalistId) {
+        const input = document.getElementById(inputId);
+        const dl = document.getElementById(datalistId);
+        if (!input || !dl) return;
+        const valid = new Set(
+          Array.from(dl.querySelectorAll('option')).map((o) => o.value.toLowerCase())
+        );
+        input.addEventListener('blur', () => {
+          const v = input.value.trim().toLowerCase();
+          if (v && !valid.has(v)) {
+            input.value = '';
+            regenerate();
+          }
+        });
+      }
+      makeStrict('source-language', 'lang-codes');
+      makeStrict('source-script', 'script-codes');
+      makeStrict('target-script', 'script-codes');
+
+      // ── Strict relation target validation ────────────────────
+      const sysDL = document.getElementById('system-codes-list');
+      const sysValid = sysDL ? new Set(Array.from(sysDL.querySelectorAll('option')).map((o) => o.value.toLowerCase())) : null;
+      function validateRelationTarget(input) {
+        if (!sysValid) return;
+        input.addEventListener('blur', () => {
+          const v = input.value.trim().toLowerCase();
+          if (v && !sysValid.has(v)) { input.value = ''; regenerate(); }
+        });
+      }
+      // Hook into dynamic relation rows
+      const relContainer = document.getElementById('relations-container');
+      if (relContainer) {
+        const observer = new MutationObserver(() => {
+          relContainer.querySelectorAll('input[list="system-codes-list"]').forEach((inp) => {
+            if (!inp.dataset.strict) { inp.dataset.strict = '1'; validateRelationTarget(inp); }
+          });
+        });
+        observer.observe(relContainer, { childList: true, subtree: true });
+      }
 
       // ── Helpers ─────────────────────────────────────────
       function val(id) {
@@ -675,15 +716,66 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
           codePreview.classList.toggle('text-ink', !!data.code);
         }
 
-        // Validation
-        const issues = validate(data);
+        // Validation — grouped by section with status emojis
+        const groups = [
+          {
+            label: 'Submitter',
+            done: !!(data.submitterName && data.submitterRole),
+            note: !data.submitterName ? 'name needed' : !data.submitterRole ? 'role needed' : null,
+          },
+          {
+            label: 'Authority',
+            done: !!(data.isNewAuthority ? data.newAuthId : data.authority),
+            note: data.isNewAuthority ? (!data.newAuthId ? 'identifier needed' : null) : (!data.authority ? 'select an authority' : null),
+          },
+          {
+            label: 'System identification',
+            done: !!(data.sourceLanguage && data.sourceScript && data.targetScript && data.identifyingSegment && data.systemName && data.abstract),
+            note: [
+              !data.sourceLanguage && 'source language',
+              !data.sourceScript && 'source script',
+              !data.targetScript && 'target script',
+              !data.identifyingSegment && 'identifying segment',
+              !data.systemName && 'system name',
+              !data.abstract && 'abstract',
+            ].filter(Boolean).join(', ') || null,
+          },
+          {
+            label: 'Defining reference',
+            done: !!(data.refTitle && data.refPublisher && data.refDate),
+            note: [
+              !data.refTitle && 'title',
+              !data.refPublisher && 'publisher',
+              !data.refDate && 'date',
+            ].filter(Boolean).join(', ') || null,
+          },
+          {
+            label: 'Demonstrative usage',
+            done: !!(data.demo1Title && data.demo2Title && data.demo3Title),
+            note: [
+              !data.demo1Title && 'source 1',
+              !data.demo2Title && 'source 2',
+              !data.demo3Title && 'source 3',
+            ].filter(Boolean).join(', ') || null,
+          },
+          {
+            label: 'Justification & examples',
+            done: !!(data.justification && data.examples && data.examples.length > 0),
+            note: [
+              !data.justification && 'justification',
+              (!data.examples || data.examples.length === 0) && 'at least one example',
+            ].filter(Boolean).join(', ') || null,
+          },
+        ];
+
         const list = document.getElementById('validation-list');
         if (list) {
-          if (issues.length === 0) {
-            list.innerHTML = '<li class="text-ink">✓ All required fields filled</li>';
-          } else {
-            list.innerHTML = issues.slice(0, 8).map((i) => `<li class="text-ink-muted">— ${escapeHtml(i)}</li>`).join('') + (issues.length > 8 ? `<li class="text-ink-subtle">+ ${issues.length - 8} more</li>` : '');
-          }
+          list.innerHTML = groups.map((g) => {
+            const icon = g.done ? '✅' : '⏳';
+            const cls = g.done ? 'text-ink' : 'text-ink-muted';
+            const noteHtml = g.note ? `<span class="text-ink-subtle ml-1">— ${escapeHtml(g.note)}</span>` : '';
+            return `<li class="${cls}">${icon} <span class="font-medium">${escapeHtml(g.label)}</span>${noteHtml}</li>`;
+          }).join('');
         }
 
         // SHA-256 of canonical JSON

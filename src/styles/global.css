@@ -19,15 +19,14 @@
  * ────────────────────────────────────────────────────── */
 
 @theme {
-  /* Brand — teal (warm-leaning structural) + mauve (cool expressive),
-   * sampled from the official ISO 24229 logomark. Chosen to avoid
-   * any national-flag colour pairing. */
+  /* Brand — sampled from the official ISO 24229 logomark.
+   * Teal (warm-leaning) for accent, blue (cool) for structural elements. */
   --color-gold: #45a7b5;
   --color-gold-bright: #46b5ba;
   --color-gold-deep: #2c5a7a;
-  --color-blue: #a477b1;
-  --color-blue-bright: #cea9d0;
-  --color-blue-deep: #5e3583;
+  --color-blue: #3a5a9c;
+  --color-blue-bright: #5374b9;
+  --color-blue-deep: #2a4070;
 
   /* Ink + paper (light is default) */
   --color-paper: #fbfaf6;
