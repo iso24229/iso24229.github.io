@@ -48,7 +48,8 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
   <script type="application/json" id="country-data" set:html={JSON.stringify(countries.map((c) => ({ value: c.code, label: c.name })))} />
 
   <style is:inline>
-    .cb-dropdown { position:absolute; top:calc(100% - 1px); left:0; min-width:100%; width:max-content; max-width:30rem; max-height:240px; overflow-y:auto; z-index:50; background:var(--color-paper); border:1px solid var(--color-rule); border-radius:0 0 4px 4px; box-shadow:0 4px 12px rgba(0,0,0,0.12); display:none; }
+    .cb-wrap { position:relative; }
+    .cb-dropdown { position:absolute; top:calc(100% + 1px); left:0; min-width:100%; width:max-content; max-width:30rem; max-height:240px; overflow-y:auto; z-index:50; background:var(--color-paper); border:1px solid var(--color-rule); border-radius:0 0 4px 4px; box-shadow:0 4px 12px rgba(0,0,0,0.12); display:none; }
     .cb-dropdown.visible { display:block; }
     .cb-option { padding:0.375rem 0.75rem; cursor:pointer; display:block; }
     .cb-option:hover, .cb-option.cb-active { background:var(--color-paper-raised); }
@@ -136,28 +137,28 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         <div class="grid sm:grid-cols-2 gap-4">
           <div>
             <label class="block eyebrow mb-1.5" for="source-language">Source language (ISO 639) *</label>
-            <input id="source-language" type="text" required pattern="[a-z]{3}(-[a-z]{3})?" maxlength="7" placeholder="amh" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+            <input id="source-language" type="text" required pattern="[a-z]{3}(-[a-z]{3})?" maxlength="7" placeholder="amh" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
             <p class="text-xs text-ink-subtle mt-1">3-letter code. Type to search.</p>
           </div>
           <div>
             <label class="block eyebrow mb-1.5" for="source-script">Source script (ISO 15924) *</label>
-            <input id="source-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Ethi" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+            <input id="source-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Ethi" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
             <p class="text-xs text-ink-subtle mt-1">4-letter title-case. Type to search.</p>
           </div>
           <div>
             <label class="block eyebrow mb-1.5" for="source-country">Source country (optional)</label>
-            <input id="source-country" type="text" placeholder="Ethiopia" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" autocomplete="off" />
+            <input id="source-country" type="text" placeholder="Ethiopia" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
             <p class="text-xs text-ink-subtle mt-1">ISO 3166-1 alpha-2. Type to search by country name or code.</p>
           </div>
           <div>
             <label class="block eyebrow mb-1.5" for="target-script">Target script (ISO 15924) *</label>
-            <input id="target-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Latn" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+            <input id="target-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Latn" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
             <p class="text-xs text-ink-subtle mt-1">Usually <span class="font-mono">Latn</span> for romanizations.</p>
           </div>
         </div>
         <div>
           <label class="block eyebrow mb-1.5" for="identifying-segment">Identifying segment *</label>
-          <input id="identifying-segment" type="text" required placeholder="2011" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+          <input id="identifying-segment" type="text" required placeholder="2011" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
           <p class="text-xs text-ink-subtle mt-1">Usually a year (e.g. <span class="font-mono">2011</span>) but may include version info (<span class="font-mono">9-1995</span>, <span class="font-mono">WG-1912</span>).</p>
         </div>
         <div>
@@ -319,15 +320,24 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         if (!input || !options || !options.length) return;
         if (input.dataset.cbAttached) return;
         input.dataset.cbAttached = '1';
+        // Wrap the input in a tight positioning context so the dropdown
+        // sits flush against the input, not against the bottom of the
+        // surrounding label/help-text block.
+        const parent = input.parentNode;
+        if (!parent.classList.contains('cb-wrap')) {
+          const wrap = document.createElement('div');
+          wrap.className = 'cb-wrap';
+          parent.insertBefore(wrap, input);
+          wrap.appendChild(input);
+        }
         const wrap = input.parentNode;
-        if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
         const dd = document.createElement('div');
         dd.className = 'cb-dropdown';
         wrap.appendChild(dd);
         const err = document.createElement('div');
         err.className = 'cb-error';
         err.textContent = errMsg || 'Please select a valid option from the list';
-        input.parentNode.insertBefore(err, input.nextSibling);
+        wrap.parentNode.insertBefore(err, wrap.nextSibling);
         let selVal = '', activeIdx = -1, selecting = false;
 
         function render(q) {
@@ -671,6 +681,10 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         targetInput.type = 'text';
         targetInput.placeholder = 'search target system…';
         targetInput.value = target;
+        targetInput.autocomplete = 'off';
+        targetInput.autocapitalize = 'off';
+        targetInput.spellcheck = false;
+        targetInput.setAttribute('autocorrect', 'off');
         targetInput.className = 'w-full px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono';
         targetWrap.appendChild(targetInput);
 
