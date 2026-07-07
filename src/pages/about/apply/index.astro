@@ -1,32 +1,144 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
-import Card from '../../../components/Card.astro';
-import { repoUrls, externalLinks } from '../../../config';
+import { externalLinks } from '../../../config';
+
+const proposalFormHref = 'https://github.com/iso24229/proposals/issues/new?template=system-proposal.yml';
+const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
 ---
 
 <Layout title="Apply">
-  <h1 class="text-4xl font-semibold tracking-tight mb-6">Apply</h1>
+  <p class="eyebrow mb-4">Apply</p>
+  <h1 class="text-4xl md:text-5xl font-display font-bold tracking-[-0.035em] mb-6">Propose a system.</h1>
 
-  <p class="text-lg text-ink-muted max-w-2xl mb-10">
-    Two paths: an existing authority adding a new system to the register, or
-    a new authority applying to register. Both start as a structured GitHub
-    issue in the <a href={repoUrls.register} class="underline">register data repository</a>.
+  <p class="text-lg md:text-xl text-ink-muted max-w-2xl leading-relaxed mb-10">
+    Anyone with a GitHub account can propose a new conversion system, a new authority, or a change to an existing entry. Every proposal enters the same lifecycle: submission, Registration Authority review, Advisory Group deliberation, decision.
   </p>
 
-  <div class="grid gap-4 md:grid-cols-2 mt-8">
-    <Card
-      href="/about/apply/existing-authority"
-      title="Existing authority — new system"
-      body="Add a new conversion system under your existing authority."
-    />
-    <Card
-      href="/about/apply/new-authority"
-      title="New authority — application"
-      body="Apply to register a new authority with the Advisory Group."
-    />
+  <div class="flex flex-wrap items-center gap-x-6 gap-y-3 mb-12">
+    <a href="/about/apply/submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-sm bg-ink text-paper text-sm font-medium hover:bg-ink-muted transition-colors">
+      Use the interactive form (recommended)
+      <span aria-hidden="true">→</span>
+    </a>
+    <a href={proposalFormHref} class="text-sm text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright underline">
+      Or open a raw GitHub issue form
+    </a>
   </div>
 
-  <p class="mt-12 text-ink-muted">
-    Submissions follow a Unicode-style justification process. See <a href="/specs" class="underline">the specification</a> for the rules.
+  {/* ── Lifecycle ───────────────────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">The lifecycle</p>
+    <h2 class="max-w-2xl mb-8">From submission to register entry.</h2>
+
+    <ol class="max-w-2xl space-y-8">
+      <li class="grid grid-cols-[2rem_1fr] gap-x-4">
+        <span class="font-mono text-sm text-ink-subtle tabular-nums pt-1">01</span>
+        <div>
+          <p class="font-display text-lg font-semibold tracking-[-0.012em]">Submission</p>
+          <p class="text-ink-muted mt-1.5 leading-relaxed">
+            You fill out the <a href="/about/apply/submit" class="underline">interactive form</a> on this site, which validates each field, generates a live code preview, and produces ready-to-paste Markdown with a SHA-256 integrity checksum. The output opens a new issue in <a href={proposalBrowseHref} class="underline"><span class="font-mono">iso24229/proposals</span></a> — a public GitHub repo. (You can also use the <a href={proposalFormHref} class="underline">raw GitHub issue form</a> if you prefer, but you'll lose the validation and checksum.) The form requires identification (your GitHub account), an authority (existing approved, new, or Varia), the four code segments, a defining reference, three independent demonstrative sources, and a justification.
+          </p>
+        </div>
+      </li>
+
+      <li class="grid grid-cols-[2rem_1fr] gap-x-4">
+        <span class="font-mono text-sm text-ink-subtle tabular-nums pt-1">02</span>
+        <div>
+          <p class="font-display text-lg font-semibold tracking-[-0.012em]">Administrative review (RA, public)</p>
+          <p class="text-ink-muted mt-1.5 leading-relaxed">
+            The Registration Authority (CalConnect, operated by Ribose) checks completeness, validates codes, and confirms authority authorization within 14 days. Clarifying questions appear as comments on your proposal — you'll be <span class="font-mono">@mentioned</span>.
+          </p>
+        </div>
+      </li>
+
+      <li class="grid grid-cols-[2rem_1fr] gap-x-4">
+        <span class="font-mono text-sm text-ink-subtle tabular-nums pt-1">03</span>
+        <div>
+          <p class="font-display text-lg font-semibold tracking-[-0.012em]">AG deliberation (private)</p>
+          <p class="text-ink-muted mt-1.5 leading-relaxed">
+            When ready, the proposal is mirrored to <span class="font-mono">iso24229/decisions</span> — a private repo accessible only to Advisory Group members. The AG of 4–12 experts (including an ISO/TC 46 representative) discusses and votes. As a rule, decisions are by consensus; if a vote is needed, more than two-thirds must approve.
+          </p>
+        </div>
+      </li>
+
+      <li class="grid grid-cols-[2rem_1fr] gap-x-4">
+        <span class="font-mono text-sm text-ink-subtle tabular-nums pt-1">04</span>
+        <div>
+          <p class="font-display text-lg font-semibold tracking-[-0.012em]">Decision (public)</p>
+          <p class="text-ink-muted mt-1.5 leading-relaxed">
+            The outcome is posted as a comment on your proposal. If approved, an automated workflow generates the YAML and opens a PR to the register; once merged, the entry appears on <a href="/" class="underline">www.iso24229.org</a> with <span class="font-mono">registrationStatus: proposed</span>. If rejected, the proposal is closed; no register entry is created.
+          </p>
+        </div>
+      </li>
+
+      <li class="grid grid-cols-[2rem_1fr] gap-x-4">
+        <span class="font-mono text-sm text-ink-subtle tabular-nums pt-1">05</span>
+        <div>
+          <p class="font-display text-lg font-semibold tracking-[-0.012em]">Public review → accepted</p>
+          <p class="text-ink-muted mt-1.5 leading-relaxed">
+            After a public review period, the AG transitions the entry to <span class="font-mono">registrationStatus: accepted</span> at its next bimonthly meeting. Codes are then reserved indefinitely for backwards compatibility, even if later deprecated.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  {/* ── Three repos ────────────────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Three repos</p>
+    <h2 class="max-w-2xl mb-6">Why three repositories.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
+      The lifecycle uses three GitHub repositories. This separation keeps public auditability of proposals and outcomes, while protecting AG deliberation from outside pressure.
+    </p>
+    <div class="grid gap-6 md:grid-cols-3 max-w-4xl">
+      <div class="border border-rule rounded p-5">
+        <p class="font-mono text-xs text-ink-subtle mb-2">PUBLIC</p>
+        <p class="font-display font-semibold tracking-[-0.012em]">iso24229/proposals</p>
+        <p class="mt-2 text-sm text-ink-muted leading-relaxed">Submission queue. Every proposal is a GitHub issue. Public comments for RA clarifications.</p>
+      </div>
+      <div class="border border-rule rounded p-5 bg-paper-raised">
+        <p class="font-mono text-xs text-ink-subtle mb-2">PRIVATE</p>
+        <p class="font-display font-semibold tracking-[-0.012em]">iso24229/decisions</p>
+        <p class="mt-2 text-sm text-ink-muted leading-relaxed">AG members only. Discussion, voting, rationale all stay here. Only the outcome is published back.</p>
+      </div>
+      <div class="border border-rule rounded p-5">
+        <p class="font-mono text-xs text-ink-subtle mb-2">PUBLIC</p>
+        <p class="font-display font-semibold tracking-[-0.012em]">iso24229/iso24229-register</p>
+        <p class="mt-2 text-sm text-ink-muted leading-relaxed">The authoritative register. Approved proposals land here as YAML files via automated PRs.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ── What you'll need ────────────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Before you submit</p>
+    <h2 class="max-w-2xl mb-6">What you'll need.</h2>
+    <ul class="max-w-2xl space-y-3 text-ink-muted leading-relaxed list-disc pl-6">
+      <li><strong class="text-ink">A defining reference</strong> — the authoritative document specifying the system (published romanization table, ISO standard, etc.). Title, publisher, date, URL if available. Drag-and-drop PDF or image excerpts of the relevant pages.</li>
+      <li><strong class="text-ink">Three independent public sources</strong> demonstrating actual use. Must be independent of both the authority and you. Library catalogues, gazetteers, academic publications, government style guides, software localisation projects.</li>
+      <li><strong class="text-ink">Authorization</strong> — if proposing for an approved authority, you must be the authority itself or an authorized representative. Otherwise, propose for <span class="font-mono">Var</span> (Varia) or propose a new authority alongside the system.</li>
+      <li><strong class="text-ink">A complete system identification</strong> — ISO 639 source language, ISO 15924 source and target scripts, an identifying segment (year or version), a human-readable name, and a one-sentence abstract.</li>
+      <li><strong class="text-ink">Example conversions</strong> — at least one <span class="font-mono">&lt;input&gt; → &lt;output&gt;</span> pair so the AG can verify the rules are well-defined.</li>
+    </ul>
+  </section>
+
+  {/* ── Integrity controls ─────────────────────────────────── */}
+  <section class="rule-section">
+    <p class="eyebrow mb-3">Integrity controls</p>
+    <h2 class="max-w-2xl mb-6">How the register protects against unauthorized submissions.</h2>
+    <p class="text-ink-muted max-w-2xl leading-relaxed">
+      Three paths, depending on your relationship to the system:
+    </p>
+    <ul class="max-w-2xl space-y-3 mt-4 text-ink-muted leading-relaxed list-disc pl-6">
+      <li><strong class="text-ink">Existing approved authority</strong> — submitter must be the authority itself or have an email/username on file as one of its two authorised persons (per Annex A.4). The RA cross-references this during administrative review.</li>
+      <li><strong class="text-ink">New authority</strong> — submitter provides official contact details; the AG verifies the contact before approving.</li>
+      <li><strong class="text-ink">Varia authority (<span class="font-mono">Var</span>)</strong> — anyone may propose. The AG itself is the de facto authority for these systems (typically historic systems with no clear current owner, e.g. Wade-Giles).</li>
+    </ul>
+  </section>
+
+  <p class="mt-12">
+    <a href="/about/apply/submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-sm bg-ink text-paper text-sm font-medium hover:bg-ink-muted transition-colors">
+      Use the interactive form
+      <span aria-hidden="true">→</span>
+    </a>
   </p>
 </Layout>
