@@ -255,6 +255,7 @@ p {
 }
 .nav-cta:hover {
   background-color: #45a7b5;
+  color: #ffffff;
 }
 .dark .nav-cta {
   background-color: #45a7b5;
@@ -262,6 +263,7 @@ p {
 }
 .dark .nav-cta:hover {
   background-color: #46b5ba;
+  color: #0c0e14;
 }
 
 .article code {
