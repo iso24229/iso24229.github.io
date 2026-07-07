@@ -18,6 +18,10 @@ permissions:
 jobs:
   smoke:
     runs-on: ubuntu-latest
+    env:
+      # PAT scoped to read the private iso24229/register repo.
+      # The default GITHUB_TOKEN cannot clone same-org private repos.
+      ISO24229_CI_PAT_TOKEN: ${{ secrets.ISO24229_CI_PAT_TOKEN }}
     steps:
       - uses: actions/checkout@v7
 

@@ -52,15 +52,17 @@ jobs:
           echo "Site built successfully"
 
       - name: Link Checker
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         uses: lycheeverse/lychee-action@v2
         with:
           args: >-
-            --verbose
             --no-progress
             --config lychee.toml
             --root-dir ${{ github.workspace }}/dist
             'dist/**/*.html'
-          fail: false
+          fail: true
+          failOnError: true
           output: link-check-results.md
           format: markdown
 
