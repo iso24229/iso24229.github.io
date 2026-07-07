@@ -208,8 +208,11 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
           <textarea id="justification" required rows="4" placeholder="3–5 sentences. What problem does assigning a code solve? Who benefits?" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink"></textarea>
         </div>
         <div>
-          <label class="block eyebrow mb-1.5" for="examples">Example conversions *</label>
-          <textarea id="examples" required rows="3" placeholder="One per line, format: input → output (optional remark)&#10;e.g.&#10;አማርኛ → amarəñya" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono"></textarea>
+          <label class="block eyebrow mb-2">Example conversions * (at least one)</label>
+          <div id="examples-container" class="space-y-2"></div>
+          <button type="button" id="add-example-btn" class="mt-2 text-sm text-blue dark:text-blue-bright hover:text-gold-deep dark:hover:text-gold-bright underline">
+            + Add example
+          </button>
         </div>
         <div>
           <label class="block eyebrow mb-2">Relations to other systems (optional)</label>
@@ -431,7 +434,12 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         section('Demonstrative source 3', `Title: ${data.demo3Title}\nURL: ${data.demo3Url}\nUsage: ${data.demo3Usage}`);
 
         section('Justification', data.justification);
-        section('Example conversions', data.examples);
+        if (data.examples && data.examples.length > 0) {
+          section('Example conversions', data.examples.map((ex) => {
+            const r = ex.remarks ? ` (${ex.remarks})` : '';
+            return `${ex.input} → ${ex.output}${r}`;
+          }).join('\n'));
+        }
         if (data.relations && data.relations.length > 0) {
           section('Relations to other systems (optional)', data.relations.map((r) => `${r.type}: ${r.target}`).join('\n'));
         }
@@ -465,7 +473,7 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         required('demonstrative source 2', data.demo2Title);
         required('demonstrative source 3', data.demo3Title);
         required('justification', data.justification);
-        required('example conversions', data.examples);
+        if (!data.examples || data.examples.length === 0) issues.push('Missing: example conversions (at least one required)');
 
         // Format checks
         if (data.sourceLanguage && !/^[a-z]{3}(-[a-z]{3})?$/.test(data.sourceLanguage)) {
@@ -482,6 +490,74 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         }
         return issues;
       }
+
+      // ── Structured examples (dynamic rows) ───────────────
+      let exRowCounter = 0;
+
+      function addExampleRow(input = '', output = '', remarks = '') {
+        const container = document.getElementById('examples-container');
+        if (!container) return;
+        const id = ++exRowCounter;
+        const num = container.querySelectorAll('.example-row').length + 1;
+        const row = document.createElement('div');
+        row.className = 'example-row space-y-1';
+        row.dataset.exId = String(id);
+
+        row.innerHTML = '' +
+          '<div class="flex items-center gap-2">' +
+            '<span class="text-xs font-mono text-ink-subtle shrink-0 w-8">E' + num + '</span>' +
+            '<input type="text" class="ex-input flex-1 px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono" placeholder="source text" />' +
+            '<span class="text-ink-subtle text-sm shrink-0">→</span>' +
+            '<input type="text" class="ex-output flex-1 px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono" placeholder="converted text" />' +
+            '<button type="button" class="ex-remove shrink-0 px-2 py-1 text-sm text-ink-subtle hover:text-red-600">✕</button>' +
+          '</div>' +
+          '<input type="text" class="ex-remarks w-full pl-10 pr-2 py-1 border border-rule rounded-sm bg-paper text-ink-subtle text-xs" placeholder="optional remark" />';
+
+        row.querySelector('.ex-input').value = input;
+        row.querySelector('.ex-output').value = output;
+        row.querySelector('.ex-remarks').value = remarks;
+
+        row.querySelector('.ex-remove').addEventListener('click', () => {
+          row.remove();
+          renumberExamples();
+          regenerate();
+        });
+        row.querySelectorAll('input').forEach((inp) => {
+          inp.addEventListener('input', regenerate);
+        });
+
+        container.appendChild(row);
+        renumberExamples();
+      }
+
+      function renumberExamples() {
+        const rows = document.querySelectorAll('#examples-container .example-row');
+        rows.forEach((row, i) => {
+          const label = row.querySelector('span.font-mono');
+          if (label) label.textContent = 'E' + (i + 1);
+        });
+      }
+
+      function collectExamples() {
+        const container = document.getElementById('examples-container');
+        if (!container) return [];
+        const rows = container.querySelectorAll('.example-row');
+        const result = [];
+        rows.forEach((row) => {
+          const input = row.querySelector('.ex-input')?.value?.trim();
+          const output = row.querySelector('.ex-output')?.value?.trim();
+          const remarks = row.querySelector('.ex-remarks')?.value?.trim();
+          if (input && output) result.push({ input, output, remarks: remarks || null });
+        });
+        return result;
+      }
+
+      const addExBtn = document.getElementById('add-example-btn');
+      if (addExBtn) {
+        addExBtn.addEventListener('click', () => addExampleRow());
+      }
+      // Start with one empty row
+      addExampleRow();
 
       // ── Structured relations (dynamic rows) ──────────────
       const RELATION_TYPES = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'aliasOf', 'adoptedFrom', 'relatedTo'];
@@ -586,7 +662,7 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
           demo3Url: val('demo-3-url'),
           demo3Usage: val('demo-3-usage'),
           justification: val('justification'),
-          examples: val('examples'),
+          examples: collectExamples(),
           relations: collectRelations(),
         };
         data.code = buildCode(data);
