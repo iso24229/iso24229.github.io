@@ -2,14 +2,12 @@
 import Layout from '../../../layouts/Layout.astro';
 import RegistrationBadge from '../../../components/RegistrationBadge.astro';
 import { getCollection } from 'astro:content';
+import { lookupLanguage } from '../../../domain/codes/CodeNames';
 import type { GetStaticPaths } from 'astro';
 
 interface EntryLike { id: string; data: Record<string, unknown>; }
 
 export const getStaticPaths = (async () => {
-  const all = (await getCollection('system-code')) as unknown as EntryLike[];
-  const allSpellings = (await getCollection('spelling-system')) as unknown as EntryLike[];
-
   function refId(v: unknown): string | null {
     if (v == null) return null;
     if (typeof v === 'string') return v;
@@ -21,7 +19,9 @@ export const getStaticPaths = (async () => {
     return null;
   }
 
-  // Build spelling id -> language code lookup (lowercase keys — glob loader lowercases IDs)
+  const all = (await getCollection('system-code')) as unknown as EntryLike[];
+  const allSpellings = (await getCollection('spelling-system')) as unknown as EntryLike[];
+
   const langOf = new Map<string, string>();
   for (const s of allSpellings) {
     const lc = s.data.languageCode;
@@ -37,11 +37,11 @@ export const getStaticPaths = (async () => {
     const targetSpellingId = refId(entry.data.targetSpelling);
     if (sourceSpellingId) {
       const key = sourceSpellingId.toLowerCase();
-      if (langOf.has(key)) source = langOf.get(key)!;
+      if (langOf.has(key)) source = langOf.get(key);
     }
     if (targetSpellingId) {
       const key = targetSpellingId.toLowerCase();
-      if (langOf.has(key)) target = langOf.get(key)!;
+      if (langOf.has(key)) target = langOf.get(key);
     }
     return { source, target };
   }
@@ -75,6 +75,7 @@ const { code, asSource, asTarget } = Astro.props as {
   asTarget: EntryLike[];
 };
 const total = asSource.length + asTarget.length;
+const info = lookupLanguage(code);
 ---
 
 <Layout title={`Systems for language ${code}`}>
@@ -85,7 +86,17 @@ const total = asSource.length + asTarget.length;
   <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mb-3">
     Language <span class="font-mono text-blue dark:text-blue-bright">{code}</span>
   </h1>
-  <p class="text-ink-muted max-w-2xl mb-2 leading-relaxed">
+
+  {info && (
+    <div class="max-w-2xl mb-2">
+      <p class="text-xl text-ink font-display font-semibold tracking-[-0.018em]">{info.name}</p>
+      <p class="mt-2 text-sm text-ink-muted leading-relaxed">
+        Defined by <a href={info.url} target="_blank" rel="noopener" class="text-blue dark:text-blue-bright underline">ISO 639 ({info.part}) <span aria-hidden="true">↗</span></a>.
+      </p>
+    </div>
+  )}
+
+  <p class="text-ink-muted max-w-2xl mt-6 mb-2 leading-relaxed">
     Every system in the register whose source or target spelling system uses this ISO 639 language code.
   </p>
   <p class="text-sm text-ink-muted mb-10">
