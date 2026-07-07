@@ -281,6 +281,7 @@ export const versionedSchemaWithRichData: VersionedSchemaWithRichData = {
         description: 'string?',
         specification: ['string'],
         examples: 'string?',
+        references: 'string?',
         authority: ref('authority', true),
         sourceSpelling: ref('spelling-system', true),
         sourceScriptCode: 'string?',
@@ -339,6 +340,13 @@ export const zodSchemas = Object.entries(schemas).reduce((acc, [k, v]) => {
     }),
   ).default([]),
   specification: z.array(z.string()).default([]),
+  references: z.array(
+    z.object({
+      id: z.string(),
+      citation: z.string(),
+      url: z.string().nullish(),
+    }),
+  ).default([]),
 });
 
 export const collections = Object.entries(zodSchemas).reduce((acc, [k, v]) => {
