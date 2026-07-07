@@ -29,12 +29,22 @@ exclude_path = [
 # - iso.org: behind Cloudflare, 403s automated requests regardless of UA
 # - github.com/iso24229/register: private repo, 404 to unauthenticated
 # - github.com/iso24229/proposals/issues/new: requires GitHub auth to view
+#
+# TODO (register-data): the URLs below are referenced from register entries
+# and need to be updated in the iso24229/register repo.
+# - icao.int/...9303_p3_cons_en.pdf: ICAO removed the legacy Doc 9303
+#   Part 3 PDF; the new location is not discoverable. Affects 11 entries.
+# - royin.go.th: Thailand Royal Institute server is unreachable from CI.
+# - quod.lib.umich.edu: bot-blocked (403).
 exclude = [
   "^https?://localhost:4321",
   "^https?://127\\.0\\.0\\.1",
   "^https?://www\\.iso\\.org/",
   "^https://github\\.com/iso24229/register",
   "^https://github\\.com/iso24229/proposals/issues/new",
+  "^https://www\\.icao\\.int/publications/Documents/9303_p3_cons_en\\.pdf",
+  "^https?://www\\.royin\\.go\\.th/",
+  "^https://quod\\.lib\\.umich\\.edu/",
 ]
 
 exclude_loopback = true
