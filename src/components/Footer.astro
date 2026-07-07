@@ -42,8 +42,8 @@ const year = new Date().getFullYear();
                   src={org.logo.light}
                   alt={`${org.name} logo`}
                   class:list={[
-                    'h-7 w-auto',
-                    org.invertInDark ? 'dark:invert' : 'block dark:hidden',
+                    'auth-logo',
+                    org.invertInDark ? 'auth-logo-invert' : 'auth-logo-light',
                   ]}
                   width="120"
                   height="28"
@@ -52,7 +52,7 @@ const year = new Date().getFullYear();
                   <img
                     src={org.logo.dark}
                     alt={`${org.name} logo`}
-                    class="hidden dark:block h-7 w-auto"
+                    class="auth-logo auth-logo-dark"
                     width="120"
                     height="28"
                   />

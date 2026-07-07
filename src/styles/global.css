@@ -463,6 +463,18 @@ p {
   }
 }
 
+/* ── Footer authority logos — class-based dark mode ───────────────
+ * Tailwind v4's `dark:` variant defaults to prefers-color-scheme,
+ * which doesn't match the site's manual `.dark` class toggle, so we
+ * drive the logo swap with explicit selectors here.
+ */
+.auth-logo { height: 1.75rem; width: auto; display: inline-block; }
+.auth-logo-dark { display: none; }
+.auth-logo-invert { filter: none; }
+.dark .auth-logo-light { display: none; }
+.dark .auth-logo-dark { display: inline-block; }
+.dark .auth-logo-invert { filter: invert(1); }
+
 /* ── Focus: gold ring (consistent across themes) ───────────────── */
 *:focus-visible {
   outline: 2px solid var(--color-gold);
