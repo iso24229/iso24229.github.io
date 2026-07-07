@@ -27,7 +27,7 @@ const sections: { title: string; items: FaqItem[] }[] = [
       { q: 'What does a code like `UN:ara-Arab:Latn:2017` mean?', a: 'Four colon-separated segments: UN (United Nations, the authority), ara-Arab (Arabic language in Arabic script, the source), Latn (Latin script, the target), 2017 (year of adoption, the identifier).' },
       { q: 'What about systems with no clear authority?', a: 'The Varia (Var) authority is managed by the AG for systems that need representation but have no extant authority. Example: Var:zho-Hani:Latn:WG-1912 for Wade-Giles.' },
       { q: 'Can I rely on proposed codes in production?', a: 'Proposed codes are pending AG review and may change. Preferred codes are stable — their identifiers are reserved forever, even if later deprecated.' },
-      { q: 'How do I cite a register entry?', a: 'Cite the code and the access date. Example: `acadsin:zho-Hani:Latn:2002, ISO 24229 register, accessed YYYY-MM-DD`.' },
+      { q: 'How do I cite a register entry?', a: 'Cite the code and the access date. Example: `UN:ara-Arab:Latn:2017, ISO 24229 register, accessed YYYY-MM-DD`.' },
       { q: 'Can I get the data in bulk?', a: 'Yes. JSON-LD, Turtle, and RDF/XML dumps are at /data/register.{jsonld,ttl,rdf}. Per-item downloads are available from each entry\'s page.' },
       { q: 'What if my language or script is not in ISO 639 or ISO 15924?', a: 'Apply to the relevant Registration Authority first (LOC for ISO 639-2/-5, SIL for ISO 639-3, Unicode Consortium for ISO 15924). ISO 24229 codes can only reference codes that already exist in those standards.' },
     ],
