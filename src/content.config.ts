@@ -34,7 +34,7 @@ const registrationStatusTrait = {
 
 const remarkable = {
   remarks: {
-    type: 'string',
+    type: 'string?',
     title: 'Remarks',
   },
 } as const;
@@ -163,9 +163,9 @@ const transformPrimitiveSchemaToZodSchema = (s: PrimitiveSchemaType): z.ZodTypeA
     case 'number?':
       return z.number().nullish();
     case 'string':
-      return z.string();
+      return z.coerce.string();
     case 'string?':
-      return z.string().nullish();
+      return z.coerce.string().nullish();
     default:
       if (Array.isArray(s)) {
         return z.array(
@@ -343,10 +343,18 @@ export const zodSchemas = Object.entries(schemas).reduce((acc, [k, v]) => {
   references: z.array(
     z.object({
       id: z.string(),
-      citation: z.string(),
+      label: z.string(),
+      title: z.string(),
+      publisher: z.string().nullish(),
+      date: z.string().nullish(),
       url: z.string().nullish(),
+      // Backwards compatibility: previously-emitted `citation` strings
+      // (still accepted so old data validates)
+      citation: z.string().nullish(),
     }),
   ).default([]),
+  notes: z.array(z.string()).default([]),
+  provenance: z.array(z.string()).default([]),
 });
 
 export const collections = Object.entries(zodSchemas).reduce((acc, [k, v]) => {
