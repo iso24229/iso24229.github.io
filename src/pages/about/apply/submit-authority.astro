@@ -1,0 +1,394 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Submit an authority proposal">
+  <p class="text-sm text-ink-subtle mb-2">
+    <a href="/about/apply" class="hover:text-gold-deep dark:hover:text-gold-bright">← Apply</a>
+  </p>
+  <p class="eyebrow mb-3">Interactive submission form</p>
+  <h1 class="text-3xl md:text-4xl font-display font-bold tracking-[-0.035em] mb-3">Propose a new authority.</h1>
+  <p class="text-base md:text-lg text-ink-muted max-w-2xl leading-relaxed mb-12">
+    Use this form to apply for registration of a new conversion system authority. Once approved by the Advisory Group, the authority can submit systems under its own identifier. Per Annex A.4, every authority designates exactly two authorised persons who can submit changes on its behalf.
+  </p>
+
+  <div class="lg:grid lg:grid-cols-[1fr_320px] lg:gap-12">
+    <form id="authority-form" class="space-y-12">
+
+      {/* ── Submitter ───────────────────────────────────────── */}
+      <fieldset class="space-y-4">
+        <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Submitter</legend>
+        <div>
+          <label class="block eyebrow mb-1.5" for="submitter-name">Your name *</label>
+          <input id="submitter-name" type="text" required class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
+        </div>
+        <div>
+          <label class="block eyebrow mb-1.5" for="submitter-org">Your organization (optional)</label>
+          <input id="submitter-org" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+        </div>
+        <div>
+          <label class="block eyebrow mb-1.5" for="submitter-role">Your relationship to the proposed authority *</label>
+          <select id="submitter-role" required class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink">
+            <option value="">Select…</option>
+            <option value="I am the authority itself">I am the authority itself (or its official representative)</option>
+            <option value="I am proposing on behalf of the authority with their knowledge">I am proposing on behalf of the authority with their knowledge</option>
+            <option value="I am an interested third party nominating this authority">I am an interested third party nominating this authority</option>
+          </select>
+        </div>
+      </fieldset>
+
+      {/* ── Authority identification ─────────────────────────── */}
+      <fieldset class="space-y-4">
+        <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Authority identification</legend>
+        <div>
+          <label class="block eyebrow mb-1.5" for="auth-name">Full authority name *</label>
+          <input id="auth-name" type="text" required placeholder="e.g. Academia Sinica" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+        </div>
+        <div>
+          <label class="block eyebrow mb-1.5" for="auth-id">Proposed short identifier *</label>
+          <input id="auth-id" type="text" required pattern="[A-Za-z][A-Za-z0-9-]{1,15}" maxlength="16" placeholder="e.g. acadsin, BGN-PCGN, UN" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+          <p class="text-xs text-ink-subtle mt-1">3–16 characters. Letters, digits, hyphens. Must start with a letter. The AG allocates the final identifier at its discretion.</p>
+        </div>
+        <div>
+          <label class="block eyebrow mb-1.5" for="auth-country">Country (if national, ISO 3166-1 alpha-2)</label>
+          <input id="auth-country" type="text" pattern="[A-Z]{2}" maxlength="2" placeholder="e.g. TW, US, GB" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+          <p class="text-xs text-ink-subtle mt-1">Leave blank if the authority is international.</p>
+        </div>
+        <div>
+          <label class="block eyebrow mb-1.5" for="auth-abstract">Abstract *</label>
+          <textarea id="auth-abstract" required rows="2" placeholder="One or two sentences describing the authority and its remit." class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink"></textarea>
+        </div>
+      </fieldset>
+
+      {/* ── Contact ──────────────────────────────────────────── */}
+      <fieldset class="space-y-4">
+        <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Contact</legend>
+        <div>
+          <label class="block eyebrow mb-1.5" for="contact-email">Official contact email *</label>
+          <input id="contact-email" type="email" required placeholder="info@example.org" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+          <p class="text-xs text-ink-subtle mt-1">The AG verifies this contact before approving the authority.</p>
+        </div>
+        <div>
+          <label class="block eyebrow mb-1.5" for="contact-url">Official website (optional)</label>
+          <input id="contact-url" type="url" placeholder="https://…" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+        </div>
+      </fieldset>
+
+      {/* ── Postal address (optional) ────────────────────────── */}
+      <fieldset class="space-y-4">
+        <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Postal address (optional)</legend>
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block eyebrow mb-1.5" for="addr-street">Street</label>
+            <input id="addr-street" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+          </div>
+          <div>
+            <label class="block eyebrow mb-1.5" for="addr-city">City</label>
+            <input id="addr-city" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+          </div>
+          <div>
+            <label class="block eyebrow mb-1.5" for="addr-postal">Postal code</label>
+            <input id="addr-postal" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+          </div>
+          <div>
+            <label class="block eyebrow mb-1.5" for="addr-country">Country code (ISO 3166-1)</label>
+            <input id="addr-country" type="text" pattern="[A-Z]{2}" maxlength="2" placeholder="TW" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+          </div>
+        </div>
+      </fieldset>
+
+      {/* ── Authorised persons (2 required per Annex A.4) ────── */}
+      <fieldset class="space-y-4">
+        <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Authorised persons (exactly two, per Annex A.4)</legend>
+        <p class="text-sm text-ink-muted">Every authority designates exactly two persons who can submit changes on its behalf. Both are required.</p>
+        {[1, 2].map((n) => (
+          <div class="space-y-2 p-4 border border-rule rounded-sm">
+            <p class="eyebrow">Person {n}</p>
+            <div class="grid sm:grid-cols-3 gap-2">
+              <input id={`person-${n}-name`} type="text" required placeholder="Name" class="px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+              <input id={`person-${n}-role`} type="text" required placeholder="Role / title" class="px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+              <input id={`person-${n}-email`} type="email" required placeholder="Email" class="px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+            </div>
+          </div>
+        ))}
+      </fieldset>
+
+      {/* ── Demonstrative evidence ───────────────────────────── */}
+      <fieldset class="space-y-4">
+        <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Demonstrative evidence</legend>
+        <p class="text-sm text-ink-muted">Provide at least one writing system conversion system that this authority manages (or intends to register once approved). The AG uses this to verify the authority's competence per §5.2.</p>
+        <div class="space-y-2 p-4 border border-rule rounded-sm">
+          <p class="eyebrow">System 1 *</p>
+          <input id="demo-sys-1-name" type="text" required placeholder="System name (e.g. ALA-LC Romanization of Amharic 2011)" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+          <input id="demo-sys-1-spec" type="text" placeholder="Specification URL or citation" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+        </div>
+        <div class="space-y-2 p-4 border border-rule rounded-sm">
+          <p class="eyebrow">System 2 (optional)</p>
+          <input id="demo-sys-2-name" type="text" placeholder="System name" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+          <input id="demo-sys-2-spec" type="text" placeholder="Specification URL or citation" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+        </div>
+      </fieldset>
+
+      {/* ── Justification ────────────────────────────────────── */}
+      <fieldset class="space-y-4">
+        <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Justification</legend>
+        <div>
+          <label class="block eyebrow mb-1.5" for="justification">Why should this authority be registered? *</label>
+          <textarea id="justification" required rows="5" placeholder="3–6 sentences. What is the authority's remit? What systems does it manage or intend to manage? Why is an ISO 24229 authority identifier needed? Who will benefit from having this authority in the register?" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink"></textarea>
+        </div>
+      </fieldset>
+
+      {/* ── Terms ────────────────────────────────────────────── */}
+      <fieldset class="space-y-3">
+        <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Submission terms</legend>
+        <label class="flex items-baseline gap-3 text-sm text-ink-muted leading-relaxed">
+          <input type="checkbox" required class="mt-1" />
+          <span>I confirm the information above is accurate to the best of my knowledge.</span>
+        </label>
+        <label class="flex items-baseline gap-3 text-sm text-ink-muted leading-relaxed">
+          <input type="checkbox" required class="mt-1" />
+          <span>I understand the AG may reject this proposal, and that rejection does not result in a register entry.</span>
+        </label>
+        <label class="flex items-baseline gap-3 text-sm text-ink-muted leading-relaxed">
+          <input type="checkbox" required class="mt-1" />
+          <span>I understand this proposal is public, but the AG's deliberation (including voting) is private.</span>
+        </label>
+        <label class="flex items-baseline gap-3 text-sm text-ink-muted leading-relaxed">
+          <input type="checkbox" required class="mt-1" />
+          <span>I will enable GitHub notifications so I receive RA questions and the AG decision.</span>
+        </label>
+      </fieldset>
+    </form>
+
+    {/* ── Live preview / output ──────────────────────────── */}
+    <aside class="lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:self-start space-y-6">
+      <div class="border border-rule rounded-sm p-5 bg-paper-raised">
+        <p class="eyebrow mb-3">Authority preview</p>
+        <p id="auth-preview" class="font-mono text-sm break-all leading-relaxed text-ink-muted">—</p>
+      </div>
+
+      <div class="border border-rule rounded-sm p-5 bg-paper-raised">
+        <p class="eyebrow mb-3">Validation</p>
+        <ul id="validation-list" class="text-xs space-y-1 text-ink-subtle">
+          <li>Fill in required fields to validate.</li>
+        </ul>
+      </div>
+
+      <div class="border border-rule rounded-sm p-5 bg-paper-raised">
+        <p class="eyebrow mb-3">Output</p>
+        <p class="text-xs text-ink-subtle mb-3">Ready-to-paste Markdown for the GitHub issue, with SHA-256 checksum of the structured data.</p>
+        <pre id="output-markdown" class="font-mono text-xs whitespace-pre-wrap break-words bg-paper p-3 border border-rule rounded-sm max-h-64 overflow-y-auto text-ink-muted">—</pre>
+        <p class="text-xs text-ink-subtle mt-2">SHA-256: <code id="checksum" class="font-mono break-all">—</code></p>
+        <div class="mt-4 space-y-2">
+          <button type="button" id="copy-btn" class="w-full px-3 py-2 text-sm font-medium rounded-sm bg-ink text-paper hover:bg-ink-muted transition-colors">Copy Markdown</button>
+          <a id="open-gh-btn" href="https://github.com/iso24229/proposals/issues/new" target="_blank" rel="noopener" class="block text-center px-3 py-2 text-sm font-medium rounded-sm border border-ink text-ink hover:bg-paper-raised transition-colors">Open GitHub issue</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</Layout>
+
+<script is:inline>
+  (function () {
+    function init() {
+      const form = document.getElementById('authority-form');
+      if (!form) return;
+
+      form.querySelectorAll('input, textarea, select').forEach((el) => {
+        el.addEventListener('input', regenerate);
+        el.addEventListener('change', regenerate);
+      });
+
+      function val(id) {
+        const el = document.getElementById(id);
+        return el ? el.value.trim() : '';
+      }
+
+      function buildStructured(d) {
+        return JSON.stringify({
+          type: 'authority-proposal',
+          submitter: { name: d.submitterName, organization: d.submitterOrg, role: d.submitterRole },
+          authority: {
+            name: d.authName,
+            identifier: d.authId,
+            country: d.authCountry,
+            abstract: d.authAbstract,
+          },
+          contact: { email: d.contactEmail, url: d.contactUrl },
+          address: {
+            street: d.addrStreet,
+            city: d.addrCity,
+            postalCode: d.addrPostal,
+            country: d.addrCountry,
+          },
+          authorisedPersons: [
+            { name: d.p1Name, role: d.p1Role, email: d.p1Email },
+            { name: d.p2Name, role: d.p2Role, email: d.p2Email },
+          ],
+          demonstrativeSystems: [
+            { name: d.sys1Name, specification: d.sys1Spec },
+            { name: d.sys2Name, specification: d.sys2Spec },
+          ].filter((s) => s.name),
+          justification: d.justification,
+        });
+      }
+
+      async function sha256Hex(s) {
+        const buf = new TextEncoder().encode(s);
+        const hash = await crypto.subtle.digest('SHA-256', buf);
+        return Array.from(new Uint8Array(hash)).map((b) => b.toString(16).padStart(2, '0')).join('');
+      }
+
+      function genMarkdown(d, checksum) {
+        const lines = [];
+        function section(label, value) {
+          lines.push(`### ${label}`);
+          lines.push('');
+          lines.push(value || '_(not provided)_');
+          lines.push('');
+        }
+        lines.push(`<!-- ISO 24229 authority proposal generated by www.iso24229.org/about/apply/submit-authority -->`);
+        lines.push(`<!-- integrity-sha256: ${checksum} -->`);
+        lines.push(`<!-- proposal-type: authority -->`);
+        lines.push('');
+        section('Your name', d.submitterName);
+        section('Your organization (optional)', d.submitterOrg);
+        section('Your relationship to the proposed authority', d.submitterRole);
+        section('Full authority name', d.authName);
+        section('Proposed short identifier', d.authId);
+        section('Country (if national)', d.authCountry);
+        section('Abstract', d.authAbstract);
+        section('Official contact email', d.contactEmail);
+        section('Official website', d.contactUrl);
+        section('Postal address', [d.addrStreet, d.addrCity, d.addrPostal, d.addrCountry].filter(Boolean).join('\n'));
+        section('Authorised person 1', `Name: ${d.p1Name}\nRole: ${d.p1Role}\nEmail: ${d.p1Email}`);
+        section('Authorised person 2', `Name: ${d.p2Name}\nRole: ${d.p2Role}\nEmail: ${d.p2Email}`);
+        section('Demonstrative system 1', `Name: ${d.sys1Name}\nSpecification: ${d.sys1Spec}`);
+        if (d.sys2Name) section('Demonstrative system 2', `Name: ${d.sys2Name}\nSpecification: ${d.sys2Spec}`);
+        section('Justification', d.justification);
+        section('Submission terms', [
+          '- [x] I confirm the information is accurate to the best of my knowledge',
+          '- [x] I understand the AG may reject this proposal',
+          '- [x] I understand this proposal is public, but the AG\'s deliberation is private',
+          '- [x] I will enable GitHub notifications',
+        ].join('\n'));
+        return lines.join('\n');
+      }
+
+      function validate(d) {
+        const issues = [];
+        const req = (l, v) => { if (!v) issues.push(`Missing: ${l}`); };
+        req('submitter name', d.submitterName);
+        req('role', d.submitterRole);
+        req('authority name', d.authName);
+        req('proposed identifier', d.authId);
+        req('abstract', d.authAbstract);
+        req('contact email', d.contactEmail);
+        req('authorised person 1 name', d.p1Name);
+        req('authorised person 1 role', d.p1Role);
+        req('authorised person 1 email', d.p1Email);
+        req('authorised person 2 name', d.p2Name);
+        req('authorised person 2 role', d.p2Role);
+        req('authorised person 2 email', d.p2Email);
+        req('demonstrative system 1', d.sys1Name);
+        req('justification', d.justification);
+        if (d.authId && !/^[A-Za-z][A-Za-z0-9-]{1,15}$/.test(d.authId)) {
+          issues.push('Identifier must be 2–16 chars, starting with a letter');
+        }
+        return issues;
+      }
+
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      }
+
+      let scheduled = false;
+      function regenerate() {
+        if (scheduled) return;
+        scheduled = true;
+        setTimeout(() => { scheduled = false; actuallyRegenerate(); }, 50);
+      }
+
+      async function actuallyRegenerate() {
+        const d = {
+          submitterName: val('submitter-name'),
+          submitterOrg: val('submitter-org'),
+          submitterRole: val('submitter-role'),
+          authName: val('auth-name'),
+          authId: val('auth-id'),
+          authCountry: val('auth-country'),
+          authAbstract: val('auth-abstract'),
+          contactEmail: val('contact-email'),
+          contactUrl: val('contact-url'),
+          addrStreet: val('addr-street'),
+          addrCity: val('addr-city'),
+          addrPostal: val('addr-postal'),
+          addrCountry: val('addr-country'),
+          p1Name: val('person-1-name'),
+          p1Role: val('person-1-role'),
+          p1Email: val('person-1-email'),
+          p2Name: val('person-2-name'),
+          p2Role: val('person-2-role'),
+          p2Email: val('person-2-email'),
+          sys1Name: val('demo-sys-1-name'),
+          sys1Spec: val('demo-sys-1-spec'),
+          sys2Name: val('demo-sys-2-name'),
+          sys2Spec: val('demo-sys-2-spec'),
+          justification: val('justification'),
+        };
+
+        const preview = document.getElementById('auth-preview');
+        if (preview) {
+          const text = [d.authId && `@${d.authId}`, d.authName, d.authCountry && `(${d.authCountry})`].filter(Boolean).join(' ');
+          preview.textContent = text || '—';
+          preview.classList.toggle('text-ink-muted', !text);
+          preview.classList.toggle('text-ink', !!text);
+        }
+
+        const issues = validate(d);
+        const list = document.getElementById('validation-list');
+        if (list) {
+          if (issues.length === 0) list.innerHTML = '<li class="text-ink">✓ All required fields filled</li>';
+          else list.innerHTML = issues.slice(0, 8).map((i) => `<li class="text-ink-muted">— ${escapeHtml(i)}</li>`).join('') + (issues.length > 8 ? `<li class="text-ink-subtle">+ ${issues.length - 8} more</li>` : '');
+        }
+
+        let checksum = '';
+        if (d.submitterName || d.authName) {
+          try { checksum = await sha256Hex(buildStructured(d)); }
+          catch (e) { checksum = '(unavailable over insecure connection)'; }
+        }
+
+        const md = genMarkdown(d, checksum);
+        const mdEl = document.getElementById('output-markdown');
+        if (mdEl) mdEl.textContent = (d.submitterName || d.authName) ? md : '—';
+        const ckEl = document.getElementById('checksum');
+        if (ckEl) ckEl.textContent = checksum || '—';
+
+        const ghBtn = document.getElementById('open-gh-btn');
+        if (ghBtn) {
+          const title = d.authName ? `[Authority Proposal] ${d.authName}` : '[Authority Proposal]';
+          const url = `https://github.com/iso24229/proposals/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(md)}`;
+          ghBtn.setAttribute('href', url);
+        }
+
+        const copyBtn = document.getElementById('copy-btn');
+        if (copyBtn) {
+          copyBtn.onclick = async () => {
+            try {
+              await navigator.clipboard.writeText(md);
+              copyBtn.textContent = 'Copied ✓';
+              setTimeout(() => { copyBtn.textContent = 'Copy Markdown'; }, 2000);
+            } catch (e) {
+              copyBtn.textContent = 'Copy failed — select manually';
+            }
+          };
+        }
+      }
+
+      regenerate();
+    }
+
+    init();
+    document.addEventListener('astro:page-load', init);
+  })();
+</script>
