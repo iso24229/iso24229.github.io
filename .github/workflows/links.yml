@@ -16,8 +16,6 @@ permissions:
 jobs:
   link_checker:
     runs-on: ubuntu-latest
-    env:
-      ISO24229_CI_PAT_TOKEN: ${{ secrets.ISO24229_CI_PAT_TOKEN }}
     steps:
       - uses: actions/checkout@v6
 

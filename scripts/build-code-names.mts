@@ -108,13 +108,12 @@ async function buildLanguages(): Promise<Record<string, LanguageEntry>> {
 function resolveSibling(name: string): string {
   // Mirror of src/config/external-sources.ts resolveSourcePath logic — but
   // we can't import it here because the script runs in node, not Astro.
-  // Sibling path: same parent dir as this repo.
+  // Priority: npm package, then sibling checkout for local dev.
   const here = process.cwd();
+  const pkg = join(here, 'node_modules', '@iso24229', name);
+  if (existsSync(pkg)) return pkg;
   const sibling = join(here, '..', name);
-  if (existsSync(sibling)) return sibling;
-  // CI fallback: .cache/external/<name>
-  const cached = join(here, '.cache', 'external', name);
-  return cached;
+  return sibling;
 }
 
 const [scripts, languages] = await Promise.all([buildScripts(), buildLanguages()]);

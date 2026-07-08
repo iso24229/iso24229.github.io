@@ -20,7 +20,6 @@ const targets = [
   ['node_modules/.vite/ (Vite deps optimizer cache)', 'node_modules/.vite'],
   ['node_modules/.astro/ (Astro barrel cache)', 'node_modules/.astro'],
   ['dist/ (build output)', 'dist'],
-  ['.cache/ (external-data cache from CI clones)', '.cache'],
 ];
 
 let cleared = 0;
