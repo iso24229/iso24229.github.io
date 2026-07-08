@@ -4,3 +4,7 @@ allowBuilds:
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
+# Exempt our own org's packages from pnpm's minimum-release-age supply-chain
+# check. They're freshly published and we vouch for them.
+minimumReleaseAgeExclude:
+  - '@iso24229/*'
