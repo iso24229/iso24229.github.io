@@ -29,11 +29,6 @@ jobs:
         with:
           node-version: 22
           package-manager: pnpm@11
-        env:
-          # PAT scoped to read the private iso24229-register repo.
-          # The default GITHUB_TOKEN cannot clone same-org private repos.
-          ISO24229_CI_PAT_TOKEN: ${{ secrets.ISO24229_CI_PAT_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   deploy:
     needs: build

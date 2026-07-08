@@ -8,23 +8,21 @@ describe('external-sources config', () => {
     expect(names).toEqual(['iso639-data', 'iso15924-data', 'register']);
   });
 
-  it('all sources are pinned to a ref', () => {
+  it('all sources are pinned to a ref and an npm package', () => {
     for (const src of externalSources) {
       expect(src.ref.length).toBeGreaterThan(0);
+      expect(src.npmPackage.startsWith('@iso24229/')).toBe(true);
     }
   });
 
-  it('only the register is private', () => {
-    expect(sourceByName('iso639-data').private).toBe(false);
-    expect(sourceByName('iso15924-data').private).toBe(false);
-    expect(sourceByName('register').private).toBe(true);
-  });
-
-  it('resolveSourcePath prefers a sibling clone when present', () => {
-    // On a developer machine with siblings checked out, paths resolve
-    // to the sibling — no symlink, no cache directory.
-    const resolved = resolveSourcePath('iso639-data');
-    expect(resolved.endsWith('iso639-data')).toBe(true);
+  it('resolveSourcePath points at the installed npm package', () => {
+    // With packages installed (CI and dev), paths resolve into
+    // node_modules/@iso24229/<name>.
+    for (const src of externalSources) {
+      const resolved = resolveSourcePath(src.name as any);
+      expect(resolved.includes('node_modules')).toBe(true);
+      expect(resolved.includes(src.npmPackage)).toBe(true);
+    }
   });
 
   it('sourceByName throws on unknown', () => {

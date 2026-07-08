@@ -1,11 +1,11 @@
 /**
  * Typed view over `external-sources.yaml`.
  *
- * The configuration is data (YAML), not code. This module loads it via
- * the `yaml` package and exposes typed accessors for the rest of the
- * codebase.
+ * Sources are consumed as npm packages (@iso24229/<name>); the YAML
+ * retains repo/ref metadata for traceability. The website's build
+ * pipeline reads files directly from the installed package(s).
  */
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { parse } from 'yaml';
 
@@ -13,8 +13,7 @@ export interface ExternalSource {
   readonly name: string;
   readonly repoUrl: string;
   readonly ref: string;
-  readonly localPath: string;
-  readonly private: boolean;
+  readonly npmPackage: string;
 }
 
 interface RawConfig {
@@ -36,24 +35,24 @@ export function sourceByName(name: string): ExternalSource {
 /**
  * Resolve the active path for a source.
  *
- * Priority:
- *   1. If a sibling clone exists at `localPath` (developer's machine),
- *      use it directly. No symlink, no copy — tools read from the
- *      sibling repo.
- *   2. Otherwise use `.cache/external/<name>/` — populated by
- *      `scripts/prepare-external.mts` via `git clone` (CI case).
- *
- * We deliberately do NOT create symlinks into `.cache/`. Earlier the
- * cache directory was a symlink to the sibling repo, and Vite / TS /
- * Astro file watchers followed the symlink into the sibling's `.git`,
- * causing runaway CPU. Returning the sibling path directly avoids the
- * entire class of "tool follows symlink somewhere unexpected" bugs.
+ * Reads from `node_modules/<npmPackage>/`. If the package isn't
+ * installed (e.g. running before `pnpm install`), falls back to a
+ * sibling checkout at `../<name>` for local development convenience.
  */
 export function resolveSourcePath(name: ExternalSourceName): string {
   const src = sourceByName(name);
-  const sibling = resolve(src.localPath);
-  if (existsSync(sibling)) {
-    return sibling;
+  const pkgPath = resolve('node_modules', src.npmPackage);
+  if (fileExists(pkgPath)) return pkgPath;
+  const sibling = resolve('..', src.name);
+  if (fileExists(sibling)) return sibling;
+  return pkgPath;
+}
+
+function fileExists(p: string): boolean {
+  try {
+    readFileSync(p + '/package.json', 'utf-8');
+    return true;
+  } catch {
+    return false;
   }
-  return `.cache/external/${name}`;
 }
