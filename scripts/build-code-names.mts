@@ -113,10 +113,48 @@ function resolveSibling(name: string): string {
   const pkg = join(here, 'node_modules', '@iso24229', name);
   if (existsSync(pkg)) return pkg;
   const sibling = join(here, '..', name);
+  if (existsSync(sibling)) {
+    console.warn(
+      `! ${name}: npm package not installed; using sibling checkout at ${sibling}.\n` +
+      `  Run \`pnpm install\` to consume the published @iso24229/${name} package instead.`,
+    );
+  }
   return sibling;
 }
 
+function assertDataRoot(name: string, root: string, requiredSubdirs: string[]): void {
+  if (!existsSync(root)) {
+    console.error(
+      `✖ ${name}: data source not found at ${root}\n` +
+      `  Run \`pnpm install\` (or ensure a sibling checkout at ../${name}).`,
+    );
+    process.exit(1);
+  }
+  for (const sub of requiredSubdirs) {
+    const dir = join(root, sub);
+    if (!existsSync(dir)) {
+      console.error(`✖ ${name}: expected directory ${dir} does not exist.`);
+      process.exit(1);
+    }
+  }
+}
+
+const iso15924Root = resolveSibling('iso15924-data');
+const iso639Root   = resolveSibling('iso639-data');
+assertDataRoot('iso15924-data', iso15924Root, ['codes']);
+assertDataRoot('iso639-data',   iso639Root,   ['639-1', '639-2', '639-3', '639-5']);
+
 const [scripts, languages] = await Promise.all([buildScripts(), buildLanguages()]);
+
+if (Object.keys(scripts).length === 0) {
+  console.error('✖ iso15924-data: 0 scripts loaded. Refusing to emit empty code-names.json.');
+  process.exit(1);
+}
+if (Object.keys(languages).length === 0) {
+  console.error('✖ iso639-data: 0 languages loaded. Refusing to emit empty code-names.json.');
+  process.exit(1);
+}
+
 const out = { scripts, languages, _meta: { generatedAt: new Date().toISOString() } };
 await writeFile('src/data/code-names.json', JSON.stringify(out, null, 2));
 console.log(`Generated src/data/code-names.json: ${Object.keys(scripts).length} scripts, ${Object.keys(languages).length} languages`);
