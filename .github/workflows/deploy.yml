@@ -3,9 +3,8 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  repository_dispatch:
-    # Triggered by iso24229/iso24229-register when register data merges
-    types: [register-updated]
+  # repository_dispatch is handled by bump-deps.yml, which commits a
+  # lockfile bump and the resulting push re-triggers this workflow.
   workflow_dispatch:
 
 permissions:
