@@ -1,0 +1,79 @@
+name: Bump @iso24229/* deps on package publish
+
+# When a @iso24229/* data package publishes a new version, its
+# release.yml fires repository_dispatch 'package-published' here.
+# This workflow runs `pnpm update <package>` to bump the lockfile,
+# commits, and pushes. The push triggers deploy.yml via the normal
+# `push to main` path, and the rebuild picks up the new version.
+#
+# Legacy 'register-updated' dispatch (from before the npm migration)
+# is handled the same way — bump @iso24229/register.
+#
+# Loop safety: this workflow only runs on repository_dispatch, never
+# on push, so its own commit doesn't re-trigger it.
+
+on:
+  repository_dispatch:
+    types: [package-published, register-updated]
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to update, e.g. @iso24229/register'
+        required: false
+        default: '@iso24229/register'
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: '11'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Resolve which package to update
+        id: pkg
+        run: |
+          if [ -n "${{ inputs.package }}" ]; then
+            PKG="${{ inputs.package }}"
+          elif [ -n "${{ github.event.client_payload.package }}" ]; then
+            PKG="${{ github.event.client_payload.package }}"
+          else
+            PKG="@iso24229/register"
+          fi
+          echo "package=$PKG" >> "$GITHUB_OUTPUT"
+          echo "Updating $PKG"
+
+      - run: pnpm install --frozen-lockfile=false
+
+      - name: pnpm update the dispatched package
+        run: pnpm update "${{ steps.pkg.outputs.package }}@latest"
+
+      - name: Commit + push if lockfile changed
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          if git diff --quiet pnpm-lock.yaml; then
+            echo "Lockfile unchanged — already at latest."
+            exit 0
+          fi
+          PKG="${{ steps.pkg.outputs.package }}"
+          VERSION="${{ github.event.client_payload.version }}"
+          MSG="chore(deps): bump $PKG"
+          if [ -n "$VERSION" ]; then
+            MSG="$MSG to $VERSION"
+          fi
+          git add pnpm-lock.yaml
+          git commit -m "$MSG"
+          git push origin HEAD
