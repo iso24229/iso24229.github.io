@@ -29,12 +29,15 @@ exclude_path = [
 # - iso.org: behind Cloudflare, 403s automated requests regardless of UA
 # - github.com/iso24229/register: private repo, 404 to unauthenticated
 # - github.com/iso24229/proposals/issues/new: requires GitHub auth to view
+# - iso639-3.sil.org: URLs are valid but the site is slow / rate-limits
+#   automated clients; lychee times out on every request.
 exclude = [
   "^https?://localhost:4321",
   "^https?://127\\.0\\.0\\.1",
   "^https?://www\\.iso\\.org/",
   "^https://github\\.com/iso24229/register",
   "^https://github\\.com/iso24229/proposals/issues/new",
+  "^https://iso639-3\\.sil\\.org/",
 ]
 
 exclude_loopback = true
