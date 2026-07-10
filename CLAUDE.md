@@ -89,8 +89,9 @@ The collection loaders use `glob({ base: join(resolveSourcePath('register'), ite
 ### Theming
 
 - `src/layouts/Layout.astro` — base HTML shell. Dark mode is **class-based** (`.dark` on `<html>`, toggled client-side by `ThemeControl.astro`).
-- Tailwind v4's `dark:` variant uses `prefers-color-scheme` by default and does **not** respond to the `.dark` class. Use explicit `.dark` selectors in `src/styles/global.css` for class-driven theme switching (the footer logos do this; copy that pattern).
-- Design tokens live at the top of `src/styles/global.css` (`--color-paper`, `--color-ink`, etc.). Tailwind utilities like `bg-paper`, `text-ink-muted` resolve to these via `@theme`.
+- `src/styles/global.css` starts with `@custom-variant dark (&:where(.dark, .dark *));` so Tailwind's `dark:` variant responds to the `.dark` class, not the default `prefers-color-scheme` media query. Use `dark:` utilities freely (`dark:text-gold-bright`, `dark:hidden`, etc.).
+- Cases that need direct CSS (e.g., swapping a `src` attribute, or rules scoped to descendants Tailwind can't reach) still use explicit `.dark .selector` blocks in `global.css` — the footer logo swap is the example.
+- Design tokens live at the top of `src/styles/global.css` (`--color-paper`, `--color-ink`, etc.). Tailwind utilities like `bg-paper`, `text-ink-muted` resolve to these via `@theme`. Some tokens flip in `.dark` (`--color-paper`, `--color-blue`, `--color-accent`); others stay constant (`--color-gold-deep`) — check the `.dark` block before assuming a token auto-flips.
 
 ### TypeScript / path aliases
 
