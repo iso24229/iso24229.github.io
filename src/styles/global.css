@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Make Tailwind's `dark:` variant respond to the `.dark` class on the
+ * root element instead of the default `prefers-color-scheme` media
+ * query. The site toggles themes via ThemeControl.astro adding the
+ * `.dark` class to <html>; without this directive, every `dark:`
+ * variant across the codebase would silently fail to apply.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
 @import "@fontsource-variable/space-grotesk";
