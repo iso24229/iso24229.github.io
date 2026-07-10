@@ -1,75 +1,14 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import RegistrationBadge from '../../../components/RegistrationBadge.astro';
-import { getCollection } from 'astro:content';
 import { lookupScript } from '../../../domain/codes/CodeNames';
-import type { GetStaticPaths } from 'astro';
+import { buildBrowsePaths, type EntryLike } from '../../../domain/browse/buildPaths';
 
-interface EntryLike { id: string; data: Record<string, unknown>; }
-
-export const getStaticPaths = (async () => {
-  function refId(v: unknown): string | null {
-    if (v == null) return null;
-    if (typeof v === 'string') return v;
-    if (typeof v === 'object') {
-      const obj = v as Record<string, unknown>;
-      const direct = obj.id ?? obj.uuid ?? obj.$ref ?? obj.slug;
-      if (typeof direct === 'string') return direct;
-    }
-    return null;
-  }
-
-  const all = (await getCollection('system-code')) as unknown as EntryLike[];
-  const allSpellings = (await getCollection('spelling-system')) as unknown as EntryLike[];
-
-  const scriptOf = new Map<string, string>();
-  for (const s of allSpellings) {
-    const sc = s.data.scriptCode;
-    if (typeof sc === 'string' && sc.length > 0) {
-      scriptOf.set(s.id.toLowerCase(), sc);
-    }
-  }
-
-  function scriptsFor(entry: EntryLike): { source?: string; target?: string } {
-    let source: string | undefined;
-    let target: string | undefined;
-    const sourceSpellingId = refId(entry.data.sourceSpelling);
-    const targetSpellingId = refId(entry.data.targetSpelling);
-    if (sourceSpellingId) {
-      const key = sourceSpellingId.toLowerCase();
-      if (scriptOf.has(key)) source = scriptOf.get(key);
-    }
-    if (targetSpellingId) {
-      const key = targetSpellingId.toLowerCase();
-      if (scriptOf.has(key)) target = scriptOf.get(key);
-    }
-    if (!source && typeof entry.data.sourceScriptCode === 'string' && entry.data.sourceScriptCode.length > 0) source = entry.data.sourceScriptCode;
-    if (!target && typeof entry.data.targetScriptCode === 'string' && entry.data.targetScriptCode.length > 0) target = entry.data.targetScriptCode;
-    return { source, target };
-  }
-
-  const byScript = new Map<string, { asSource: EntryLike[]; asTarget: EntryLike[] }>();
-  for (const e of all) {
-    const { source, target } = scriptsFor(e);
-    if (source) {
-      if (!byScript.has(source)) byScript.set(source, { asSource: [], asTarget: [] });
-      byScript.get(source)!.asSource.push(e);
-    }
-    if (target) {
-      if (!byScript.has(target)) byScript.set(target, { asSource: [], asTarget: [] });
-      byScript.get(target)!.asTarget.push(e);
-    }
-  }
-
-  return [...byScript.keys()].sort().map((code) => ({
-    params: { code },
-    props: {
-      code,
-      asSource: byScript.get(code)!.asSource,
-      asTarget: byScript.get(code)!.asTarget,
-    },
-  }));
-}) satisfies GetStaticPaths;
+export const getStaticPaths = buildBrowsePaths({
+  spellingField: 'scriptCode',
+  fallbackSourceField: 'sourceScriptCode',
+  fallbackTargetField: 'targetScriptCode',
+});
 
 const { code, asSource, asTarget } = Astro.props as {
   code: string;

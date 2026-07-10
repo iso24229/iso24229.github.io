@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import SectionHead from '../../../components/SectionHead.astro';
 import { externalLinks } from '../../../config';
 
 const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
@@ -99,8 +100,7 @@ const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
 
   {/* ── Three repos ────────────────────────────────────────── */}
   <section class="rule-section">
-    <p class="eyebrow mb-3">Three repos</p>
-    <h2 class="max-w-2xl mb-6">Why three repositories.</h2>
+    <SectionHead eyebrow="Three repos" title="Why three repositories." />
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
       The lifecycle uses three GitHub repositories. This separation keeps public auditability of proposals and outcomes, while protecting AG deliberation from outside pressure.
     </p>
@@ -125,8 +125,7 @@ const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
 
   {/* ── What you'll need ────────────────────────────────────── */}
   <section class="rule-section">
-    <p class="eyebrow mb-3">Before you submit</p>
-    <h2 class="max-w-2xl mb-6">What you'll need.</h2>
+    <SectionHead eyebrow="Before you submit" title="What you'll need." />
     <ul class="max-w-2xl space-y-3 text-ink-muted leading-relaxed list-disc pl-6">
       <li><strong class="text-ink">A defining reference</strong> — the authoritative document specifying the system (published romanization table, ISO standard, etc.). Title, publisher, date, URL if available. Drag-and-drop PDF or image excerpts of the relevant pages.</li>
       <li><strong class="text-ink">Three independent public sources</strong> demonstrating actual use. Must be independent of both the authority and you. Library catalogues, gazetteers, academic publications, government style guides, software localisation projects.</li>
@@ -138,8 +137,7 @@ const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
 
   {/* ── Varia (Var) explanation ──────────────────────────── */}
   <section class="rule-section">
-    <p class="eyebrow mb-3">Varia — when to use it</p>
-    <h2 class="max-w-2xl mb-6">Don't propose a new authority if Varia fits.</h2>
+    <SectionHead eyebrow="Varia — when to use it" title="Don't propose a new authority if Varia fits." />
     <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
       <p>
         The <strong class="text-ink">Varia authority</strong> (<span class="font-mono">Var</span>) is a special authority managed by the Advisory Group itself. It exists for systems that need a code in the register but have no clear extant authority to own them. Anyone can propose a system under <span class="font-mono">Var</span> — no authorization required.
@@ -168,8 +166,7 @@ const proposalBrowseHref = 'https://github.com/iso24229/proposals/issues';
 
   {/* ── Integrity controls ─────────────────────────────────── */}
   <section class="rule-section">
-    <p class="eyebrow mb-3">Integrity controls</p>
-    <h2 class="max-w-2xl mb-6">How the register protects against unauthorized submissions.</h2>
+    <SectionHead eyebrow="Integrity controls" title="How the register protects against unauthorized submissions." />
     <p class="text-ink-muted max-w-2xl leading-relaxed">
       Three paths, depending on your relationship to the system:
     </p>

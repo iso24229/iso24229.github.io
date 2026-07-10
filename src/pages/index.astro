@@ -1,5 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SectionHead from '../components/SectionHead.astro';
+import ArrowLink from '../components/ArrowLink.astro';
 import Card from '../components/Card.astro';
 import { externalLinks } from '../config';
 ---
@@ -60,8 +62,7 @@ import { externalLinks } from '../config';
 
   {/* ── Code anatomy: SVG diagram ────────────────────────────── */}
   <section class="rule-section">
-    <p class="eyebrow mb-3">What a code is made of</p>
-    <h2 class="max-w-2xl mb-3">One code, four segments, three standards.</h2>
+    <SectionHead eyebrow="What a code is made of" title="One code, four segments, three standards." titleClass="max-w-2xl mb-3" />
     <p class="text-ink-muted max-w-2xl mb-8 leading-relaxed">
       A single ISO 24229 code is built from identifiers you may already know:
       ISO 639 for languages, ISO 15924 for scripts. ISO 24229 is the standard
@@ -119,9 +120,7 @@ import { externalLinks } from '../config';
     </div>
 
     <p class="mt-5">
-      <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">
-        Read the full code structure →
-      </a>
+      <ArrowLink href="/learn/code-structure">Read the full code structure</ArrowLink>
     </p>
   </section>
 
@@ -144,9 +143,9 @@ import { externalLinks } from '../config';
       the Advisory Group?
     </p>
     <div class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
-      <a href="/about/apply" class="text-ink hover:text-gold-deep dark:hover:text-gold-bright">Apply / submit a system →</a>
-      <a href="/about/managers" class="text-ink hover:text-gold-deep dark:hover:text-gold-bright">AG materials →</a>
-      <a href="/specs" class="text-ink hover:text-gold-deep dark:hover:text-gold-bright">Specification (Annex A ToR) →</a>
+      <ArrowLink href="/about/apply" variant="primary">Apply / submit a system</ArrowLink>
+      <ArrowLink href="/about/managers" variant="primary">AG materials</ArrowLink>
+      <ArrowLink href="/specs" variant="primary">Specification (Annex A ToR)</ArrowLink>
     </div>
   </section>
 </Layout>

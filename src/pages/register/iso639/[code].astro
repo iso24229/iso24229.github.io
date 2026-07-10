@@ -1,73 +1,10 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 import RegistrationBadge from '../../../components/RegistrationBadge.astro';
-import { getCollection } from 'astro:content';
 import { lookupLanguage } from '../../../domain/codes/CodeNames';
-import type { GetStaticPaths } from 'astro';
+import { buildBrowsePaths, type EntryLike } from '../../../domain/browse/buildPaths';
 
-interface EntryLike { id: string; data: Record<string, unknown>; }
-
-export const getStaticPaths = (async () => {
-  function refId(v: unknown): string | null {
-    if (v == null) return null;
-    if (typeof v === 'string') return v;
-    if (typeof v === 'object') {
-      const obj = v as Record<string, unknown>;
-      const direct = obj.id ?? obj.uuid ?? obj.$ref ?? obj.slug;
-      if (typeof direct === 'string') return direct;
-    }
-    return null;
-  }
-
-  const all = (await getCollection('system-code')) as unknown as EntryLike[];
-  const allSpellings = (await getCollection('spelling-system')) as unknown as EntryLike[];
-
-  const langOf = new Map<string, string>();
-  for (const s of allSpellings) {
-    const lc = s.data.languageCode;
-    if (typeof lc === 'string' && lc.length > 0) {
-      langOf.set(s.id.toLowerCase(), lc);
-    }
-  }
-
-  function langsFor(entry: EntryLike): { source?: string; target?: string } {
-    let source: string | undefined;
-    let target: string | undefined;
-    const sourceSpellingId = refId(entry.data.sourceSpelling);
-    const targetSpellingId = refId(entry.data.targetSpelling);
-    if (sourceSpellingId) {
-      const key = sourceSpellingId.toLowerCase();
-      if (langOf.has(key)) source = langOf.get(key);
-    }
-    if (targetSpellingId) {
-      const key = targetSpellingId.toLowerCase();
-      if (langOf.has(key)) target = langOf.get(key);
-    }
-    return { source, target };
-  }
-
-  const byLang = new Map<string, { asSource: EntryLike[]; asTarget: EntryLike[] }>();
-  for (const e of all) {
-    const { source, target } = langsFor(e);
-    if (source) {
-      if (!byLang.has(source)) byLang.set(source, { asSource: [], asTarget: [] });
-      byLang.get(source)!.asSource.push(e);
-    }
-    if (target) {
-      if (!byLang.has(target)) byLang.set(target, { asSource: [], asTarget: [] });
-      byLang.get(target)!.asTarget.push(e);
-    }
-  }
-
-  return [...byLang.keys()].sort().map((code) => ({
-    params: { code },
-    props: {
-      code,
-      asSource: byLang.get(code)!.asSource,
-      asTarget: byLang.get(code)!.asTarget,
-    },
-  }));
-}) satisfies GetStaticPaths;
+export const getStaticPaths = buildBrowsePaths({ spellingField: 'languageCode' });
 
 const { code, asSource, asTarget } = Astro.props as {
   code: string;

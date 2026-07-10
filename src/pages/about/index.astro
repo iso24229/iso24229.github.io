@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import GovernanceDiagram from '../../components/GovernanceDiagram.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
+import GovernanceHierarchy from '../../components/diagrams/GovernanceHierarchy.astro';
 import { externalLinks } from '../../config';
 import { getCollection } from 'astro:content';
 import TableOfContents from '../../components/TableOfContents.astro';
@@ -49,8 +51,7 @@ const tocItems = [{ "id": "purpose",
 
   {/* ── Purpose ────────────────────────────────────────────────── */}
   <section id="purpose" class="rule-section">
-    <p class="eyebrow mb-3">Purpose</p>
-    <h2 class="max-w-2xl mb-6">Why this standard exists.</h2>
+    <SectionHead eyebrow="Purpose" title="Why this standard exists." />
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
       <p>
         A number of international applications require the identification of writing system conversion systems — terminology, lexicography, bibliography, and linguistics, especially for reverse transliteration, computational linguistics, and machine pronunciation.
@@ -66,8 +67,7 @@ const tocItems = [{ "id": "purpose",
 
   {/* ── Scope ──────────────────────────────────────────────────── */}
   <section id="scope" class="rule-section">
-    <p class="eyebrow mb-3">Scope</p>
-    <h2 class="max-w-2xl mb-6">What the standard defines.</h2>
+    <SectionHead eyebrow="Scope" title="What the standard defines." />
     <ul class="max-w-2xl space-y-3 text-ink-muted leading-relaxed list-disc pl-6">
       <li>Conversion system codes — structured identifiers for writing system conversion systems</li>
       <li>Spelling system codes — identifiers for the source and target forms being converted</li>
@@ -79,23 +79,21 @@ const tocItems = [{ "id": "purpose",
 
   {/* ── Governance ─────────────────────────────────────────────── */}
   <section id="governance" class="rule-section">
-    <p class="eyebrow mb-3">Governance</p>
-    <h2 class="max-w-2xl mb-6">How the register is managed.</h2>
+    <SectionHead eyebrow="Governance" title="How the register is managed." />
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed mb-8">
       <p>
         <a href={externalLinks.calconnect} class="underline">CalConnect</a> is the Registration Authority (ISO 24229/RA), designated by ISO. The register is operated by <a href={externalLinks.ribose} class="underline">Ribose</a>. An Advisory Group (ISO 24229/AG) of 4–12 experts — including a representative of ISO/TC 46 — reviews submissions at its bimonthly meeting. As a rule, decisions are made by consensus; if a vote is needed, a decision is approved when more than two-thirds of members vote for it.
       </p>
     </div>
-    <GovernanceDiagram />
+    <GovernanceHierarchy />
     <p class="mt-6 text-sm">
-      <a href="/specs/governance" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Full governance and lifecycle →</a>
+      <ArrowLink href="/specs/governance" variant="muted">Full governance and lifecycle</ArrowLink>
     </p>
   </section>
 
   {/* ── Authorities directory ─────────────────────────────── */}
   <section id="authorities" class="rule-section">
-    <p class="eyebrow mb-3">Authorities</p>
-    <h2 class="max-w-2xl mb-6">Who manages each entry.</h2>
+    <SectionHead eyebrow="Authorities" title="Who manages each entry." />
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
       Most authorities maintain their own entries directly — they appoint two authorised persons (per Annex A.4) who can submit changes on the authority's behalf. The Varia authority (<span class="font-mono">Var</span>) is the exception: the Advisory Group itself manages it on behalf of the community, for systems that need representation but have no clear extant authority.
     </p>
@@ -137,8 +135,7 @@ const tocItems = [{ "id": "purpose",
 
   {/* ── URIs ─────────────────────────────────────────────────── */}
   <section id="uris" class="rule-section">
-    <p class="eyebrow mb-3">Identifiers</p>
-    <h2 class="max-w-2xl mb-6">A URN for every entry.</h2>
+    <SectionHead eyebrow="Identifiers" title="A URN for every entry." />
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
       <p>
         Every register entry has a canonical, location-independent identifier — a Uniform Resource Name issued under the <a href="https://www.rfc-editor.org/rfc/rfc5141" class="underline">RFC 5141</a> <span class="font-mono">urn:iso:</span> namespace. The URN is the machine-readable twin of the human-readable code; it is what citation systems, Linked Data consumers, and digital libraries should record.
@@ -159,8 +156,7 @@ const tocItems = [{ "id": "purpose",
 
   {/* ── Reference standards ─────────────────────────────────── */}
   <section id="reference-standards" class="rule-section">
-    <p class="eyebrow mb-3">Reference standards</p>
-    <h2 class="max-w-2xl mb-6">ISO 24229 is one of three ISO standards that together identify any written form of any language. The other two have their own registration authorities.</h2>
+    <SectionHead eyebrow="Reference standards" title="ISO 24229 is one of three ISO standards that together identify any written form of any language. The other two have their own registration authorities." />
     <div class="max-w-2xl space-y-6 text-ink-muted leading-relaxed">
 
       <div class="border-l-2 border-blue/50 dark:border-blue-bright/50 pl-5">
@@ -231,8 +227,7 @@ const tocItems = [{ "id": "purpose",
 
   {/* ── Colours ──────────────────────────────────────────────── */}
   <section id="colours" class="rule-section">
-    <p class="eyebrow mb-3">The colours</p>
-    <h2 class="max-w-2xl mb-6">The palette.</h2>
+    <SectionHead eyebrow="The colours" title="The palette." />
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
       <p>
         The two half-spheres carry two colour pairs: <strong class="text-ink">blue and red</strong> on one, <strong class="text-ink">cyan and yellow</strong> on the other. These four primaries sit at cardinal points of the colour wheel — no single one dominates, and together they span the full visible spectrum.

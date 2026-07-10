@@ -31,11 +31,11 @@ const isActive = (href: string): boolean =>
 {/* Mobile hamburger menu (visible only on narrow viewports) */}
 <button
   type="button"
-  class="mobile-nav-trigger md:hidden p-2 rounded-sm text-ink-muted hover:text-ink hover:bg-paper-raised transition-colors relative z-50"
+  id="mobile-nav-trigger"
+  class="md:hidden p-2 rounded-sm text-ink-muted hover:text-ink hover:bg-paper-raised transition-colors relative z-50"
   aria-label="Open menu"
   aria-controls="mobile-nav-panel"
   aria-expanded="false"
-  onclick="window.__toggleMobileNav && window.__toggleMobileNav()"
 >
   <Icon name="menu" size={20} />
 </button>
@@ -72,47 +72,56 @@ const isActive = (href: string): boolean =>
 </div>
 
 <script is:inline>
-  // Global toggle function — defined once on initial load, called via
-  // onclick attribute on the hamburger button. Using is:inline so the
-  // script isn't bundled (which can fail to re-bind after Astro view
-  // transitions replace the DOM).
+  // Mobile nav toggle. Inline because Astro view transitions replace
+  // the DOM, so a bundled <script> might miss the re-rendered trigger.
+  // We look up the trigger by id each call rather than relying on a
+  // global function called via inline onclick.
   (function () {
-    function toggle() {
+    function getEls() {
       const panel = document.getElementById('mobile-nav-panel');
-      const trigger = document.querySelector('.mobile-nav-trigger');
+      const trigger = document.getElementById('mobile-nav-trigger');
+      return { panel, trigger };
+    }
+
+    function toggle() {
+      const { panel, trigger } = getEls();
       if (!panel || !trigger) return;
       const willOpen = panel.classList.contains('hidden');
       panel.classList.toggle('hidden', !willOpen);
       trigger.setAttribute('aria-expanded', String(willOpen));
     }
-    window.__toggleMobileNav = toggle;
 
     function close() {
-      const panel = document.getElementById('mobile-nav-panel');
-      const trigger = document.querySelector('.mobile-nav-trigger');
+      const { panel, trigger } = getEls();
       if (!panel || !trigger) return;
       panel.classList.add('hidden');
       trigger.setAttribute('aria-expanded', 'false');
     }
 
+    function bindTrigger() {
+      const trigger = document.getElementById('mobile-nav-trigger');
+      if (!trigger || trigger.dataset.bound) return;
+      trigger.dataset.bound = '1';
+      trigger.addEventListener('click', toggle);
+    }
+
+    bindTrigger();
+
     // Close on outside click — but only if click is outside both
     // trigger and panel.
     document.addEventListener('click', function (e) {
-      const panel = document.getElementById('mobile-nav-panel');
-      const trigger = document.querySelector('.mobile-nav-trigger');
+      const { panel, trigger } = getEls();
       if (!panel || panel.classList.contains('hidden')) return;
-      const t = e.target;
-      if (trigger && trigger.contains(t)) return;
-      if (panel.contains(t)) return;
+      if (trigger && trigger.contains(e.target)) return;
+      if (panel.contains(e.target)) return;
       close();
     });
 
-    // Close on Escape
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') close();
     });
 
-    // Close on view-transition navigation
-    document.addEventListener('astro:page-load', close);
+    // Re-bind after view transitions
+    document.addEventListener('astro:page-load', () => { bindTrigger(); close(); });
   })();
 </script>

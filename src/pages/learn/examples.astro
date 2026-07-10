@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
 
 interface Example {
   code: string;
@@ -21,7 +22,7 @@ const examples: Example[] = [
     note: 'The country code CN in the source segment disambiguates this from Mongolian romanisation systems used in Mongolia itself.',
   },
   {
-    code: 'BGN-PCGN:chn-Hans:Latn:1979',
+    code: 'BGN-PCGN:zho-Hans:Latn:1979',
     desc: 'BGN/PCGN 1979 Agreement — Romanization of Chinese.',
     note: 'No abbreviation: the source script Hans (simplified Han) cannot be omitted because Chinese is written in multiple scripts.',
   },
@@ -151,6 +152,6 @@ function colorize(code: string): string {
   </section>
 
   <p class="mt-12">
-    <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Full code structure →</a>
+    <ArrowLink href="/learn/code-structure" variant="muted">Full code structure</ArrowLink>
   </p>
 </Layout>

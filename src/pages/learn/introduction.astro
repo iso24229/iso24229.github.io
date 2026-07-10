@@ -1,5 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
 import { externalLinks } from '../../config';
 import TableOfContents from '../../components/TableOfContents.astro';
 const tocItems = [
@@ -33,8 +35,7 @@ const tocItems = [
 
   {/* ── When do you need each standard? ──────────────────────── */}
   <section id="standards" class="rule-section mb-12">
-    <p class="eyebrow mb-3">Three standards, three questions</p>
-    <h2 class="max-w-2xl mb-6">When do you need each?</h2>
+    <SectionHead eyebrow="Three standards, three questions" title="When do you need each?" />
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
       These standards are not steps in a sequence. They answer three different, orthogonal questions. Most projects need only one or two; some need all three.
     </p>
@@ -74,15 +75,14 @@ const tocItems = [
 
   {/* ── How they compose ─────────────────────────────────────── */}
   <section id="compose" class="rule-section mb-12">
-    <p class="eyebrow mb-3">How they compose</p>
-    <h2 class="max-w-2xl mb-6">One code, built from all three.</h2>
+    <SectionHead eyebrow="How they compose" title="One code, built from all three." />
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
       An ISO 24229 code does not replace ISO 639 and ISO 15924 — it <em>references</em> them within its own structure. Each four-segment code embeds language and script identifiers from the other two standards, then adds the authority and an identifying segment.
     </p>
 
     <div class="p-6 md:p-8 border border-rule rounded bg-paper-raised mb-6">
       <p class="font-mono text-lg md:text-2xl lg:text-3xl break-all leading-tight">
-        <span class="text-gold-deep dark:text-gold-bright">BGN-PCGN</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">chn-Hans</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Latn</span><span class="text-ink-subtle">:</span><span class="text-ink">1979</span>
+        <span class="text-gold-deep dark:text-gold-bright">BGN-PCGN</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">zho-Hans</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Latn</span><span class="text-ink-subtle">:</span><span class="text-ink">1979</span>
       </p>
       <div class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-sm">
         <div>
@@ -109,14 +109,13 @@ const tocItems = [
     </p>
 
     <p class="mt-6">
-      <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Full code structure →</a>
+      <ArrowLink href="/learn/code-structure" variant="muted">Full code structure</ArrowLink>
     </p>
   </section>
 
   {/* ── The problem it solves ────────────────────────────────── */}
   <section id="problem" class="rule-section mb-12">
-    <p class="eyebrow mb-3">The problem</p>
-    <h2 class="max-w-2xl mb-6">The same system, called by six different names.</h2>
+    <SectionHead eyebrow="The problem" title="The same system, called by six different names." />
     <div class="max-w-2xl space-y-5 text-ink-muted leading-relaxed">
       <p>
         A library catalogue in Tokyo, a gazetteer in Canberra, and a corpus in Berkeley might all reference the same Chinese romanisation system — but each calls it something different. One says "Wade-Giles", another says "Wade–Giles romanisation", a third says "Modified Wade-Giles (1912)". A fourth simply says "romanised" with no system specified.
@@ -189,15 +188,14 @@ const tocItems = [
 
   {/* ── Where the register sits ──────────────────────────────── */}
   <section id="register" class="rule-section mb-12">
-    <p class="eyebrow mb-3">The register</p>
-    <h2 class="max-w-2xl mb-6">The authoritative list.</h2>
+    <SectionHead eyebrow="The register" title="The authoritative list." />
     <p class="text-ink-muted max-w-2xl leading-relaxed">
       The standard defines the rules for constructing codes. The <em>register</em> — this website — is the authoritative list of every system that has been assigned a code. It is operated under <a href={externalLinks.iso19135Standard} class="underline">ISO 19135</a> (procedures for registration of items of geographic information). Every entry in the register has a lifecycle: proposed, stable, deprecated, or withdrawn. Codes, once assigned, are reserved forever — even if the system is later deprecated, the code is never reused.
     </p>
   </section>
 
   <p class="mt-12">
-    <a href="/learn/code-structure" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Next: Anatomy of a code →</a>
+    <ArrowLink href="/learn/code-structure" variant="muted">Next: Anatomy of a code</ArrowLink>
   </p>
     </div>
   </div>
