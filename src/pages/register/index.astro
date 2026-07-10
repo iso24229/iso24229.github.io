@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
 import RegistrationBadge from '../../components/RegistrationBadge.astro';
 import { getCollection } from 'astro:content';
 import { itemClassSlugs } from '../../domain/registry/ItemClassRegistry';
@@ -110,7 +111,7 @@ const statusBreakdown = REGISTRATION_STATUS_ORDER
   <section class="rule-section">
     <p class="eyebrow mb-3">Authorities</p>
     <p class="text-sm">
-      <a href="/register/authority" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Browse the authority directory →</a>
+      <ArrowLink href="/register/authority" variant="muted">Browse the authority directory</ArrowLink>
     </p>
   </section>
 </Layout>

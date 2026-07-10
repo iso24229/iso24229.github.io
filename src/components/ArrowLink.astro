@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  href: string;
+  variant?: 'primary' | 'muted' | 'link';
+  arrow?: 'right' | 'external';
+  class?: string;
+}
+
+const { href, variant = 'muted', arrow = 'right', class: className } = Astro.props;
+
+const variantClass = {
+  primary: 'text-ink hover:text-gold-deep dark:hover:text-gold-bright',
+  muted: 'text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright',
+  link: 'text-blue dark:text-blue-bright underline hover:text-gold-deep dark:hover:text-gold-bright',
+}[variant];
+---
+
+<a href={href} class:list={[variantClass, 'inline-flex items-center gap-1 transition-colors', className]}>
+  <slot />
+  {arrow === 'external'
+    ? <Icon name="arrow-out" class="opacity-70" />
+    : <span aria-hidden="true">→</span>}
+</a>

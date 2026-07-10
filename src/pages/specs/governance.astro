@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import SectionHead from '../../components/SectionHead.astro';
 import { externalLinks, repoUrls } from '../../config';
 import TableOfContents from '../../components/TableOfContents.astro';
 import GovernanceHierarchy from '../../components/diagrams/GovernanceHierarchy.astro';
@@ -44,8 +45,7 @@ const tocItems = [
 
   {/* ── A.1 RA ─────────────────────────────────────────────────── */}
   <section id="ra" class="rule-section mb-12">
-    <p class="eyebrow mb-3">A.1</p>
-    <h2 class="max-w-2xl mb-6">Registration authority (ISO 24229/RA)</h2>
+    <SectionHead eyebrow="A.1" title="Registration authority (ISO 24229/RA)" />
 
     <div class="max-w-2xl space-y-6 text-ink-muted leading-relaxed">
       <div>
@@ -94,8 +94,7 @@ const tocItems = [
 
   {/* ── A.2 AG ─────────────────────────────────────────────────── */}
   <section id="ag" class="rule-section mb-12">
-    <p class="eyebrow mb-3">A.2</p>
-    <h2 class="max-w-2xl mb-6">Advisory group (ISO 24229/AG)</h2>
+    <SectionHead eyebrow="A.2" title="Advisory group (ISO 24229/AG)" />
 
     <div class="max-w-2xl space-y-6 text-ink-muted leading-relaxed">
       <div>
@@ -119,8 +118,7 @@ const tocItems = [
 
   {/* ── A.3 Operations on authorities ─────────────────────────── */}
   <section id="operations-authorities" class="rule-section mb-12">
-    <p class="eyebrow mb-3">A.3</p>
-    <h2 class="max-w-2xl mb-6">Operations on the list of conversion system authorities and their identifiers</h2>
+    <SectionHead eyebrow="A.3" title="Operations on the list of conversion system authorities and their identifiers" />
 
     <div class="max-w-2xl space-y-6 text-ink-muted leading-relaxed">
       <div>
@@ -171,8 +169,7 @@ const tocItems = [
 
   {/* ── A.4 Operations on systems ─────────────────────────────── */}
   <section id="operations-systems" class="rule-section mb-12">
-    <p class="eyebrow mb-3">A.4</p>
-    <h2 class="max-w-2xl mb-6">Operations on the list of writing system conversion systems and their codes</h2>
+    <SectionHead eyebrow="A.4" title="Operations on the list of writing system conversion systems and their codes" />
 
     <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
       <div>
@@ -185,8 +182,7 @@ const tocItems = [
 
   {/* ── A.5 Reservation ───────────────────────────────────────── */}
   <section id="reservation" class="rule-section mb-12">
-    <p class="eyebrow mb-3">A.5</p>
-    <h2 class="max-w-2xl mb-6">Reservation of code elements</h2>
+    <SectionHead eyebrow="A.5" title="Reservation of code elements" />
 
     <div class="max-w-2xl space-y-6 text-ink-muted leading-relaxed">
       <div>
@@ -226,8 +222,7 @@ const tocItems = [
 
   {/* ── A.6 Advice ────────────────────────────────────────────── */}
   <section id="advice" class="rule-section mb-12">
-    <p class="eyebrow mb-3">A.6</p>
-    <h2 class="max-w-2xl mb-6">Advice regarding use of code elements</h2>
+    <SectionHead eyebrow="A.6" title="Advice regarding use of code elements" />
     <p class="text-ink-muted max-w-2xl leading-relaxed">
       The ISO 24229/AG is available for consultation and assistance on the use of codes for conversion system authorities and writing system conversion systems.
     </p>
@@ -241,8 +236,7 @@ const tocItems = [
 
   {/* ── Registration process (diagram) ────────────────────────── */}
   <section id="process" class="rule-section mb-12">
-    <p class="eyebrow mb-3">Editorial: registration process</p>
-    <h2 class="max-w-2xl mb-6">How a new system moves through the register.</h2>
+    <SectionHead eyebrow="Editorial: registration process" title="How a new system moves through the register." />
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
       The standard defines <em>who</em> decides and <em>when</em> changes take effect; the diagram below shows the operational flow this register uses to honour those rules.
     </p>
@@ -253,8 +247,7 @@ const tocItems = [
 
   {/* ── Lifecycle states (diagram) ────────────────────────────── */}
   <section id="lifecycle" class="rule-section mb-12">
-    <p class="eyebrow mb-3">Editorial: lifecycle states</p>
-    <h2 class="max-w-2xl mb-6">Registration status of an entry over time.</h2>
+    <SectionHead eyebrow="Editorial: lifecycle states" title="Registration status of an entry over time." />
     <p class="text-ink-muted max-w-2xl leading-relaxed mb-8">
       Every entry — system-code, authority, spelling-system — carries an ISO 19135 registration lifecycle state. The state machine below tracks the allowed transitions.
     </p>

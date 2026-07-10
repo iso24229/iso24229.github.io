@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import { externalLinks } from '../../config';
 import { getCollection } from 'astro:content';
@@ -7,7 +8,7 @@ import { getCollection } from 'astro:content';
 const specExamples = [
   { n: 1, code: 'UN:ara-Arab:Latn:2017', abbrev: 'UN:ara:Latn:2017', desc: 'United Nations system for the romanization of Arabic, approved 2017.' },
   { n: 2, code: 'UN:mon-Mong-CN:Latn:1977', abbrev: 'UN:mon-CN:Latn:1977', desc: 'United Nations system for the romanization of Mongolian in China, approved 1977.' },
-  { n: 3, code: 'BGN-PCGN:chn-Hans:Latn:1979', desc: 'BGN/PCGN 1979 Agreement — Romanization of Chinese.' },
+  { n: 3, code: 'BGN-PCGN:zho-Hans:Latn:1979', desc: 'BGN/PCGN 1979 Agreement — Romanization of Chinese.' },
   { n: 4, code: 'ALA-LC:mal-Mlym:Latn:2012', abbrev: 'ALA-LC:mal:Latn:2012', desc: 'ALA-LC romanization system that transliterates the Malayalam language from Malayalam script characters into Latin script.' },
   { n: 5, code: 'ISO:Cyrl:Latn:9-1995', desc: 'ISO 9:1995 for the transliteration into Latin of Cyrillic characters.' },
   { n: 6, code: 'ICAO:Arab:Latn:2015', desc: 'ICAO rules for rendering Arabic-script names in Latin letters, issued in 2015.' },
@@ -284,9 +285,9 @@ const tocItems = [
   </section>
 
   <div class="rule-section flex flex-wrap gap-x-8 gap-y-3 text-sm">
-    <a href="/learn/examples" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Worked examples with segment breakdowns →</a>
-    <a href="/learn/authorities" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Conversion system authorities →</a>
-    <a href="/specs/data-model" class="text-ink-muted hover:text-gold-deep dark:hover:text-gold-bright">Data model →</a>
+    <ArrowLink href="/learn/examples" variant="muted">Worked examples with segment breakdowns</ArrowLink>
+    <ArrowLink href="/learn/authorities" variant="muted">Conversion system authorities</ArrowLink>
+    <ArrowLink href="/specs/data-model" variant="muted">Data model</ArrowLink>
   </div>
     </div>
   </div>
