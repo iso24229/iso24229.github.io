@@ -1,0 +1,43 @@
+---
+interface Props {
+  name: 'arrow-out' | 'menu' | 'search' | 'sun' | 'moon';
+  size?: number;
+  class?: string;
+}
+
+const { name, size, class: className } = Astro.props;
+const s = size ?? (name === 'arrow-out' ? 10 : 18);
+---
+
+<svg
+  width={s}
+  height={s}
+  viewBox={name === 'arrow-out' ? '0 0 10 10' : '0 0 24 24'}
+  fill="none"
+  stroke="currentColor"
+  stroke-width={name === 'arrow-out' ? 1.4 : 1.6}
+  aria-hidden="true"
+  class={className}
+>
+  {name === 'arrow-out' && <path d="M3 1h6v6M9 1L3 7M1 3v6h6" />}
+  {name === 'menu' && (
+    <>
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </>
+  )}
+  {name === 'search' && (
+    <>
+      <circle cx="11" cy="11" r="7" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </>
+  )}
+  {name === 'sun' && (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5" />
+    </>
+  )}
+  {name === 'moon' && <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />}
+</svg>

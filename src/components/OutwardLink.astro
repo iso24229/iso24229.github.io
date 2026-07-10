@@ -1,4 +1,6 @@
 ---
+import Icon from './Icon.astro';
+
 export interface Props {
   href: string;
   title?: string;
@@ -7,7 +9,5 @@ const { href, title } = Astro.props;
 ---
 <a href={href} target="_blank" rel="noopener" title={title} class="inline-flex items-center gap-1 underline hover:text-accent">
   <slot />
-  <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" class="opacity-70">
-    <path d="M3 1h6v6M9 1L3 7M1 3v6h6" stroke="currentColor" stroke-width="1.4" fill="none" />
-  </svg>
+  <Icon name="arrow-out" class="opacity-70" />
 </a>

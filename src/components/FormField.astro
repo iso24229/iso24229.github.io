@@ -1,0 +1,15 @@
+---
+export interface Props {
+  id: string;
+  label: string;
+  required?: boolean;
+  help?: string;
+  class?: string;
+}
+const { id, label, required, help, class: className } = Astro.props;
+---
+<div class={className}>
+  <label class="block eyebrow mb-1.5" for={id}>{label}{required && ' *'}</label>
+  <slot />
+  {help && <p class="text-xs text-ink-subtle mt-1">{help}</p>}
+</div>

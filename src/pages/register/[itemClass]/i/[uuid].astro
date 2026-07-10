@@ -3,6 +3,7 @@ import Layout from '../../../../layouts/Layout.astro';
 import LifecycleGraph from '../../../../components/LifecycleGraph.astro';
 import RegistrationBadge from '../../../../components/RegistrationBadge.astro';
 import CodeChip from '../../../../components/CodeChip.astro';
+import Icon from '../../../../components/Icon.astro';
 import { getCollection } from 'astro:content';
 import type { ItemClassSlug } from '../../../../domain/items/RegisterItem';
 import type { SystemCode } from '../../../../domain/items/SystemCode';
@@ -662,7 +663,7 @@ const abstractText = typeof entry.data.abstract === 'string' ? entry.data.abstra
               class="hover:text-gold-deep dark:hover:text-gold-bright inline-flex items-center gap-1"
             >
               YAML on GitHub
-              <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true" class="opacity-70"><path d="M3 1h6v6M9 1L3 7M1 3v6h6" stroke="currentColor" stroke-width="1.4" fill="none"/></svg>
+              <Icon name="arrow-out" class="opacity-70" />
             </a>
           </li>
         </ul>
