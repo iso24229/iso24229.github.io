@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import FormField from '../../../components/FormField.astro';
 ---
 
 <Layout title="Submit an authority proposal">
@@ -23,82 +24,66 @@ import Layout from '../../../layouts/Layout.astro';
       {/* ── Submitter ───────────────────────────────────────── */}
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Submitter</legend>
-        <div>
-          <label class="block eyebrow mb-1.5" for="submitter-name">Your name *</label>
-          <input id="submitter-name" type="text" required class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="submitter-org">Your organization (optional)</label>
-          <input id="submitter-org" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="submitter-role">Your relationship to the proposed authority *</label>
-          <select id="submitter-role" required class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink">
+        <FormField id="submitter-name" label="Your name" required>
+          <input id="submitter-name" type="text" required class="form-input" />
+        </FormField>
+        <FormField id="submitter-org" label="Your organization (optional)">
+          <input id="submitter-org" type="text" class="form-input" />
+        </FormField>
+        <FormField id="submitter-role" label="Your relationship to the proposed authority" required>
+          <select id="submitter-role" required class="form-input">
             <option value="">Select…</option>
             <option value="I am the authority itself">I am the authority itself (or its official representative)</option>
             <option value="I am proposing on behalf of the authority with their knowledge">I am proposing on behalf of the authority with their knowledge</option>
             <option value="I am an interested third party nominating this authority">I am an interested third party nominating this authority</option>
           </select>
-        </div>
+        </FormField>
       </fieldset>
 
       {/* ── Authority identification ─────────────────────────── */}
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Authority identification</legend>
-        <div>
-          <label class="block eyebrow mb-1.5" for="auth-name">Full authority name *</label>
-          <input id="auth-name" type="text" required placeholder="e.g. UNGEGN Working Group on Romanization Systems" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="auth-id">Proposed short identifier *</label>
-          <input id="auth-id" type="text" required pattern="[A-Za-z][A-Za-z0-9-]{1,15}" maxlength="16" placeholder="e.g. ungeg, BGN-PCGN, UN" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
-          <p class="text-xs text-ink-subtle mt-1">3–16 characters. Letters, digits, hyphens. Must start with a letter. The AG allocates the final identifier at its discretion.</p>
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="auth-country">Country (if national, ISO 3166-1 alpha-2)</label>
-          <input id="auth-country" type="text" pattern="[A-Z]{2}" maxlength="2" placeholder="e.g. TW, US, GB" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
-          <p class="text-xs text-ink-subtle mt-1">Leave blank if the authority is international.</p>
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="auth-abstract">Abstract *</label>
-          <textarea id="auth-abstract" required rows="2" placeholder="One or two sentences describing the authority and its remit." class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink"></textarea>
-        </div>
+        <FormField id="auth-name" label="Full authority name" required>
+          <input id="auth-name" type="text" required placeholder="e.g. UNGEGN Working Group on Romanization Systems" class="form-input" />
+        </FormField>
+        <FormField id="auth-id" label="Proposed short identifier" required help="3–16 characters. Letters, digits, hyphens. Must start with a letter. The AG allocates the final identifier at its discretion.">
+          <input id="auth-id" type="text" required pattern="[A-Za-z][A-Za-z0-9-]{1,15}" maxlength="16" placeholder="e.g. ungeg, BGN-PCGN, UN" class="form-input form-input-mono" />
+        </FormField>
+        <FormField id="auth-country" label="Country (if national, ISO 3166-1 alpha-2)" help="Leave blank if the authority is international.">
+          <input id="auth-country" type="text" pattern="[A-Z]{2}" maxlength="2" placeholder="e.g. TW, US, GB" class="form-input form-input-mono" />
+        </FormField>
+        <FormField id="auth-abstract" label="Abstract" required>
+          <textarea id="auth-abstract" required rows="2" placeholder="One or two sentences describing the authority and its remit." class="form-input"></textarea>
+        </FormField>
       </fieldset>
 
       {/* ── Contact ──────────────────────────────────────────── */}
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Contact</legend>
-        <div>
-          <label class="block eyebrow mb-1.5" for="contact-email">Official contact email *</label>
-          <input id="contact-email" type="email" required placeholder="info@example.org" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
-          <p class="text-xs text-ink-subtle mt-1">The AG verifies this contact before approving the authority.</p>
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="contact-url">Official website (optional)</label>
-          <input id="contact-url" type="url" placeholder="https://…" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
-        </div>
+        <FormField id="contact-email" label="Official contact email" required help="The AG verifies this contact before approving the authority.">
+          <input id="contact-email" type="email" required placeholder="info@example.org" class="form-input form-input-mono" />
+        </FormField>
+        <FormField id="contact-url" label="Official website (optional)">
+          <input id="contact-url" type="url" placeholder="https://…" class="form-input form-input-mono" />
+        </FormField>
       </fieldset>
 
       {/* ── Postal address (optional) ────────────────────────── */}
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Postal address (optional)</legend>
         <div class="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block eyebrow mb-1.5" for="addr-street">Street</label>
-            <input id="addr-street" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
-          <div>
-            <label class="block eyebrow mb-1.5" for="addr-city">City</label>
-            <input id="addr-city" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
-          <div>
-            <label class="block eyebrow mb-1.5" for="addr-postal">Postal code</label>
-            <input id="addr-postal" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
-          <div>
-            <label class="block eyebrow mb-1.5" for="addr-country">Country code (ISO 3166-1)</label>
-            <input id="addr-country" type="text" pattern="[A-Z]{2}" maxlength="2" placeholder="TW" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
-          </div>
+          <FormField id="addr-street" label="Street">
+            <input id="addr-street" type="text" class="form-input" />
+          </FormField>
+          <FormField id="addr-city" label="City">
+            <input id="addr-city" type="text" class="form-input" />
+          </FormField>
+          <FormField id="addr-postal" label="Postal code">
+            <input id="addr-postal" type="text" class="form-input" />
+          </FormField>
+          <FormField id="addr-country" label="Country code (ISO 3166-1)">
+            <input id="addr-country" type="text" pattern="[A-Z]{2}" maxlength="2" placeholder="TW" class="form-input form-input-mono" />
+          </FormField>
         </div>
       </fieldset>
 
@@ -110,9 +95,9 @@ import Layout from '../../../layouts/Layout.astro';
           <div class="space-y-2 p-4 border border-rule rounded-sm">
             <p class="eyebrow">Person {n}</p>
             <div class="grid sm:grid-cols-3 gap-2">
-              <input id={`person-${n}-name`} type="text" required placeholder="Name" class="px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-              <input id={`person-${n}-role`} type="text" required placeholder="Role / title" class="px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-              <input id={`person-${n}-email`} type="email" required placeholder="Email" class="px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+              <input id={`person-${n}-name`} type="text" required placeholder="Name" class="form-input" />
+              <input id={`person-${n}-role`} type="text" required placeholder="Role / title" class="form-input" />
+              <input id={`person-${n}-email`} type="email" required placeholder="Email" class="form-input form-input-mono" />
             </div>
           </div>
         ))}
@@ -124,23 +109,22 @@ import Layout from '../../../layouts/Layout.astro';
         <p class="text-sm text-ink-muted">Provide at least one writing system conversion system that this authority manages (or intends to register once approved). The AG uses this to verify the authority's competence per §5.2.</p>
         <div class="space-y-2 p-4 border border-rule rounded-sm">
           <p class="eyebrow">System 1 *</p>
-          <input id="demo-sys-1-name" type="text" required placeholder="System name (e.g. UNGEGN Romanization of Arabic 2017)" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          <input id="demo-sys-1-spec" type="text" placeholder="Specification URL or citation" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+          <input id="demo-sys-1-name" type="text" required placeholder="System name (e.g. UNGEGN Romanization of Arabic 2017)" class="form-input" />
+          <input id="demo-sys-1-spec" type="text" placeholder="Specification URL or citation" class="form-input form-input-mono" />
         </div>
         <div class="space-y-2 p-4 border border-rule rounded-sm">
           <p class="eyebrow">System 2 (optional)</p>
-          <input id="demo-sys-2-name" type="text" placeholder="System name" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          <input id="demo-sys-2-spec" type="text" placeholder="Specification URL or citation" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
+          <input id="demo-sys-2-name" type="text" placeholder="System name" class="form-input" />
+          <input id="demo-sys-2-spec" type="text" placeholder="Specification URL or citation" class="form-input form-input-mono" />
         </div>
       </fieldset>
 
       {/* ── Justification ────────────────────────────────────── */}
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Justification</legend>
-        <div>
-          <label class="block eyebrow mb-1.5" for="justification">Why should this authority be registered? *</label>
-          <textarea id="justification" required rows="5" placeholder="3–6 sentences. What is the authority's remit? What systems does it manage or intend to manage? Why is an ISO 24229 authority identifier needed? Who will benefit from having this authority in the register?" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink"></textarea>
-        </div>
+        <FormField id="justification" label="Why should this authority be registered?" required>
+          <textarea id="justification" required rows="5" placeholder="3–6 sentences. What is the authority's remit? What systems does it manage or intend to manage? Why is an ISO 24229 authority identifier needed? Who will benefit from having this authority in the register?" class="form-input"></textarea>
+        </FormField>
       </fieldset>
 
       {/* ── Terms ────────────────────────────────────────────── */}
@@ -213,19 +197,9 @@ import Layout from '../../../layouts/Layout.astro';
         return JSON.stringify({
           type: 'authority-proposal',
           submitter: { name: d.submitterName, organization: d.submitterOrg, role: d.submitterRole },
-          authority: {
-            name: d.authName,
-            identifier: d.authId,
-            country: d.authCountry,
-            abstract: d.authAbstract,
-          },
+          authority: { name: d.authName, identifier: d.authId, country: d.authCountry, abstract: d.authAbstract },
           contact: { email: d.contactEmail, url: d.contactUrl },
-          address: {
-            street: d.addrStreet,
-            city: d.addrCity,
-            postalCode: d.addrPostal,
-            country: d.addrCountry,
-          },
+          address: { street: d.addrStreet, city: d.addrCity, postalCode: d.addrPostal, country: d.addrCountry },
           authorisedPersons: [
             { name: d.p1Name, role: d.p1Role, email: d.p1Email },
             { name: d.p2Name, role: d.p2Role, email: d.p2Email },
@@ -247,10 +221,7 @@ import Layout from '../../../layouts/Layout.astro';
       function genMarkdown(d, checksum) {
         const lines = [];
         function section(label, value) {
-          lines.push(`### ${label}`);
-          lines.push('');
-          lines.push(value || '_(not provided)_');
-          lines.push('');
+          lines.push(`### ${label}`); lines.push(''); lines.push(value || '_(not provided)_'); lines.push('');
         }
         lines.push(`<!-- ISO 24229 authority proposal generated by www.iso24229.org/about/apply/submit-authority -->`);
         lines.push(`<!-- integrity-sha256: ${checksum} -->`);
@@ -316,29 +287,14 @@ import Layout from '../../../layouts/Layout.astro';
 
       async function actuallyRegenerate() {
         const d = {
-          submitterName: val('submitter-name'),
-          submitterOrg: val('submitter-org'),
-          submitterRole: val('submitter-role'),
-          authName: val('auth-name'),
-          authId: val('auth-id'),
-          authCountry: val('auth-country'),
-          authAbstract: val('auth-abstract'),
-          contactEmail: val('contact-email'),
-          contactUrl: val('contact-url'),
-          addrStreet: val('addr-street'),
-          addrCity: val('addr-city'),
-          addrPostal: val('addr-postal'),
-          addrCountry: val('addr-country'),
-          p1Name: val('person-1-name'),
-          p1Role: val('person-1-role'),
-          p1Email: val('person-1-email'),
-          p2Name: val('person-2-name'),
-          p2Role: val('person-2-role'),
-          p2Email: val('person-2-email'),
-          sys1Name: val('demo-sys-1-name'),
-          sys1Spec: val('demo-sys-1-spec'),
-          sys2Name: val('demo-sys-2-name'),
-          sys2Spec: val('demo-sys-2-spec'),
+          submitterName: val('submitter-name'), submitterOrg: val('submitter-org'), submitterRole: val('submitter-role'),
+          authName: val('auth-name'), authId: val('auth-id'), authCountry: val('auth-country'), authAbstract: val('auth-abstract'),
+          contactEmail: val('contact-email'), contactUrl: val('contact-url'),
+          addrStreet: val('addr-street'), addrCity: val('addr-city'), addrPostal: val('addr-postal'), addrCountry: val('addr-country'),
+          p1Name: val('person-1-name'), p1Role: val('person-1-role'), p1Email: val('person-1-email'),
+          p2Name: val('person-2-name'), p2Role: val('person-2-role'), p2Email: val('person-2-email'),
+          sys1Name: val('demo-sys-1-name'), sys1Spec: val('demo-sys-1-spec'),
+          sys2Name: val('demo-sys-2-name'), sys2Spec: val('demo-sys-2-spec'),
           justification: val('justification'),
         };
 

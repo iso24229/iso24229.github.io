@@ -1,5 +1,6 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
+import FormField from '../../../components/FormField.astro';
 import { getCollection } from 'astro:content';
 import codeNames from '../../../data/code-names.json';
 import { countries } from '../../../data/countries';
@@ -14,7 +15,6 @@ const authorities = (await getCollection('authority'))
 
 const scripts = Object.entries((codeNames as any).scripts ?? {}) as [string, { name: string; url: string }][];
 const languages = Object.entries((codeNames as any).languages ?? {}) as [string, { name: string; part: string; url: string }][];
-
 const systems = (await getCollection('system-code'))
   .map((c) => ({
     id: c.id,
@@ -24,6 +24,8 @@ const systems = (await getCollection('system-code'))
   .sort((a, b) => a.code.localeCompare(b.code));
 
 const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'aliasOf', 'adoptedFrom', 'relatedTo'];
+
+const FIELD = 'w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright';
 ---
 
 <Layout title="Submit a proposal">
@@ -47,44 +49,27 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
   <script type="application/json" id="system-data" set:html={JSON.stringify(systems.map((s) => ({ value: s.code, label: s.name })))} />
   <script type="application/json" id="country-data" set:html={JSON.stringify(countries.map((c) => ({ value: c.code, label: c.name })))} />
 
-  <style is:inline>
-    .cb-wrap { position:relative; }
-    .cb-dropdown { position:absolute; top:calc(100% + 1px); left:0; min-width:100%; width:max-content; max-width:30rem; max-height:240px; overflow-y:auto; z-index:50; background:var(--color-paper); border:1px solid var(--color-rule); border-radius:0 0 4px 4px; box-shadow:0 4px 12px rgba(0,0,0,0.12); display:none; }
-    .cb-dropdown.visible { display:block; }
-    .cb-option { padding:0.375rem 0.75rem; cursor:pointer; display:block; }
-    .cb-option:hover, .cb-option.cb-active { background:var(--color-paper-raised); }
-    .cb-option-value { font-family:var(--font-mono); font-size:0.8125rem; color:var(--color-ink); word-break:break-all; }
-    .cb-option-label { font-size:0.6875rem; color:var(--color-ink-muted); margin-top:0.125rem; line-height:1.3; }
-    .cb-error { display:none; font-size:0.75rem; color:#c0392b; margin-top:0.25rem; }
-    .cb-error.visible { display:block; }
-    .field-empty { border-color:var(--color-gold) !important; }
-    .field-invalid { border-color:#c0392b !important; }
-  </style>
-
   <div class="lg:grid lg:grid-cols-[1fr_320px] lg:gap-12">
     <form id="proposal-form" class="space-y-12">
 
       {/* ── Submitter ───────────────────────────────────────── */}
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Submitter</legend>
-        <div>
-          <label class="block eyebrow mb-1.5" for="submitter-name">Your name *</label>
-          <input id="submitter-name" name="submitter-name" type="text" required class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="submitter-org">Organization (optional)</label>
-          <input id="submitter-org" name="submitter-org" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="submitter-role">Your relationship to the authority *</label>
-          <select id="submitter-role" name="submitter-role" required class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright">
+        <FormField id="submitter-name" label="Your name" required>
+          <input id="submitter-name" name="submitter-name" type="text" required class="form-input" />
+        </FormField>
+        <FormField id="submitter-org" label="Organization (optional)">
+          <input id="submitter-org" name="submitter-org" type="text" class="form-input" />
+        </FormField>
+        <FormField id="submitter-role" label="Your relationship to the authority" required>
+          <select id="submitter-role" name="submitter-role" required class="form-input">
             <option value="">Select…</option>
             <option value="I am the authority, or an authorized representative of the authority">I am the authority, or an authorized representative</option>
             <option value="I am an interested third party proposing for an approved authority">Interested third party proposing for an approved authority</option>
             <option value="I am proposing for the Varia authority (Var)">Proposing for the Varia authority (Var)</option>
             <option value="I am proposing a NEW authority alongside this system">Proposing a NEW authority alongside this system</option>
           </select>
-        </div>
+        </FormField>
       </fieldset>
 
       {/* ── Authority ──────────────────────────────────────── */}
@@ -96,37 +81,33 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
           </p>
         </div>
         <div id="authority-existing-block">
-          <label class="block eyebrow mb-1.5" for="authority">Existing approved authority</label>
-          <select id="authority" name="authority" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright">
-            <option value="">— Select an existing authority —</option>
-            <option value="Var">Var — Varia authority (no specific authority)</option>
-            {authorities.map((a) => (
-              <option value={a.identifier}>{a.identifier} — {a.name}</option>
-            ))}
-          </select>
+          <FormField id="authority" label="Existing approved authority">
+            <select id="authority" name="authority" class="form-input">
+              <option value="">— Select an existing authority —</option>
+              <option value="Var">Var — Varia authority (no specific authority)</option>
+              {authorities.map((a) => (
+                <option value={a.identifier}>{a.identifier} — {a.name}</option>
+              ))}
+            </select>
+          </FormField>
         </div>
         <div id="authority-new-block" class="hidden space-y-3 p-4 border border-rule rounded-sm bg-paper-raised">
           <p class="eyebrow">New authority information</p>
-          <div>
-            <label class="block text-xs font-medium text-ink-muted mb-1" for="new-auth-name">Full authority name</label>
-            <input id="new-auth-name" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-ink-muted mb-1" for="new-auth-id">Proposed short identifier (3–16 chars)</label>
-            <input id="new-auth-id" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-ink-muted mb-1" for="new-auth-country">Country (optional, ISO 3166-1 alpha-2)</label>
-            <input id="new-auth-country" type="text" maxlength="2" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-ink-muted mb-1" for="new-auth-contact">Official contact email</label>
-            <input id="new-auth-contact" type="email" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-ink-muted mb-1" for="new-auth-justification">One-sentence justification</label>
-            <input id="new-auth-justification" type="text" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
+          <FormField id="new-auth-name" label="Full authority name">
+            <input id="new-auth-name" type="text" class="form-input" />
+          </FormField>
+          <FormField id="new-auth-id" label="Proposed short identifier (3–16 chars)">
+            <input id="new-auth-id" type="text" class="form-input" />
+          </FormField>
+          <FormField id="new-auth-country" label="Country (optional, ISO 3166-1 alpha-2)">
+            <input id="new-auth-country" type="text" maxlength="2" class="form-input form-input-mono" />
+          </FormField>
+          <FormField id="new-auth-contact" label="Official contact email">
+            <input id="new-auth-contact" type="email" class="form-input" />
+          </FormField>
+          <FormField id="new-auth-justification" label="One-sentence justification">
+            <input id="new-auth-justification" type="text" class="form-input" />
+          </FormField>
         </div>
         <p id="authorization-confirm" class="hidden text-xs text-ink-subtle italic">Confirm on submission that you are authorized to propose on behalf of this authority.</p>
       </fieldset>
@@ -135,63 +116,47 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">System identification</legend>
         <div class="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block eyebrow mb-1.5" for="source-language">Source language (ISO 639) *</label>
-            <input id="source-language" type="text" required pattern="[a-z]{3}(-[a-z]{3})?" maxlength="7" placeholder="amh" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-            <p class="text-xs text-ink-subtle mt-1">3-letter code. Type to search.</p>
-          </div>
-          <div>
-            <label class="block eyebrow mb-1.5" for="source-script">Source script (ISO 15924) *</label>
-            <input id="source-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Ethi" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-            <p class="text-xs text-ink-subtle mt-1">4-letter title-case. Type to search.</p>
-          </div>
-          <div>
-            <label class="block eyebrow mb-1.5" for="source-country">Source country (optional)</label>
-            <input id="source-country" type="text" placeholder="Ethiopia" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-            <p class="text-xs text-ink-subtle mt-1">ISO 3166-1 alpha-2. Type to search by country name or code.</p>
-          </div>
-          <div>
-            <label class="block eyebrow mb-1.5" for="target-script">Target script (ISO 15924) *</label>
-            <input id="target-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Latn" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-            <p class="text-xs text-ink-subtle mt-1">Usually <span class="font-mono">Latn</span> for romanizations.</p>
-          </div>
+          <FormField id="source-language" label="Source language (ISO 639)" required help="3-letter code. Type to search.">
+            <input id="source-language" type="text" required pattern="[a-z]{3}(-[a-z]{3})?" maxlength="7" placeholder="amh" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-input form-input-mono" />
+          </FormField>
+          <FormField id="source-script" label="Source script (ISO 15924)" required help="4-letter title-case. Type to search.">
+            <input id="source-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Ethi" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-input form-input-mono" />
+          </FormField>
+          <FormField id="source-country" label="Source country (optional)" help="ISO 3166-1 alpha-2. Type to search by country name or code.">
+            <input id="source-country" type="text" placeholder="Ethiopia" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-input" />
+          </FormField>
+          <FormField id="target-script" label="Target script (ISO 15924)" required help={<>Usually <span class="font-mono">Latn</span> for romanizations.</>}>
+            <input id="target-script" type="text" required pattern="[A-Z][a-z]{3}" maxlength="4" placeholder="Latn" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-input form-input-mono" />
+          </FormField>
         </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="identifying-segment">Identifying segment *</label>
-          <input id="identifying-segment" type="text" required placeholder="2011" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-          <p class="text-xs text-ink-subtle mt-1">Usually a year (e.g. <span class="font-mono">2011</span>) but may include version info (<span class="font-mono">9-1995</span>, <span class="font-mono">WG-1912</span>).</p>
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="system-name">System name (human-readable) *</label>
-          <input id="system-name" type="text" required placeholder="UNGEGN Romanization System -- Arabic (2017)" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright" />
-        </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="abstract">Abstract *</label>
-          <textarea id="abstract" required rows="2" placeholder="One or two sentences describing the conversion system." class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink focus:outline-none focus:border-gold-deep dark:focus:border-gold-bright"></textarea>
-        </div>
+        <FormField id="identifying-segment" label="Identifying segment" required help={<>Usually a year (e.g. <span class="font-mono">2011</span>) but may include version info (<span class="font-mono">9-1995</span>, <span class="font-mono">WG-1912</span>).</>}>
+          <input id="identifying-segment" type="text" required placeholder="2011" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" class="form-input form-input-mono" />
+        </FormField>
+        <FormField id="system-name" label="System name (human-readable)" required>
+          <input id="system-name" type="text" required placeholder="UNGEGN Romanization System -- Arabic (2017)" class="form-input" />
+        </FormField>
+        <FormField id="abstract" label="Abstract" required>
+          <textarea id="abstract" required rows="2" placeholder="One or two sentences describing the conversion system." class="form-input"></textarea>
+        </FormField>
       </fieldset>
 
       {/* ── Defining reference ─────────────────────────────── */}
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Defining reference</legend>
-        <div>
-          <label class="block eyebrow mb-1.5" for="ref-title">Title *</label>
-          <input id="ref-title" type="text" required class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-        </div>
+        <FormField id="ref-title" label="Title" required>
+          <input id="ref-title" type="text" required class="form-input" />
+        </FormField>
         <div class="grid sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block eyebrow mb-1.5" for="ref-publisher">Publisher *</label>
-            <input id="ref-publisher" type="text" required class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
-          <div>
-            <label class="block eyebrow mb-1.5" for="ref-date">Date *</label>
-            <input id="ref-date" type="text" required placeholder="1997" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-          </div>
+          <FormField id="ref-publisher" label="Publisher" required>
+            <input id="ref-publisher" type="text" required class="form-input" />
+          </FormField>
+          <FormField id="ref-date" label="Date" required>
+            <input id="ref-date" type="text" required placeholder="1997" class="form-input" />
+          </FormField>
         </div>
-        <div>
-          <label class="block eyebrow mb-1.5" for="ref-url">URL (optional)</label>
-          <input id="ref-url" type="url" placeholder="https://…" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
-        </div>
+        <FormField id="ref-url" label="URL (optional)">
+          <input id="ref-url" type="url" placeholder="https://…" class="form-input form-input-mono" />
+        </FormField>
       </fieldset>
 
       {/* ── Demonstrative sources (3 required) ─────────────── */}
@@ -201,9 +166,9 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         {[1, 2, 3].map((n) => (
           <div class="space-y-2 p-4 border border-rule rounded-sm">
             <p class="eyebrow">Source {n} *</p>
-            <input id={`demo-${n}-title`} type="text" required placeholder="Title" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
-            <input id={`demo-${n}-url`} type="text" placeholder="URL or citation" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink font-mono" />
-            <input id={`demo-${n}-usage`} type="text" required placeholder="One sentence: how it uses the system" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink" />
+            <input id={`demo-${n}-title`} type="text" required placeholder="Title" class="form-input" />
+            <input id={`demo-${n}-url`} type="text" placeholder="URL or citation" class="form-input form-input-mono" />
+            <input id={`demo-${n}-usage`} type="text" required placeholder="One sentence: how it uses the system" class="form-input" />
           </div>
         ))}
       </fieldset>
@@ -211,10 +176,9 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
       {/* ── Justification + examples ───────────────────────── */}
       <fieldset class="space-y-4">
         <legend class="font-display text-lg font-semibold tracking-[-0.012em]">Justification & examples</legend>
-        <div>
-          <label class="block eyebrow mb-1.5" for="justification">Why this system needs an ISO 24229 code *</label>
-          <textarea id="justification" required rows="4" placeholder="3–5 sentences. What problem does assigning a code solve? Who benefits?" class="w-full px-3 py-2 border border-rule rounded-sm bg-paper text-ink"></textarea>
-        </div>
+        <FormField id="justification" label="Why this system needs an ISO 24229 code" required>
+          <textarea id="justification" required rows="4" placeholder="3–5 sentences. What problem does assigning a code solve? Who benefits?" class="form-input"></textarea>
+        </FormField>
         <div>
           <label class="block eyebrow mb-2">Example conversions * (at least one)</label>
           <div id="examples-container" class="space-y-2"></div>
@@ -281,7 +245,27 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
   </div>
 </Layout>
 
-<script is:inline define:vars={{}}>
+{/* Combobox attachment — bundled module. Runs alongside the inline
+    script below; they communicate through the DOM (input.value). */}
+<script>
+  import { attachCombobox } from '../../../scripts/combobox';
+
+  function init() {
+    const lang = JSON.parse(document.getElementById('lang-data')?.textContent || '[]');
+    const script = JSON.parse(document.getElementById('script-data')?.textContent || '[]');
+    const sys = JSON.parse(document.getElementById('system-data')?.textContent || '[]');
+    const country = JSON.parse(document.getElementById('country-data')?.textContent || '[]');
+    attachCombobox(document.getElementById('source-language') as HTMLInputElement | null, lang, 'Select a valid ISO 639 language code');
+    attachCombobox(document.getElementById('source-script') as HTMLInputElement | null, script, 'Select a valid ISO 15924 script code');
+    attachCombobox(document.getElementById('target-script') as HTMLInputElement | null, script, 'Select a valid ISO 15924 script code');
+    attachCombobox(document.getElementById('source-country') as HTMLInputElement | null, country, 'Select a valid ISO 3166-1 alpha-2 country');
+    (window as any).__sysOpts = sys;
+  }
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>
+
+<script is:inline>
   (function () {
     function init() {
       const form = document.getElementById('proposal-form');
@@ -293,7 +277,6 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
       const authNew = document.getElementById('authority-new-block');
       const authConfirm = document.getElementById('authorization-confirm');
 
-      // Role select controls which authority section is shown
       function syncRoleUI() {
         const role = roleSel.value;
         const isNew = role.includes('NEW authority');
@@ -309,84 +292,11 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
       roleSel?.addEventListener('change', syncRoleUI);
       authSel?.addEventListener('change', regenerate);
 
-      // All inputs trigger regeneration
       form.querySelectorAll('input, textarea, select').forEach((el) => {
         el.addEventListener('input', regenerate);
         el.addEventListener('change', regenerate);
       });
 
-      // ── Combobox: searchable select with strict validation ──
-      function attachCombobox(input, options, errMsg) {
-        if (!input || !options || !options.length) return;
-        if (input.dataset.cbAttached) return;
-        input.dataset.cbAttached = '1';
-        // Wrap the input in a tight positioning context so the dropdown
-        // sits flush against the input, not against the bottom of the
-        // surrounding label/help-text block.
-        const parent = input.parentNode;
-        if (!parent.classList.contains('cb-wrap')) {
-          const wrap = document.createElement('div');
-          wrap.className = 'cb-wrap';
-          parent.insertBefore(wrap, input);
-          wrap.appendChild(input);
-        }
-        const wrap = input.parentNode;
-        const dd = document.createElement('div');
-        dd.className = 'cb-dropdown';
-        wrap.appendChild(dd);
-        const err = document.createElement('div');
-        err.className = 'cb-error';
-        err.textContent = errMsg || 'Please select a valid option from the list';
-        wrap.parentNode.insertBefore(err, wrap.nextSibling);
-        let selVal = '', activeIdx = -1, selecting = false;
-
-        function render(q) {
-          q = (q || '').toLowerCase().trim();
-          const m = q ? options.filter(o => o.value.toLowerCase().includes(q) || o.label.toLowerCase().includes(q)).slice(0, 50) : options.slice(0, 50);
-          activeIdx = -1;
-          dd.innerHTML = m.length ? m.map((o, i) => '<div class="cb-option" data-value="' + o.value + '" data-idx="' + i + '"><div class="cb-option-value">' + o.value + '</div><div class="cb-option-label">' + o.label + '</div></div>').join('') : '<div style="padding:.5rem .75rem;font-size:.875rem;color:var(--color-ink-subtle);">No matches</div>';
-          dd.classList.add('visible');
-        }
-        function hide() { dd.classList.remove('visible'); activeIdx = -1; }
-        function validate() {
-          const v = input.value.trim();
-          if (!v || selVal === v) { err.classList.remove('visible'); input.classList.remove('field-invalid'); return true; }
-          const match = options.find(o => o.value.toLowerCase() === v.toLowerCase());
-          if (match) { selVal = match.value; err.classList.remove('visible'); input.classList.remove('field-invalid'); return true; }
-          err.classList.add('visible'); input.classList.add('field-invalid'); return false;
-        }
-        function setActive(i) {
-          dd.querySelectorAll('.cb-active').forEach(el => el.classList.remove('cb-active'));
-          const opts = dd.querySelectorAll('.cb-option');
-          if (i >= 0 && i < opts.length) { opts[i].classList.add('cb-active'); opts[i].scrollIntoView({ block: 'nearest' }); activeIdx = i; }
-        }
-        input.addEventListener('focus', () => render(input.value));
-        input.addEventListener('input', () => { if (selecting) return; selVal = ''; render(input.value); validate(); });
-        input.addEventListener('keydown', (e) => {
-          const opts = dd.querySelectorAll('.cb-option');
-          if (!dd.classList.contains('visible') || !opts.length) return;
-          if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIdx + 1, opts.length - 1)); }
-          else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIdx - 1, 0)); }
-          else if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); opts[activeIdx].click(); }
-          else if (e.key === 'Escape') hide();
-        });
-        dd.addEventListener('mousedown', (e) => e.preventDefault());
-        dd.addEventListener('click', (e) => {
-          const opt = e.target.closest('.cb-option');
-          if (opt) {
-            selecting = true;
-            input.value = opt.dataset.value;
-            selVal = opt.dataset.value;
-            hide();
-            validate();
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-            selecting = false;
-          }
-        });
-        input.addEventListener('blur', () => { setTimeout(() => { hide(); validate(); }, 150); });
-      }
-
-      // ── Mandatory field highlighting ──────────────────────
       function highlightRequired() {
         form.querySelectorAll('input[required], textarea[required], select[required]').forEach((el) => {
           const empty = !el.value.trim() || (el.tagName === 'SELECT' && el.value === '');
@@ -394,27 +304,8 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         });
       }
 
-      // ── Attach comboboxes to code inputs ──────────────────
-      const langOpts = JSON.parse(document.getElementById('lang-data')?.textContent || '[]');
-      const scriptOpts = JSON.parse(document.getElementById('script-data')?.textContent || '[]');
-      const sysOpts = JSON.parse(document.getElementById('system-data')?.textContent || '[]');
-      const countryOpts = JSON.parse(document.getElementById('country-data')?.textContent || '[]');
-      attachCombobox(document.getElementById('source-language'), langOpts, 'Select a valid ISO 639 language code');
-      attachCombobox(document.getElementById('source-script'), scriptOpts, 'Select a valid ISO 15924 script code');
-      attachCombobox(document.getElementById('target-script'), scriptOpts, 'Select a valid ISO 15924 script code');
-      attachCombobox(document.getElementById('source-country'), countryOpts, 'Select a valid ISO 3166-1 alpha-2 country');
-      // expose sysOpts for dynamic relation rows
-      window.__sysOpts = sysOpts;
-
-      // ── Helpers ─────────────────────────────────────────
-      function val(id) {
-        const el = document.getElementById(id);
-        return el ? el.value.trim() : '';
-      }
-
-      function normalizeLang(s) {
-        return String(s || '').trim().toLowerCase();
-      }
+      function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+      function normalizeLang(s) { return String(s || '').trim().toLowerCase(); }
       function normalizeScript(s) {
         const t = String(s || '').trim();
         if (!t) return '';
@@ -432,39 +323,22 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
       }
 
       function buildStructured(data) {
-        // Canonical JSON serialization for SHA-256 (deterministic key order)
         return JSON.stringify({
-          submitter: {
-            name: data.submitterName,
-            organization: data.submitterOrg,
-            role: data.submitterRole,
-          },
+          submitter: { name: data.submitterName, organization: data.submitterOrg, role: data.submitterRole },
           authority: {
             identifier: data.authority,
             newAuthority: data.isNewAuthority ? {
-              name: data.newAuthName,
-              identifier: data.newAuthId,
-              country: data.newAuthCountry,
-              contact: data.newAuthContact,
-              justification: data.newAuthJustification,
+              name: data.newAuthName, identifier: data.newAuthId, country: data.newAuthCountry,
+              contact: data.newAuthContact, justification: data.newAuthJustification,
             } : null,
           },
           system: {
-            code: data.code,
-            name: data.systemName,
-            abstract: data.abstract,
-            sourceLanguage: data.sourceLanguage,
-            sourceScript: data.sourceScript,
-            sourceCountry: data.sourceCountry,
-            targetScript: data.targetScript,
+            code: data.code, name: data.systemName, abstract: data.abstract,
+            sourceLanguage: data.sourceLanguage, sourceScript: data.sourceScript,
+            sourceCountry: data.sourceCountry, targetScript: data.targetScript,
             identifyingSegment: data.identifyingSegment,
           },
-          definingReference: {
-            title: data.refTitle,
-            publisher: data.refPublisher,
-            date: data.refDate,
-            url: data.refUrl,
-          },
+          definingReference: { title: data.refTitle, publisher: data.refPublisher, date: data.refDate, url: data.refUrl },
           demonstrativeSources: [
             { title: data.demo1Title, url: data.demo1Url, usage: data.demo1Usage },
             { title: data.demo2Title, url: data.demo2Url, usage: data.demo2Usage },
@@ -486,35 +360,21 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         const role = data.submitterRole || '';
         const isNew = role.includes('NEW authority');
         const lines = [];
-
-        function section(label, value) {
-          lines.push(`### ${label}`);
-          lines.push('');
-          lines.push(value || '_(not provided)_');
-          lines.push('');
-        }
-
-        lines.push(`<!-- ISO 24229 system-code proposal generated by www.iso24229.org/about/apply/submit -->`);
-        lines.push(`<!-- integrity-sha256: ${checksum} -->`);
+        function section(label, value) { lines.push('### ' + label, '', value || '_(not provided)_', ''); }
+        lines.push('<!-- ISO 24229 system-code proposal generated by www.iso24229.org/about/apply/submit -->');
+        lines.push('<!-- integrity-sha256: ' + checksum + '>');
         lines.push('');
-
         section('Your name', data.submitterName);
         section('Organization (optional)', data.submitterOrg);
         section('Your relationship to the proposed authority', role);
-
         if (isNew) {
-          lines.push('### Authority identifier');
-          lines.push('');
-          lines.push('_(new authority)_');
-          lines.push('');
+          lines.push('### Authority identifier', '', '_(new authority)_', '');
           section('New authority information',
-            `Name: ${data.newAuthName}\nIdentifier: ${data.newAuthId}\nCountry: ${data.newAuthCountry}\nContact email: ${data.newAuthContact}\nJustification: ${data.newAuthJustification}`);
+            'Name: ' + data.newAuthName + '\nIdentifier: ' + data.newAuthId + '\nCountry: ' + data.newAuthCountry + '\nContact email: ' + data.newAuthContact + '\nJustification: ' + data.newAuthJustification);
         } else {
           section('Authority identifier', data.authority);
         }
-
         section('Authorization', 'I confirm I am authorized to submit on behalf of the chosen authority, OR I am proposing for Varia, OR I am proposing a new authority.');
-
         section('Source language (ISO 639 code)', data.sourceLanguage);
         section('Source script (ISO 15924 code)', data.sourceScript);
         section('Source country (optional, ISO 3166-1 alpha-2)', data.sourceCountry);
@@ -522,146 +382,71 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         section('Identifying segment', data.identifyingSegment);
         section('System name (human-readable)', data.systemName);
         section('Abstract', data.abstract);
-
         section('Defining reference — title', data.refTitle);
         section('Defining reference — publisher', data.refPublisher);
         section('Defining reference — date', data.refDate);
         section('Defining reference — URL (optional)', data.refUrl);
-
-        section('Demonstrative source 1', `Title: ${data.demo1Title}\nURL: ${data.demo1Url}\nUsage: ${data.demo1Usage}`);
-        section('Demonstrative source 2', `Title: ${data.demo2Title}\nURL: ${data.demo2Url}\nUsage: ${data.demo2Usage}`);
-        section('Demonstrative source 3', `Title: ${data.demo3Title}\nURL: ${data.demo3Url}\nUsage: ${data.demo3Usage}`);
-
+        section('Demonstrative source 1', 'Title: ' + data.demo1Title + '\nURL: ' + data.demo1Url + '\nUsage: ' + data.demo1Usage);
+        section('Demonstrative source 2', 'Title: ' + data.demo2Title + '\nURL: ' + data.demo2Url + '\nUsage: ' + data.demo2Usage);
+        section('Demonstrative source 3', 'Title: ' + data.demo3Title + '\nURL: ' + data.demo3Url + '\nUsage: ' + data.demo3Usage);
         section('Justification', data.justification);
         if (data.examples && data.examples.length > 0) {
           section('Example conversions', data.examples.map((ex) => {
-            const r = ex.remarks ? ` (${ex.remarks})` : '';
-            return `${ex.input} → ${ex.output}${r}`;
+            const r = ex.remarks ? ' (' + ex.remarks + ')' : '';
+            return ex.input + ' → ' + ex.output + r;
           }).join('\n'));
         }
         if (data.relations && data.relations.length > 0) {
-          section('Relations to other systems (optional)', data.relations.map((r) => `${r.type}: ${r.target}`).join('\n'));
+          section('Relations to other systems (optional)', data.relations.map((r) => r.type + ': ' + r.target).join('\n'));
         }
-
         section('Submission terms', [
           '- [x] I confirm the information is accurate to the best of my knowledge',
           '- [x] I understand the AG may reject this proposal, and that rejection does not result in a register entry',
           '- [x] I understand this proposal is public, but the AG\'s deliberation is private',
           '- [x] I will enable GitHub notifications',
         ].join('\n'));
-
         return lines.join('\n');
       }
 
-      function validate(data) {
-        const issues = [];
-        const required = (label, v) => { if (!v) issues.push(`Missing: ${label}`); };
-        required('submitter name', data.submitterName);
-        required('role', data.submitterRole);
-        if (!data.isNewAuthority) required('authority', data.authority);
-        required('source language (3-letter ISO 639)', data.sourceLanguage);
-        required('source script (4-letter ISO 15924)', data.sourceScript);
-        required('target script (4-letter ISO 15924)', data.targetScript);
-        required('identifying segment', data.identifyingSegment);
-        required('system name', data.systemName);
-        required('abstract', data.abstract);
-        required('defining reference title', data.refTitle);
-        required('defining reference publisher', data.refPublisher);
-        required('defining reference date', data.refDate);
-        required('demonstrative source 1', data.demo1Title);
-        required('demonstrative source 2', data.demo2Title);
-        required('demonstrative source 3', data.demo3Title);
-        required('justification', data.justification);
-        if (!data.examples || data.examples.length === 0) issues.push('Missing: example conversions (at least one required)');
-
-        // Format checks
-        if (data.sourceLanguage && !/^[a-z]{3}(-[a-z]{3})?$/.test(data.sourceLanguage)) {
-          issues.push('Source language must be 3 lowercase letters (e.g. "amh")');
-        }
-        if (data.sourceScript && !/^[A-Z][a-z]{3}$/.test(data.sourceScript)) {
-          issues.push('Source script must be 4 letters title-case (e.g. "Ethi")');
-        }
-        if (data.targetScript && !/^[A-Z][a-z]{3}$/.test(data.targetScript)) {
-          issues.push('Target script must be 4 letters title-case (e.g. "Latn")');
-        }
-        if (data.sourceCountry && !/^[A-Z]{2}$/.test(data.sourceCountry)) {
-          issues.push('Source country must be 2 uppercase letters (e.g. "ET")');
-        }
-        return issues;
-      }
-
-      // ── Structured examples (dynamic rows) ───────────────
+      const RELATION_TYPES = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'aliasOf', 'adoptedFrom', 'relatedTo'];
       let exRowCounter = 0;
-
       function addExampleRow(input = '', output = '', remarks = '') {
         const container = document.getElementById('examples-container');
         if (!container) return;
         const id = ++exRowCounter;
-        const num = container.querySelectorAll('.example-row').length + 1;
         const row = document.createElement('div');
-        row.className = 'example-row space-y-1';
+        row.className = 'example-row grid grid-cols-[1fr_auto_1fr] gap-2';
         row.dataset.exId = String(id);
-
-        row.innerHTML = '' +
-          '<div class="flex items-center gap-2">' +
-            '<span class="text-xs font-mono text-ink-subtle shrink-0 w-8">E' + num + '</span>' +
-            '<input type="text" class="ex-input flex-1 px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono" placeholder="source text" />' +
-            '<span class="text-ink-subtle text-sm shrink-0">→</span>' +
-            '<input type="text" class="ex-output flex-1 px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono" placeholder="converted text" />' +
-            '<button type="button" class="ex-remove shrink-0 px-2 py-1 text-sm text-ink-subtle hover:text-red-600">✕</button>' +
-          '</div>' +
-          '<input type="text" class="ex-remarks w-full pl-10 pr-2 py-1 border border-rule rounded-sm bg-paper text-ink-subtle text-xs" placeholder="optional remark" />';
-
-        row.querySelector('.ex-input').value = input;
-        row.querySelector('.ex-output').value = output;
-        row.querySelector('.ex-remarks').value = remarks;
-
-        row.querySelector('.ex-remove').addEventListener('click', () => {
-          row.remove();
-          renumberExamples();
-          regenerate();
-        });
-        row.querySelectorAll('input').forEach((inp) => {
-          inp.addEventListener('input', regenerate);
-        });
-
+        const inp = document.createElement('input');
+        inp.type = 'text'; inp.placeholder = 'input'; inp.value = input;
+        inp.className = 'form-input form-input-mono';
+        const arr = document.createElement('span');
+        arr.textContent = '→'; arr.className = 'self-center text-ink-subtle';
+        const out = document.createElement('input');
+        out.type = 'text'; out.placeholder = 'output'; out.value = output;
+        out.className = 'form-input form-input-mono';
+        const rem = document.createElement('input');
+        rem.type = 'text'; rem.placeholder = 'remarks (optional)'; rem.value = remarks;
+        rem.className = 'form-input';
+        const remWrap = document.createElement('div');
+        remWrap.className = 'col-span-3';
+        remWrap.appendChild(rem);
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button'; removeBtn.textContent = '✕';
+        removeBtn.className = 'col-span-3 justify-self-end text-sm text-ink-subtle hover:text-red-600';
+        removeBtn.onclick = () => { row.remove(); regenerate(); };
+        row.appendChild(inp); row.appendChild(arr); row.appendChild(out); row.appendChild(remWrap); row.appendChild(removeBtn);
         container.appendChild(row);
-        renumberExamples();
+        [inp, out, rem].forEach((el) => el.addEventListener('input', regenerate));
       }
-
-      function renumberExamples() {
-        const rows = document.querySelectorAll('#examples-container .example-row');
-        rows.forEach((row, i) => {
-          const label = row.querySelector('span.font-mono');
-          if (label) label.textContent = 'E' + (i + 1);
-        });
-      }
-
       function collectExamples() {
-        const container = document.getElementById('examples-container');
-        if (!container) return [];
-        const rows = container.querySelectorAll('.example-row');
-        const result = [];
-        rows.forEach((row) => {
-          const input = row.querySelector('.ex-input')?.value?.trim();
-          const output = row.querySelector('.ex-output')?.value?.trim();
-          const remarks = row.querySelector('.ex-remarks')?.value?.trim();
-          if (input && output) result.push({ input, output, remarks: remarks || null });
-        });
-        return result;
+        return Array.from(document.querySelectorAll('#examples-container .example-row')).map((row) => {
+          const inputs = row.querySelectorAll('input');
+          return { input: inputs[0].value.trim(), output: inputs[1].value.trim(), remarks: inputs[2].value.trim() };
+        }).filter((ex) => ex.input || ex.output);
       }
 
-      const addExBtn = document.getElementById('add-example-btn');
-      if (addExBtn) {
-        addExBtn.addEventListener('click', () => addExampleRow());
-      }
-      // Start with one empty row
-      addExampleRow();
-
-      // ── Structured relations (dynamic rows) ──────────────
-      const RELATION_TYPES = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'aliasOf', 'adoptedFrom', 'relatedTo'];
       let relRowCounter = 0;
-
       function addRelationRow(type = '', target = '') {
         const container = document.getElementById('relations-container');
         if (!container) return;
@@ -669,225 +454,178 @@ const relationTypes = ['supersedes', 'supersededBy', 'basedOn', 'basisFor', 'ali
         const row = document.createElement('div');
         row.className = 'relation-row flex items-center gap-2';
         row.dataset.relId = String(id);
-
         const typeSel = document.createElement('select');
-        typeSel.className = 'px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm shrink-0';
-        typeSel.innerHTML = '<option value="">type…</option>' + RELATION_TYPES.map((t) => `<option value="${t}" ${type === t ? 'selected' : ''}>${t}</option>`).join('');
-
+        typeSel.className = 'form-input shrink-0';
+        typeSel.innerHTML = '<option value="">type…</option>' + RELATION_TYPES.map((t) => '<option value="' + t + '"' + (type === t ? ' selected' : '') + '>' + t + '</option>').join('');
         const targetWrap = document.createElement('div');
-        targetWrap.className = 'flex-1 relative';
-
+        targetWrap.className = 'flex-1';
         const targetInput = document.createElement('input');
-        targetInput.type = 'text';
-        targetInput.placeholder = 'search target system…';
-        targetInput.value = target;
-        targetInput.autocomplete = 'off';
-        targetInput.autocapitalize = 'off';
-        targetInput.spellcheck = false;
+        targetInput.type = 'text'; targetInput.placeholder = 'search target system…'; targetInput.value = target;
+        targetInput.autocomplete = 'off'; targetInput.autocapitalize = 'off'; targetInput.spellcheck = false;
         targetInput.setAttribute('autocorrect', 'off');
-        targetInput.className = 'w-full px-2 py-1.5 border border-rule rounded-sm bg-paper text-ink text-sm font-mono';
+        targetInput.className = 'form-input form-input-mono';
         targetWrap.appendChild(targetInput);
-
         const removeBtn = document.createElement('button');
-        removeBtn.type = 'button';
-        removeBtn.textContent = '✕';
+        removeBtn.type = 'button'; removeBtn.textContent = '✕';
         removeBtn.className = 'shrink-0 px-2 py-1 text-sm text-ink-subtle hover:text-red-600';
         removeBtn.onclick = () => { row.remove(); regenerate(); };
-
-        row.appendChild(typeSel);
-        row.appendChild(targetWrap);
-        row.appendChild(removeBtn);
+        row.appendChild(typeSel); row.appendChild(targetWrap); row.appendChild(removeBtn);
         container.appendChild(row);
-        attachCombobox(targetInput, window.__sysOpts || [], 'Select a valid system code from the list');
-
+        const sysOpts = (window.__sysOpts || []);
+        const dd = document.createElement('div'); dd.className = 'cb-dropdown'; targetWrap.appendChild(dd);
+        const err = document.createElement('div'); err.className = 'cb-error';
+        err.textContent = 'Select a valid system code from the list';
+        targetWrap.parentNode.insertBefore(err, targetWrap.nextSibling);
+        let selVal = '', activeIdx = -1, selecting = false;
+        function render(q) {
+          q = (q || '').toLowerCase().trim();
+          const m = q ? sysOpts.filter((o) => o.value.toLowerCase().includes(q) || o.label.toLowerCase().includes(q)).slice(0, 50) : sysOpts.slice(0, 50);
+          activeIdx = -1;
+          dd.innerHTML = m.length ? m.map((o, i) => '<div class="cb-option" data-value="' + o.value + '"><div class="cb-option-value">' + o.value + '</div><div class="cb-option-label">' + o.label + '</div></div>').join('') : '<div class="cb-empty">No matches</div>';
+          dd.classList.add('visible');
+        }
+        function hide() { dd.classList.remove('visible'); activeIdx = -1; }
+        function validate() {
+          const v = targetInput.value.trim();
+          if (!v || selVal === v) { err.classList.remove('visible'); targetInput.classList.remove('field-invalid'); return; }
+          const match = sysOpts.find((o) => o.value.toLowerCase() === v.toLowerCase());
+          if (match) { selVal = match.value; err.classList.remove('visible'); targetInput.classList.remove('field-invalid'); return; }
+          err.classList.add('visible'); targetInput.classList.add('field-invalid');
+        }
+        function setActive(i) {
+          dd.querySelectorAll('.cb-active').forEach((el) => el.classList.remove('cb-active'));
+          const opts = dd.querySelectorAll('.cb-option');
+          if (i >= 0 && i < opts.length) { opts[i].classList.add('cb-active'); opts[i].scrollIntoView({ block: 'nearest' }); activeIdx = i; }
+        }
+        targetInput.addEventListener('focus', () => render(targetInput.value));
+        targetInput.addEventListener('input', () => { if (selecting) return; selVal = ''; render(targetInput.value); validate(); });
+        targetInput.addEventListener('keydown', (e) => {
+          const opts = dd.querySelectorAll('.cb-option');
+          if (!dd.classList.contains('visible') || !opts.length) return;
+          if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIdx + 1, opts.length - 1)); }
+          else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIdx - 1, 0)); }
+          else if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); opts[activeIdx].click(); }
+          else if (e.key === 'Escape') hide();
+        });
+        dd.addEventListener('mousedown', (e) => e.preventDefault());
+        dd.addEventListener('click', (e) => {
+          const opt = e.target.closest('.cb-option');
+          if (!opt) return;
+          selecting = true;
+          targetInput.value = opt.dataset.value; selVal = opt.dataset.value;
+          hide(); validate();
+          targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+          selecting = false;
+        });
+        targetInput.addEventListener('blur', () => { setTimeout(() => { hide(); validate(); }, 150); });
         typeSel.addEventListener('change', regenerate);
         targetInput.addEventListener('input', regenerate);
       }
-
       function collectRelations() {
-        const container = document.getElementById('relations-container');
-        if (!container) return [];
-        const rows = container.querySelectorAll('.relation-row');
-        const result = [];
-        rows.forEach((row) => {
+        return Array.from(document.querySelectorAll('#relations-container .relation-row')).map((row) => {
           const type = row.querySelector('select')?.value?.trim();
           const target = row.querySelector('input')?.value?.trim();
-          if (type && target) result.push({ type, target });
-        });
-        return result;
+          if (type && target) return { type, target };
+          return null;
+        }).filter(Boolean);
       }
 
-      const addRelBtn = document.getElementById('add-relation-btn');
-      if (addRelBtn) {
-        addRelBtn.addEventListener('click', () => addRelationRow());
-      }
+      document.getElementById('add-example-btn')?.addEventListener('click', () => addExampleRow());
+      document.getElementById('add-relation-btn')?.addEventListener('click', () => addRelationRow());
+      addExampleRow();
 
-      // ── Regenerate (debounced) ─────────────────────────
       let scheduled = false;
       function regenerate() {
         if (scheduled) return;
         scheduled = true;
-        setTimeout(() => {
-          scheduled = false;
-          actuallyRegenerate();
-        }, 50);
+        setTimeout(() => { scheduled = false; actuallyRegenerate(); }, 50);
       }
 
       async function actuallyRegenerate() {
         const role = val('submitter-role');
         const isNewAuthority = role.includes('NEW authority');
-
         const data = {
-          submitterName: val('submitter-name'),
-          submitterOrg: val('submitter-org'),
-          submitterRole: role,
+          submitterName: val('submitter-name'), submitterOrg: val('submitter-org'), submitterRole: role,
           isNewAuthority,
           authority: isNewAuthority ? (val('new-auth-id') || '(new)') : val('authority'),
-          newAuthName: val('new-auth-name'),
-          newAuthId: val('new-auth-id'),
-          newAuthCountry: val('new-auth-country'),
-          newAuthContact: val('new-auth-contact'),
+          newAuthName: val('new-auth-name'), newAuthId: val('new-auth-id'),
+          newAuthCountry: val('new-auth-country'), newAuthContact: val('new-auth-contact'),
           newAuthJustification: val('new-auth-justification'),
           sourceLanguage: normalizeLang(val('source-language')),
           sourceScript: normalizeScript(val('source-script')),
           sourceCountry: val('source-country').toUpperCase(),
           targetScript: normalizeScript(val('target-script')),
           identifyingSegment: val('identifying-segment'),
-          systemName: val('system-name'),
-          abstract: val('abstract'),
-          refTitle: val('ref-title'),
-          refPublisher: val('ref-publisher'),
-          refDate: val('ref-date'),
-          refUrl: val('ref-url'),
-          demo1Title: val('demo-1-title'),
-          demo1Url: val('demo-1-url'),
-          demo1Usage: val('demo-1-usage'),
-          demo2Title: val('demo-2-title'),
-          demo2Url: val('demo-2-url'),
-          demo2Usage: val('demo-2-usage'),
-          demo3Title: val('demo-3-title'),
-          demo3Url: val('demo-3-url'),
-          demo3Usage: val('demo-3-usage'),
+          systemName: val('system-name'), abstract: val('abstract'),
+          refTitle: val('ref-title'), refPublisher: val('ref-publisher'),
+          refDate: val('ref-date'), refUrl: val('ref-url'),
+          demo1Title: val('demo-1-title'), demo1Url: val('demo-1-url'), demo1Usage: val('demo-1-usage'),
+          demo2Title: val('demo-2-title'), demo2Url: val('demo-2-url'), demo2Usage: val('demo-2-usage'),
+          demo3Title: val('demo-3-title'), demo3Url: val('demo-3-url'), demo3Usage: val('demo-3-usage'),
           justification: val('justification'),
           examples: collectExamples(),
           relations: collectRelations(),
         };
         data.code = buildCode(data);
 
-        // Update code preview
         const codePreview = document.getElementById('code-preview');
-        if (codePreview) {
-          codePreview.textContent = data.code || '—';
-          codePreview.classList.toggle('text-ink-muted', !data.code);
-          codePreview.classList.toggle('text-ink', !!data.code);
-        }
+        if (codePreview) codePreview.textContent = data.code || '—';
 
-        // Validation — grouped by section with status emojis
-        const groups = [
-          {
-            label: 'Submitter',
-            done: !!(data.submitterName && data.submitterRole),
-            note: !data.submitterName ? 'name needed' : !data.submitterRole ? 'role needed' : null,
-          },
-          {
-            label: 'Authority',
-            done: !!(data.isNewAuthority ? data.newAuthId : data.authority),
-            note: data.isNewAuthority ? (!data.newAuthId ? 'identifier needed' : null) : (!data.authority ? 'select an authority' : null),
-          },
-          {
-            label: 'System identification',
-            done: !!(data.sourceLanguage && data.sourceScript && data.targetScript && data.identifyingSegment && data.systemName && data.abstract),
-            note: [
-              !data.sourceLanguage && 'source language',
-              !data.sourceScript && 'source script',
-              !data.targetScript && 'target script',
-              !data.identifyingSegment && 'identifying segment',
-              !data.systemName && 'system name',
-              !data.abstract && 'abstract',
-            ].filter(Boolean).join(', ') || null,
-          },
-          {
-            label: 'Defining reference',
-            done: !!(data.refTitle && data.refPublisher && data.refDate),
-            note: [
-              !data.refTitle && 'title',
-              !data.refPublisher && 'publisher',
-              !data.refDate && 'date',
-            ].filter(Boolean).join(', ') || null,
-          },
-          {
-            label: 'Demonstrative usage',
-            done: !!(data.demo1Title && data.demo2Title && data.demo3Title),
-            note: [
-              !data.demo1Title && 'source 1',
-              !data.demo2Title && 'source 2',
-              !data.demo3Title && 'source 3',
-            ].filter(Boolean).join(', ') || null,
-          },
-          {
-            label: 'Justification & examples',
-            done: !!(data.justification && data.examples && data.examples.length > 0),
-            note: [
-              !data.justification && 'justification',
-              (!data.examples || data.examples.length === 0) && 'at least one example',
-            ].filter(Boolean).join(', ') || null,
-          },
-        ];
+        highlightRequired();
 
-        const list = document.getElementById('validation-list');
-        if (list) {
-          list.innerHTML = groups.map((g) => {
-            const icon = g.done ? '✅' : '⏳';
-            const cls = g.done ? 'text-ink' : 'text-ink-muted';
-            const noteHtml = g.note ? `<span class="text-ink-subtle ml-1">— ${escapeHtml(g.note)}</span>` : '';
-            return `<li class="${cls}">${icon} <span class="font-medium">${escapeHtml(g.label)}</span>${noteHtml}</li>`;
-          }).join('');
-        }
-
-        // SHA-256 of canonical JSON
-        let checksum = '';
-        if (data.submitterName || data.systemName) {
-          try {
-            checksum = await sha256Hex(buildStructured(data));
-          } catch (e) {
-            // crypto.subtle requires HTTPS or localhost — fail gracefully
-            checksum = '(unavailable over insecure connection)';
+        const valList = document.getElementById('validation-list');
+        if (valList) {
+          const items = [];
+          if (!data.submitterName) items.push('Submitter name required');
+          if (!data.submitterRole) items.push('Submitter role required');
+          if (isNewAuthority) {
+            if (!data.newAuthName) items.push('New authority name required');
+            if (!data.newAuthId) items.push('New authority short identifier required');
+          } else if (!data.authority) {
+            items.push('Authority required');
           }
+          if (!data.sourceLanguage) items.push('Source language required');
+          if (!data.sourceScript) items.push('Source script required');
+          if (!data.targetScript) items.push('Target script required');
+          if (!data.identifyingSegment) items.push('Identifying segment required');
+          if (!data.systemName) items.push('System name required');
+          if (!data.abstract) items.push('Abstract required');
+          if (!data.refTitle) items.push('Reference title required');
+          if (!data.refPublisher) items.push('Reference publisher required');
+          if (!data.refDate) items.push('Reference date required');
+          if (!data.demo1Title) items.push('Demonstrative source 1 title required');
+          if (!data.demo2Title) items.push('Demonstrative source 2 title required');
+          if (!data.demo3Title) items.push('Demonstrative source 3 title required');
+          if (!data.justification) items.push('Justification required');
+          if (data.examples.length === 0) items.push('At least one example conversion required');
+          valList.innerHTML = items.length
+            ? items.map((i) => '<li>' + i + '</li>').join('')
+            : '<li>✓ All fields filled — ready to submit.</li>';
         }
 
-        // Markdown
+        const structured = buildStructured(data);
+        const checksum = await sha256Hex(structured);
         const md = genMarkdown(data, checksum);
-        const mdEl = document.getElementById('output-markdown');
-        if (mdEl) mdEl.textContent = data.submitterName || data.systemName ? md : '—';
-        const ckEl = document.getElementById('checksum');
-        if (ckEl) ckEl.textContent = checksum || '—';
+        const out = document.getElementById('output-markdown');
+        if (out) out.textContent = md;
+        const sumEl = document.getElementById('checksum');
+        if (sumEl) sumEl.textContent = checksum;
 
-        // Open-GitHub-issue link with pre-filled body
-        const ghBtn = document.getElementById('open-gh-btn');
-        if (ghBtn) {
-          const title = data.systemName ? `[Proposal] ${data.systemName}` : '[Proposal]';
-          const url = `https://github.com/iso24229/proposals/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(md)}`;
-          ghBtn.setAttribute('href', url);
+        const openBtn = document.getElementById('open-gh-btn');
+        if (openBtn) {
+          const title = data.code ? 'Proposal: ' + data.code : 'New ISO 24229 system-code proposal';
+          openBtn.href = 'https://github.com/iso24229/proposals/issues/new?title=' + encodeURIComponent(title) + '&body=' + encodeURIComponent(md);
         }
 
-        // Copy button
         const copyBtn = document.getElementById('copy-btn');
         if (copyBtn) {
-          copyBtn.onclick = async () => {
-            try {
-              await navigator.clipboard.writeText(md);
-              copyBtn.textContent = 'Copied ✓';
-              setTimeout(() => { copyBtn.textContent = 'Copy Markdown'; }, 2000);
-            } catch (e) {
-              copyBtn.textContent = 'Copy failed — select manually';
-            }
+          copyBtn.onclick = () => {
+            navigator.clipboard.writeText(md).then(() => {
+              copyBtn.textContent = 'Copied!';
+              setTimeout(() => { copyBtn.textContent = 'Copy Markdown'; }, 1500);
+            });
           };
         }
-        highlightRequired();
-      }
-
-      function escapeHtml(s) {
-        return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
       }
 
       syncRoleUI();
