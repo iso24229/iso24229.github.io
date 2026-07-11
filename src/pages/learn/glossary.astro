@@ -12,7 +12,7 @@ const terms = [
     term: 'spelling system',
     def: 'A set of rules governing the orthography of a language. Several languages have undergone orthographic reforms and thus have had multiple spelling systems over time.',
     examples: [['Indonesian pre-1972 orthography extension', 'pre1972'], ['Indonesian default orthography', 'ind-Latn']],
-    note: 'A bare ISO 15924 script code (e.g. `Latn`) is NOT a spelling system — it has no language. Bare scripts live in ISO 15924 reference data only.' as string | null,
+    note: 'A bare ISO 15924 script code (e.g. <code>Latn</code>) is NOT a spelling system — it has no language. Bare scripts live in ISO 15924 reference data only.' as string | null,
   },
   {
     term: 'written language',
@@ -99,7 +99,7 @@ const terms = [
           {t.note && (
             <div class="mt-5 border-l-2 border-blue/40 dark:border-blue-bright/40 pl-4">
               <p class="eyebrow text-blue dark:text-blue-bright mb-2">Note</p>
-              <p class="text-sm text-ink-muted leading-relaxed max-w-2xl">{t.note}</p>
+              <p class="text-sm text-ink-muted leading-relaxed max-w-2xl" set:html={t.note} />
             </div>
           )}
         </dd>
