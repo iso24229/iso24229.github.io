@@ -5,11 +5,11 @@ import { externalLinks } from '../../config';
 const comparisons = [
   {
     name: 'BCP 47',
-    body: 'BCP 47 composes a language tag (e.g. `zh-Hant-TW`) from ISO 639 + ISO 15924 + ISO 3166 codes. It identifies a language variant — not how to convert between variants. ISO 24229 picks up where BCP 47 leaves off: given two variants, which system do you use to convert between them?',
+    body: 'BCP 47 composes a language tag (e.g. <code>zh-Hant-TW</code>) from ISO 639 + ISO 15924 + ISO 3166 codes. It identifies a language variant — not how to convert between variants. ISO 24229 picks up where BCP 47 leaves off: given two variants, which system do you use to convert between them?',
   },
   {
     name: 'ALA-LC romanization tables',
-    body: 'The American Library Association / Library of Congress publishes romanization tables for many scripts. These are individual conversion systems; ISO 24229 gives each one a stable code (e.g. `ALA-LC:mal-Mlym:Latn:2012`) so they can be cited unambiguously in library systems.',
+    body: 'The American Library Association / Library of Congress publishes romanization tables for many scripts. These are individual conversion systems; ISO 24229 gives each one a stable code (e.g. <code>ALA-LC:mal-Mlym:Latn:2012</code>) so they can be cited unambiguously in library systems.',
   },
   {
     name: 'ICAO Document 9303',
@@ -17,11 +17,11 @@ const comparisons = [
   },
   {
     name: 'UN romanization systems',
-    body: 'The United Nations publishes recommended romanization systems for many geographic names. Each UN system has an ISO 24229 code (e.g. `UN:ara-Arab:Latn:2017`).',
+    body: 'The United Nations publishes recommended romanization systems for many geographic names. Each UN system has an ISO 24229 code (e.g. <code>UN:ara-Arab:Latn:2017</code>).',
   },
   {
     name: 'ISO 9 (Cyrillic)',
-    body: 'ISO 9 itself is a standard that defines a Cyrillic→Latin transliteration. In ISO 24229 it gets the code `ISO:Cyrl:Latn:9-1995` — the standard number plus year is the identifying segment.',
+    body: 'ISO 9 itself is a standard that defines a Cyrillic→Latin transliteration. In ISO 24229 it gets the code <code>ISO:Cyrl:Latn:9-1995</code> — the standard number plus year is the identifying segment.',
   },
 ];
 ---
@@ -33,8 +33,7 @@ const comparisons = [
   <p class="text-lg text-ink-muted max-w-2xl mb-10">
     ISO 24229 is the international standard for writing system conversion
     systems, composing with ISO 639 and ISO 15924. Other
-    well-known standards and systems sit at different layers — most are
-    <em>consumers</em> of ISO 24229 codes rather than competitors.
+    well-known standards and systems sit at different layers — most are <em>consumers</em> of ISO 24229 codes rather than competitors.
   </p>
 
   <div class="space-y-8 max-w-3xl">
@@ -42,7 +41,7 @@ const comparisons = [
       comparisons.map((c) => (
         <section class="border-t border-line pt-6">
           <h2 class="text-xl font-semibold mb-2">{c.name}</h2>
-          <p class="text-ink-muted">{c.body}</p>
+          <p class="text-ink-muted" set:html={c.body} />
         </section>
       ))
     }
