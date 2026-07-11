@@ -5,61 +5,61 @@ const terms = [
   {
     term: 'script',
     def: 'A particular graphic representation or class of representations of a set of characters used to write one or more languages (ISO 5127). Each script has an ISO 15924 code.',
-    examples: ['Latn (Latin)', 'Cyrl (Cyrillic)', 'Hani (Han / Hanzi / Kanji / Hanja)', 'Arab (Arabic)'],
+    examples: [['Latin', 'Latn'], ['Cyrillic', 'Cyrl'], ['Han / Hanzi / Kanji / Hanja', 'Hani'], ['Arabic', 'Arab']],
     note: null as string | null,
   },
   {
     term: 'spelling system',
     def: 'A set of rules governing the orthography of a language. Several languages have undergone orthographic reforms and thus have had multiple spelling systems over time.',
-    examples: ['Indonesian pre-1972 orthography (extension: `pre1972`)', 'default orthography: `ind-Latn`'],
+    examples: [['Indonesian pre-1972 orthography extension', 'pre1972'], ['Indonesian default orthography', 'ind-Latn']],
     note: 'A bare ISO 15924 script code (e.g. `Latn`) is NOT a spelling system — it has no language. Bare scripts live in ISO 15924 reference data only.' as string | null,
   },
   {
     term: 'written language',
     def: 'A natural language realized through the writing of characters. Identified by combining an ISO 639 language code with an ISO 15924 script code.',
-    examples: ['Chinese in Han script: `zho-Hani`', 'Arabic in Arabic script: `ara-Arab`'],
+    examples: [['Chinese in Han script', 'zho-Hani'], ['Arabic in Arabic script', 'ara-Arab']],
     note: null,
   },
   {
     term: 'writing system conversion',
     def: 'The process whereby one spelling system is converted into another. Includes script conversion (change of script) AND conversion within the same script (e.g. re-spelling a foreign name in your own alphabet, or applying a new orthography).',
-    examples: ['Arabic-script Arabic → Latin (`ara-Arab → Latn`)', 'Same-script Serbian re-spelling'],
+    examples: [['Arabic-script Arabic → Latin', 'ara-Arab → Latn'], ['Same-script Serbian re-spelling', null]],
     note: null,
   },
   {
     term: 'transliteration',
     def: 'A conversion that represents the characters of an alphabetical or syllabic writing system by the characters of a conversion alphabet. Typically sign-by-sign reversible.',
-    examples: ['ISO 9 (Cyrillic → Latin): `ISO:Cyrl:Latn:9-1995`'],
+    examples: [['ISO 9 (Cyrillic → Latin)', 'ISO:Cyrl:Latn:9-1995']],
     note: null,
   },
   {
     term: 'transcription',
     def: 'A conversion whereby the sounds of a given language are noted by the system of signs of a conversion language. Typically not reversible sign-by-sign.',
-    examples: ['Wade-Giles Chinese transcription: `Var:zho-Hani:Latn:WG-1912`'],
+    examples: [['Wade-Giles Chinese transcription', 'Var:zho-Hani:Latn:WG-1912']],
     note: null,
   },
   {
     term: 'romanization',
     def: 'Script conversion from a non-Roman script to the Roman (Latin) script, by means of transliteration, transcription, or both.',
-    examples: ['BGN/PCGN Chinese romanization: `BGN-PCGN:zho-Hans:Latn:1979`'],
+    examples: [['BGN/PCGN Chinese romanization', 'BGN-PCGN:zho-Hans:Latn:1979']],
     note: null,
   },
   {
     term: 'writing system conversion system',
     def: 'A set of rules for writing system conversion. Each system has a unique ISO 24229 code.',
-    examples: ['`UN:ara-Arab:Latn:2017` — UNGEGN Arabic romanisation'],
+    examples: [['UNGEGN Arabic romanisation', 'UN:ara-Arab:Latn:2017']],
     note: null,
   },
   {
     term: 'conversion system authority',
     def: 'A competent authority that creates, publishes, and/or manages writing system conversion systems. Has an alphabetic identifier (3–16 chars).',
-    examples: ['`UN` — United Nations', '`BGN-PCGN` — BGN/PCGN joint system', '`ALA-LC` — American Library Association / Library of Congress'],
+    examples: [['United Nations', 'UN'], ['BGN/PCGN joint system', 'BGN-PCGN'], ['American Library Association / Library of Congress', 'ALA-LC']],
     note: null,
   },
   {
     term: 'Varia authority (Var)',
     def: 'A special authority managed by the Advisory Group for systems that need representation but do not have a clear extant authority.',
-    examples: ['`Var:zho-Hani:Latn:WG-1912` — Wade-Giles Chinese transcription'],
+    examples: [['Wade-Giles Chinese transcription', `Var:zho-Hani:Latn:WG-1912`]],
     note: null,
   },
 ];
@@ -85,9 +85,12 @@ const terms = [
             <div class="mt-5 border-l-2 border-gold/40 dark:border-gold-bright/40 pl-4">
               <p class="eyebrow text-gold-deep dark:text-gold-bright mb-2">Examples</p>
               <ul class="space-y-1">
-                {t.examples.map((ex) => (
+                {t.examples.map(([explanation, code]) => (
                   <li class="text-sm text-ink-muted leading-relaxed">
-                    <span class="font-mono text-ink break-all">{ex}</span>
+                    <span class="text-ink break-all">{explanation}</span>
+                    {code && (
+                      <><span>: </span><span class="font-mono text-ink break-all">{code}</span></>
+                    )}
                   </li>
                 ))}
               </ul>
