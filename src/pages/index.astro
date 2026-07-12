@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import SectionHead from '../components/SectionHead.astro';
 import ArrowLink from '../components/ArrowLink.astro';
 import Card from '../components/Card.astro';
+import CodeTicker from '../components/CodeTicker.vue';
 import { externalLinks } from '../config';
 ---
 
@@ -60,64 +61,17 @@ import { externalLinks } from '../config';
     </p>
   </section>
 
-  {/* ── Code anatomy: SVG diagram ────────────────────────────── */}
+  {/* ── Code anatomy: live ticker ─────────────────────────────── */}
   <section class="rule-section">
     <SectionHead eyebrow="What a code is made of" title="One code, four segments, three standards." titleClass="max-w-2xl mb-3" />
     <p class="text-ink-muted max-w-2xl mb-8 leading-relaxed">
       A single ISO 24229 code is built from identifiers you may already know:
       ISO 639 for languages, ISO 15924 for scripts. ISO 24229 is the standard
-      that defines how they combine.
+      that defines how they combine. Watch the ticker cycle through real codes.
     </p>
 
     <div class="border border-rule rounded bg-paper-raised p-6 md:p-10">
-      <svg viewBox="0 0 760 280" class="w-full h-auto" role="img" aria-label="Anatomy of the ISO 24229 code UN:ara-Arab:Latn:2017">
-        <style>
-          .code-seg { font-family: var(--font-mono, monospace); font-size: 28px; font-weight: 500; }
-          .code-colon { fill: var(--color-ink-subtle, #888); font-family: var(--font-mono, monospace); font-size: 28px; }
-          .lbl { font-family: var(--font-sans, sans-serif); font-size: 10px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
-          .lbl-meta { font-family: var(--font-sans, sans-serif); font-size: 11px; }
-          .arrow { stroke: var(--color-rule, #ccc); stroke-width: 1; fill: none; }
-        </style>
-
-        {/* The code itself, centered */}
-        <text x="380" y="140" text-anchor="middle" class="code-seg" fill="var(--color-ink, #111)">
-          <tspan fill="var(--color-gold-deep, #a86513)" class="code-seg">UN</tspan><tspan class="code-colon">:</tspan><tspan fill="var(--color-blue, #5374b9)" class="code-seg">ara-Arab</tspan><tspan class="code-colon">:</tspan><tspan fill="var(--color-blue, #5374b9)" class="code-seg">Latn</tspan><tspan class="code-colon">:</tspan><tspan fill="var(--color-ink, #111)" class="code-seg">2017</tspan>
-        </text>
-
-        {/* Bracket + label for UN (authority) */}
-        <path d="M 204 156 L 204 168 L 237 168" class="arrow"/>
-        <text x="221" y="190" text-anchor="middle" class="lbl" fill="var(--color-gold-deep, #a86513)">Authority</text>
-        <text x="221" y="206" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-muted, #666)">ISO 24229/AG</text>
-        <text x="221" y="222" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-subtle, #888)">United Nations</text>
-
-        {/* Bracket + label for ara-Arab (source spelling) */}
-        <path d="M 254 156 L 254 168 L 389 168" class="arrow"/>
-        <text x="322" y="190" text-anchor="middle" class="lbl" fill="var(--color-blue, #5374b9)">Source spelling</text>
-        <text x="322" y="206" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-muted, #666)">ara — ISO 639</text>
-        <text x="322" y="222" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-subtle, #888)">Arab — ISO 15924</text>
-
-        {/* Bracket + label for Latn (target spelling) */}
-        <path d="M 405 156 L 405 168 L 473 168" class="arrow"/>
-        <text x="439" y="190" text-anchor="middle" class="lbl" fill="var(--color-blue, #5374b9)">Target spelling</text>
-        <text x="439" y="206" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-muted, #666)">Latn — ISO 15924</text>
-        <text x="439" y="222" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-subtle, #888)">(script only)</text>
-
-        {/* Bracket + label for 2017 (identifying) */}
-        <path d="M 489 156 L 489 168 L 557 168" class="arrow"/>
-        <text x="523" y="190" text-anchor="middle" class="lbl" fill="var(--color-ink-muted, #666)">Ident</text>
-        <text x="523" y="206" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-muted, #666)">Year</text>
-        <text x="523" y="222" text-anchor="middle" class="lbl-meta" fill="var(--color-ink-subtle, #888)">of adoption</text>
-
-        {/* Top label: standard */}
-        <text x="380" y="50" text-anchor="middle" class="lbl" fill="var(--color-ink-subtle, #888)">ISO 24229 code</text>
-        <line x1="204" y1="62" x2="557" y2="62" class="arrow"/>
-      </svg>
-
-      <p class="mt-6 text-sm text-ink-muted leading-relaxed max-w-2xl">
-        United Nations romanization of Arabic, adopted 2017, is encoded
-        as <span class="font-mono">UN:ara-Arab:Latn:2017</span>.
-        Each segment carries independent, verifiable meaning.
-      </p>
+      <CodeTicker client:load />
     </div>
 
     <p class="mt-5">
