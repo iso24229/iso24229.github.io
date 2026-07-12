@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 
 interface CodeExample {
   authority: string;
@@ -12,48 +12,9 @@ interface CodeExample {
   identifyingLabel: string;
 }
 
-const codes: CodeExample[] = [
-  {
-    authority: 'UN', source: 'ara-Arab', target: 'Latn', identifying: '2017',
-    authorityLabel: 'United Nations', sourceLabel: 'Arabic · Arab', targetLabel: 'Latin',
-    identifyingLabel: 'Year of adoption',
-  },
-  {
-    authority: 'BGN-PCGN', source: 'zho-Hans', target: 'Latn', identifying: '1979',
-    authorityLabel: 'BGN/PCGN Joint Agency', sourceLabel: 'Chinese · Han (Simplified)', targetLabel: 'Latin',
-    identifyingLabel: 'Year of agreement',
-  },
-  {
-    authority: 'ALA-LC', source: 'mal-Mlym', target: 'Latn', identifying: '2012',
-    authorityLabel: 'ALA / Library of Congress', sourceLabel: 'Malayalam · Malayalam', targetLabel: 'Latin',
-    identifyingLabel: 'Edition year',
-  },
-  {
-    authority: 'ISO', source: 'Cyrl', target: 'Latn', identifying: '9-1995',
-    authorityLabel: 'International Org. for Standardization', sourceLabel: 'Cyrillic (any language)', targetLabel: 'Latin',
-    identifyingLabel: 'Standard number',
-  },
-  {
-    authority: 'DIN', source: 'bel-Cyrl', target: 'Latn', identifying: '1460-1982',
-    authorityLabel: 'German Institute for Standardization', sourceLabel: 'Belarusian · Cyrillic', targetLabel: 'Latin',
-    identifyingLabel: 'DIN standard no.',
-  },
-  {
-    authority: 'ESKT', source: 'udm-Cyrl', target: 'est-Latn', identifying: '2021',
-    authorityLabel: 'Estonian Language Committee', sourceLabel: 'Udmurt · Cyrillic', targetLabel: 'Estonian · Latin',
-    identifyingLabel: 'Year of approval',
-  },
-  {
-    authority: 'LV', source: 'eng-Latn', target: 'lav-Latn', identifying: '2006',
-    authorityLabel: 'Republic of Latvia', sourceLabel: 'English · Latin', targetLabel: 'Latvian · Latin',
-    identifyingLabel: 'Year of issue',
-  },
-  {
-    authority: 'ICAO', source: 'Arab', target: 'Latn', identifying: '2015',
-    authorityLabel: 'Int\'l Civil Aviation Organization', sourceLabel: 'Arabic (any language)', targetLabel: 'Latin',
-    identifyingLabel: 'Edition year',
-  },
-];
+const props = defineProps<{
+  codes: CodeExample[];
+}>();
 
 const interval = 4200;
 const flipDuration = 500;
@@ -61,13 +22,13 @@ const cascadeGap = 120;
 
 const activeIndex = ref(0);
 const phase = ref<'idle' | 'flipping'>('idle');
-
 const flipStates = ref([false, false, false, false]);
 
 let timer: ReturnType<typeof setInterval> | null = null;
 
 function startCascade() {
   if (phase.value === 'flipping') return;
+  if (props.codes.length < 2) return;
   phase.value = 'flipping';
 
   for (let i = 0; i < 4; i++) {
@@ -76,7 +37,7 @@ function startCascade() {
       setTimeout(() => {
         flipStates.value[i] = false;
         if (i === 3) {
-          activeIndex.value = (activeIndex.value + 1) % codes.length;
+          activeIndex.value = (activeIndex.value + 1) % props.codes.length;
           phase.value = 'idle';
         }
       }, flipDuration);
@@ -85,16 +46,19 @@ function startCascade() {
 }
 
 onMounted(() => {
-  timer = setInterval(startCascade, interval);
+  if (props.codes.length >= 2) {
+    timer = setInterval(startCascade, interval);
+  }
 });
 
 onUnmounted(() => {
   if (timer) clearInterval(timer);
 });
 
-const current = (i: number) => {
-  const next = (activeIndex.value + 1) % codes.length;
-  return flipStates.value[i] ? codes[next] : codes[activeIndex.value];
+const current = (i: number): CodeExample => {
+  if (props.codes.length === 0) return { authority: '', source: '', target: '', identifying: '', authorityLabel: '', sourceLabel: '', targetLabel: '', identifyingLabel: '' };
+  const next = (activeIndex.value + 1) % props.codes.length;
+  return flipStates.value[i] ? props.codes[next] : props.codes[activeIndex.value];
 };
 
 const segments = [
@@ -115,15 +79,12 @@ const segments = [
           <div class="ticker-card" :class="{ 'is-flipped': flipStates[i] }">
             <div class="ticker-face ticker-face-front">
               <span class="ticker-text" :style="{ color: seg.color }">
-                {{ codes[activeIndex][seg.key] }}
+                {{ codes[activeIndex]?.[seg.key] ?? '—' }}
               </span>
             </div>
             <div class="ticker-face ticker-face-back">
-              <span
-                class="ticker-text"
-                :style="{ color: seg.brightColor }"
-              >
-                {{ codes[(activeIndex + 1) % codes.length][seg.key] }}
+              <span class="ticker-text" :style="{ color: seg.brightColor }">
+                {{ codes[(activeIndex + 1) % codes.length]?.[seg.key] ?? '—' }}
               </span>
             </div>
           </div>
@@ -137,7 +98,6 @@ const segments = [
         v-for="(seg, i) in segments"
         :key="seg.key"
         class="ticker-label-cell"
-        :style="{ gridColumn: `${i * 2 + 1} / ${i * 2 + 2}` }"
       >
         <p class="ticker-label-eyebrow">{{ seg.key }}</p>
         <p class="ticker-label-detail">{{ current(i)[(`${seg.key}Label` as keyof CodeExample)] }}</p>
