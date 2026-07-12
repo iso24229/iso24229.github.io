@@ -1,0 +1,246 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+
+const tocItems = [
+  { id: 'what-is', label: 'What is a spelling system' },
+  { id: 'elements', label: 'The four elements' },
+  { id: 'mandatory', label: 'Script is mandatory' },
+  { id: 'collapse', label: 'When language collapses' },
+  { id: 'examples', label: 'Worked examples' },
+  { id: 'register', label: 'In the register' },
+];
+---
+
+<Layout title="Spelling systems — how language and script combine">
+  <p class="text-sm text-ink-subtle mb-2"><a href="/learn" class="hover:text-gold-deep dark:hover:text-gold-bright">← Learn</a></p>
+  <p class="eyebrow mb-3">§4.1.4–§4.1.5</p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-4">Spelling systems</h1>
+  <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
+    A spelling system identifies <em>what is being converted</em> in an
+    ISO 24229 code. It is the second and third segment of the four-part
+    code — the source and target. Each spelling system combines an ISO 639
+    language code with an ISO 15924 script code, but the language can be
+    omitted when the conversion applies to all languages in a script.
+  </p>
+
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
+
+      {/* ── What is a spelling system ─────────────────────────── */}
+      <section id="what-is" class="mb-12">
+        <SectionHead eyebrow="Definition" title="A spelling system identifies a written form of a language." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            A <strong class="text-ink">spelling system</strong> is the combination
+            of a language (from ISO 639) and the script it is written in (from
+            ISO 15924). It answers the question: <em>which language, in which
+            script?</em> For example:
+          </p>
+          <ul class="list-disc pl-6 space-y-1.5">
+            <li><code class="font-mono text-blue dark:text-blue-bright">ara-Arab</code> — Arabic language written in the Arabic script</li>
+            <li><code class="font-mono text-blue dark:text-blue-bright">bel-Cyrl</code> — Belarusian language written in Cyrillic</li>
+            <li><code class="font-mono text-blue dark:text-blue-bright">Latn</code> — Latin script, any language (script-only — see below)</li>
+          </ul>
+          <p>
+            In an ISO 24229 code, the source and target segments are each a
+            spelling system. The code <code class="font-mono">UN:ara-Arab:Latn:2017</code>
+            describes a conversion <em>from</em> Arabic-in-Arabic-script
+            <em>to</em> Latin-script (the target being language-agnostic).
+          </p>
+        </div>
+      </section>
+
+      {/* ── The four elements ─────────────────────────────────── */}
+      <section id="elements" class="rule-section mb-12">
+        <SectionHead eyebrow="Anatomy" title="Four elements, in order, two mandatory." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            A spelling system may contain up to four elements, separated by
+            hyphens:
+          </p>
+          <div class="p-5 border border-rule rounded bg-paper-raised">
+            <p class="font-mono text-base break-all mb-4">
+              <span class="text-blue dark:text-blue-bright">languageCode</span>-<span class="text-blue dark:text-blue-bright">scriptCode</span>-<span class="text-ink-muted">countryCode</span>-<span class="text-ink-muted">extension</span>
+            </p>
+            <ul class="space-y-2 text-sm">
+              <li><strong>languageCode</strong> — 3-letter code from <a href="/learn/iso639" class="text-blue dark:text-blue-bright underline">ISO 639</a> (optional, terminological form preferred)</li>
+              <li><strong>scriptCode</strong> — 4-letter code from <a href="/learn/iso15924" class="text-blue dark:text-blue-bright underline">ISO 15924</a> (<strong class="text-ink">mandatory</strong>)</li>
+              <li><strong>countryCode</strong> — 2-letter code from ISO 3166-1 (optional, for regional variants)</li>
+              <li><strong>extension</strong> — ad hoc string for a non-default spelling (optional, e.g. <code class="font-mono">pre1972</code> for old orthography)</li>
+            </ul>
+          </div>
+          <p>
+            Only the script code is always required. The language code, country
+            code, and extension are present only when they add disambiguating
+            information.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Script is mandatory ──────────────────────────────── */}
+      <section id="mandatory" class="rule-section mb-12">
+        <SectionHead eyebrow="Rule" title="The script code is always mandatory." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            Per ISO 24229 §4.1.4, the script code is a mandatory element in
+            every spelling-system segment. Even when the conversion applies
+            to all languages in a script, the script code must be present.
+            A bare language code like <code class="font-mono">ara</code> without
+            a script code is <strong class="text-ink">not</strong> a valid
+            spelling system — it would be ambiguous (Arabic is written in
+            both the Arabic and Latin scripts depending on the region and era).
+          </p>
+          <div class="border-l-2 border-gold/60 dark:border-gold-bright/60 pl-5 py-2">
+            <p class="text-sm text-ink-muted leading-relaxed">
+              <strong class="text-ink">A script code is not a spelling system.</strong>
+              ISO 15924 script codes are reference data — they identify writing
+              systems. A spelling system is the combination of a script code
+              with optional language/country/extension metadata. The register's
+              <code class="font-mono">spelling-system</code> item class stores
+              these combinations; the ISO 15924 code table is external.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── When language collapses ──────────────────────────── */}
+      <section id="collapse" class="rule-section mb-12">
+        <SectionHead eyebrow="§4.1.4" title="When a spelling system collapses into a script code." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            Some conversion systems apply to <strong class="text-ink">all
+            languages</strong> written in a given script — not just one. In
+            these cases, the language code is omitted, and the spelling
+            system collapses into the script code alone. The source or
+            target segment contains just the four-letter ISO 15924 code.
+          </p>
+          <p>
+            The clearest example:
+          </p>
+          <div class="p-5 border border-rule rounded bg-paper-raised">
+            <p class="font-mono text-lg md:text-xl break-all mb-3 text-center">
+              <span class="text-gold-deep dark:text-gold-bright">ISO</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Cyrl</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Latn</span><span class="text-ink-subtle">:</span><span class="text-ink">9-1995</span>
+            </p>
+            <p class="text-sm text-center text-ink-muted">
+              ISO 9:1995 transliterates <strong>any</strong> Cyrillic text into Latin —
+              Russian, Belarusian, Bulgarian, Serbian, Macedonian, Ukrainian, all of them.
+            </p>
+          </div>
+          <p>
+            The source segment is <code class="font-mono text-blue dark:text-blue-bright">Cyrl</code>
+            (just the script, no language). The target is
+            <code class="font-mono text-blue dark:text-blue-bright">Latn</code>
+            (Latin script, also no language — because ISO 9 doesn't care
+            what language the output is in). Compare with:
+          </p>
+          <div class="p-5 border border-rule rounded bg-paper-raised">
+            <p class="font-mono text-lg md:text-xl break-all mb-3 text-center">
+              <span class="text-gold-deep dark:text-gold-bright">DIN</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">bel-Cyrl</span><span class="text-ink-subtle">:</span><span class="text-blue dark:text-blue-bright">Latn</span><span class="text-ink-subtle">:</span><span class="text-ink">1460-1982</span>
+            </p>
+            <p class="text-sm text-center text-ink-muted">
+              DIN 1460:1982 transliterates <strong>Belarusian</strong> Cyrillic specifically.
+            </p>
+          </div>
+          <p>
+            Here the source is <code class="font-mono text-blue dark:text-blue-bright">bel-Cyrl</code>
+            — the language code <code class="font-mono">bel</code> (Belarusian) is
+            present because DIN 1460 covers the Cyrillic alphabet of Slavic
+            languages, and the specific rules differ per language.
+          </p>
+
+          <h3 class="font-display text-lg font-semibold text-ink mt-8 mb-3">Decision rule</h3>
+          <div class="p-4 border border-rule rounded">
+            <p class="text-sm text-ink-muted leading-relaxed">
+              When the system's specification says "applies to all
+              [script]-script text regardless of language" → omit the language
+              code, use script-only.<br /><br />
+              When the system's specification is for a named language or
+              family of languages → include the ISO 639 code before the script
+              code.<br /><br />
+              When in doubt, include the language code. It is always safe to
+              be more specific; omitting it means the system is claimed to
+              work for <em>every</em> language in that script, which is a
+              strong claim.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Worked examples ───────────────────────────────────── */}
+      <section id="examples" class="rule-section mb-12">
+        <SectionHead eyebrow="Examples" title="Spelling systems in real ISO 24229 codes." />
+        <div class="max-w-2xl space-y-6">
+          <div class="border-l-2 border-rule pl-5">
+            <p class="font-mono text-sm md:text-base mb-1">
+              <span class="text-blue dark:text-blue-bright">ara-Arab</span>
+            </p>
+            <p class="text-sm text-ink-muted">Arabic language in the Arabic script. Used in <code class="font-mono">UN:ara-Arab:Latn:2017</code>.</p>
+          </div>
+          <div class="border-l-2 border-rule pl-5">
+            <p class="font-mono text-sm md:text-base mb-1">
+              <span class="text-blue dark:text-blue-bright">Cyrl</span>
+            </p>
+            <p class="text-sm text-ink-muted">Cyrillic script, any language. Language collapsed — ISO 9:1995 applies to all Cyrillic. Used in <code class="font-mono">ISO:Cyrl:Latn:9-1995</code>.</p>
+          </div>
+          <div class="border-l-2 border-rule pl-5">
+            <p class="font-mono text-sm md:text-base mb-1">
+              <span class="text-blue dark:text-blue-bright">udm-Cyrl</span>
+            </p>
+            <p class="text-sm text-ink-muted">Udmurt language in Cyrillic. Used in <code class="font-mono">ESKT:udm-Cyrl:est-Latn:2021</code>.</p>
+          </div>
+          <div class="border-l-2 border-rule pl-5">
+            <p class="font-mono text-sm md:text-base mb-1">
+              <span class="text-blue dark:text-blue-bright">est-Latn</span>
+            </p>
+            <p class="text-sm text-ink-muted">Estonian language in Latin script. This is the <em>target</em> spelling — not just "Latin" generically, but specifically Estonian Latin (which has its own alphabet conventions: <span class="font-mono">š, ž, ö, ü, õ</span>). Used in <code class="font-mono">ESKT:udm-Cyrl:est-Latn:2021</code>.</p>
+          </div>
+          <div class="border-l-2 border-rule pl-5">
+            <p class="font-mono text-sm md:text-base mb-1">
+              <span class="text-ink-muted">ind-Latn-pre1972</span>
+            </p>
+            <p class="text-sm text-ink-muted">Indonesian in Latin script, using the pre-1972 orthography (the Soeharto-era <em>Ejaan Yang Disempurnakan</em> spelling reform). The extension <code class="font-mono">pre1972</code> disambiguates from the current orthography. Example from the standard, §4.1.4.</p>
+          </div>
+          <div class="border-l-2 border-rule pl-5">
+            <p class="font-mono text-sm md:text-base mb-1">
+              <span class="text-ink-muted">uzb-Arab-AF</span>
+            </p>
+            <p class="text-sm text-ink-muted">Uzbek in Arabic script, as used in Afghanistan. The country code <code class="font-mono">AF</code> distinguishes from Uzbek as written in Uzbekistan (which uses Latin). Example from the standard, §4.1.4.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── In the register ───────────────────────────────────── */}
+      <section id="register" class="rule-section mb-12">
+        <SectionHead eyebrow="Register entries" title="How spelling systems are stored." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            The register has a dedicated <code class="font-mono">spelling-system</code>
+            item class. Each entry stores the four elements (language code,
+            script code, country code, extension) as separate fields, along
+            with a URI and registration status. System-code entries reference
+            spelling systems by ID.
+          </p>
+          <p>
+            Spelling systems in the register are <strong class="text-ink">reference
+            data</strong>, not primary register content — they exist so that
+            system-code entries can reference stable combinations of ISO 639 +
+            ISO 15924 identifiers. The authoritative source for language codes
+            remains the ISO 639 Registration Authorities; for script codes,
+            the Unicode Consortium.
+          </p>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+          <ArrowLink href="/learn/code-structure">Full code structure</ArrowLink>
+          <ArrowLink href="/learn/iso639">ISO 639 (language codes)</ArrowLink>
+          <ArrowLink href="/learn/iso15924">ISO 15924 (script codes)</ArrowLink>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</Layout>

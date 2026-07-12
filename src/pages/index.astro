@@ -5,6 +5,99 @@ import ArrowLink from '../components/ArrowLink.astro';
 import Card from '../components/Card.astro';
 import CodeTicker from '../components/CodeTicker.vue';
 import { externalLinks } from '../config';
+import { getCollection } from 'astro:content';
+import codeNames from '../data/code-names.json';
+
+// ── Select diverse real register codes for the ticker ──
+const allSystems = await getCollection('system-code');
+const allAuthorities = await getCollection('authority');
+const authNames = new Map<string, string>();
+for (const a of allAuthorities) {
+  const id = String((a.data as Record<string, unknown>).authorityIdentifier ?? a.id);
+  const name = String((a.data as Record<string, unknown>).name ?? a.id);
+  authNames.set(id.toLowerCase(), name);
+}
+
+function lookupLang(code: string | undefined): string {
+  if (!code) return '';
+  return (codeNames as any).languages?.[code.toLowerCase()]?.name ?? code;
+}
+function lookupScript(code: string): string {
+  return (codeNames as any).scripts?.[code]?.name ?? code;
+}
+
+interface TickerEntry {
+  authority: string;
+  source: string;
+  target: string;
+  identifying: string;
+  authorityLabel: string;
+  sourceLabel: string;
+  targetLabel: string;
+  identifyingLabel: string;
+}
+
+const seenAuth = new Set<string>();
+const tickerCodes: TickerEntry[] = [];
+
+for (const sys of allSystems) {
+  const data = sys.data as Record<string, unknown>;
+  const code = String(data.code ?? '');
+  const segs = code.split(':');
+  if (segs.length !== 4) continue;
+
+  // Pick one per authority for diversity, skip "var" authority
+  const authId = segs[0];
+  if (authId === 'var' || authId === 'Var') continue;
+  const authKey = authId.toLowerCase();
+  if (seenAuth.has(authKey)) continue;
+  seenAuth.add(authKey);
+
+  // Parse the source spelling segment
+  const sourceParts = segs[1].split('-');
+  const sourceLang = sourceParts[0] && sourceParts[0].length <= 3 && sourceParts[0].match(/^[a-z]+$/) ? sourceParts[0] : '';
+  const sourceScript = sourceParts.find((p) => p.length === 4 && p[0] === p[0].toUpperCase()) ?? '';
+  const sourceCountry = sourceParts.find((p) => p.length === 2 && p === p.toUpperCase() && p.match(/^[A-Z]{2}$/)) ?? '';
+
+  // Parse the target spelling segment
+  const targetParts = segs[2].split('-');
+  const targetLang = targetParts[0] && targetParts[0].length <= 3 && targetParts[0].match(/^[a-z]+$/) ? targetParts[0] : '';
+  const targetScript = targetParts.find((p) => p.length === 4 && p[0] === p[0].toUpperCase()) ?? '';
+
+  // Build labels
+  const authName = authNames.get(authKey) ?? authId;
+  const sourceLabel = [
+    sourceLang ? lookupLang(sourceLang) : null,
+    sourceScript ? lookupScript(sourceScript) : null,
+    sourceCountry ? `(${sourceCountry})` : null,
+  ].filter(Boolean).join(' · ') || sourceScript;
+
+  const targetLabel = [
+    targetLang ? lookupLang(targetLang) : null,
+    targetScript ? lookupScript(targetScript) : null,
+  ].filter(Boolean).join(' · ') || targetScript;
+
+  // Identify what the identifying segment represents
+  const ident = segs[3];
+  let identifyingLabel: string;
+  if (/^\d{4}$/.test(ident)) identifyingLabel = 'Year of adoption';
+  else if (/^\d+-\d{4}$/.test(ident)) identifyingLabel = 'Standard no.';
+  else if (/^v/i.test(ident)) identifyingLabel = 'Version';
+  else identifyingLabel = 'Identifier';
+
+  tickerCodes.push({
+    authority: authId,
+    source: segs[1],
+    target: segs[2],
+    identifying: ident,
+    authorityLabel: authName,
+    sourceLabel,
+    targetLabel,
+    identifyingLabel,
+  });
+
+  if (tickerCodes.length >= 10) break;
+}
 ---
 
 <Layout>
@@ -71,7 +164,7 @@ import { externalLinks } from '../config';
     </p>
 
     <div class="border border-rule rounded bg-paper-raised p-6 md:p-10">
-      <CodeTicker client:load />
+      <CodeTicker client:load codes={tickerCodes} />
     </div>
 
     <p class="mt-5">
