@@ -1,0 +1,210 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { externalLinks } from '../../config';
+
+const tocItems = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'part-1', label: 'Part 1 (alpha-2)' },
+  { id: 'part-2', label: 'Part 2 (alpha-3)' },
+  { id: 'part-3', label: 'Part 3 (comprehensive)' },
+  { id: 'part-5', label: 'Part 5 (families)' },
+  { id: 'format', label: 'Code format' },
+  { id: 'relationship', label: 'Relationship to 24229' },
+];
+---
+
+<Layout title="ISO 639 — Language Codes">
+  <p class="text-sm text-ink-subtle mb-2"><a href="/learn" class="hover:text-gold-deep dark:hover:text-gold-bright">← Learn</a></p>
+  <p class="eyebrow mb-3">Companion standard</p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-4">ISO 639 — Language Codes</h1>
+  <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
+    ISO 639 is the international standard for representing the names of
+    languages. ISO 24229 references ISO 639 codes in the source and target
+    spelling-system segments of every conversion code.
+  </p>
+
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
+
+      {/* ── Overview ──────────────────────────────────────────── */}
+      <section id="overview" class="mb-12">
+        <SectionHead eyebrow="Overview" title="A four-part standard covering every named language." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            ISO 639 is published as a family of four parts, each covering a
+            different scope and code length. Together they represent every
+            named language — from the most widely spoken to the most obscure
+            extinct tongue. A single Maintenance Agency oversees the family,
+            with operational publication delegated to three Language Coding
+            Agencies (LCAs).
+          </p>
+          <p>
+            ISO 24229 uses <strong class="text-ink">ISO 639-3</strong> codes
+            (three-letter, terminological form when one exists) as the
+            primary language identifier inside its code structure. When a
+            language has both a bibliographic (B) and terminological (T)
+            form, the terminological form is preferred.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Part 1 ────────────────────────────────────────────── */}
+      <section id="part-1" class="rule-section mb-12">
+        <SectionHead eyebrow="ISO 639-1" title="Alpha-2 code — major languages." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            Two-letter codes for the ~180 languages most commonly referenced
+            in national, bibliographic, and terminological applications.
+            These are the familiar codes like <code class="font-mono text-blue dark:text-blue-bright">en</code> (English),
+            <code class="font-mono text-blue dark:text-blue-bright">fr</code> (French),
+            <code class="font-mono text-blue dark:text-blue-bright">zh</code> (Chinese), and
+            <code class="font-mono text-blue dark:text-blue-bright">ja</code> (Japanese).
+          </p>
+          <p>
+            Originally published in 1988; the current edition is maintained
+            jointly with Part 2 by the Library of Congress as the
+            Registration Authority.
+          </p>
+          <div class="border-l-2 border-blue/50 dark:border-blue-bright/50 pl-5 space-y-1">
+            <p class="text-sm"><strong class="text-ink">Registration Authority:</strong> <a href={externalLinks.iso639_1RA} class="text-blue dark:text-blue-bright underline">Library of Congress — ISO 639-1/2 Joint RA</a></p>
+            <p class="text-sm"><strong class="text-ink">Standard:</strong> <a href={externalLinks.iso639_1Standard} class="text-blue dark:text-blue-bright underline">ISO 639-1 on iso.org</a></p>
+            <p class="text-sm"><strong class="text-ink">Code format:</strong> two lowercase letters (e.g. <code class="font-mono">en</code>, <code class="font-mono">ar</code>, <code class="font-mono">sw</code>)</p>
+            <p class="text-sm"><strong class="text-ink">Coverage:</strong> ~183 codes</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Part 2 ────────────────────────────────────────────── */}
+      <section id="part-2" class="rule-section mb-12">
+        <SectionHead eyebrow="ISO 639-2" title="Alpha-3 code — bibliographic and terminological." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            Three-letter codes for ~500 languages. Each language may have
+            two separate codes: a <strong class="text-ink">bibliographic</strong> (B)
+            code used in library catalogues, and a <strong class="text-ink">terminological</strong> (T)
+            code used in terminology and computing. For example, German has
+            <code class="font-mono text-blue dark:text-blue-bright">ger</code> (bibliographic) and
+            <code class="font-mono text-blue dark:text-blue-bright">deu</code> (terminological).
+          </p>
+          <p>
+            ISO 24229 prefers the terminological form when both exist.
+          </p>
+          <div class="border-l-2 border-blue/50 dark:border-blue-bright/50 pl-5 space-y-1">
+            <p class="text-sm"><strong class="text-ink">Registration Authority:</strong> <a href={externalLinks.iso639_2RA} class="text-blue dark:text-blue-bright underline">Library of Congress</a></p>
+            <p class="text-sm"><strong class="text-ink">Standard:</strong> <a href={externalLinks.iso639_2Standard} class="text-blue dark:text-blue-bright underline">ISO 639-2 on iso.org</a></p>
+            <p class="text-sm"><strong class="text-ink">Code format:</strong> three lowercase letters (e.g. <code class="font-mono">eng</code>, <code class="font-mono">deu</code>, <code class="font-mono">chi</code>/<code class="font-mono">zho</code>)</p>
+            <p class="text-sm"><strong class="text-ink">Coverage:</strong> ~487 codes (each with B and T variants)</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Part 3 ────────────────────────────────────────────── */}
+      <section id="part-3" class="rule-section mb-12">
+        <SectionHead eyebrow="ISO 639-3" title="Alpha-3 code — comprehensive coverage of individual languages." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            The most comprehensive part of ISO 639, covering all known
+            individual living, extinct, ancient, and historic languages —
+            approximately 7 900 entries. Each language receives a unique
+            three-letter code. ISO 639-3 is the primary source for the
+            language identifiers used in ISO 24229 codes.
+          </p>
+          <p>
+            Maintained by SIL International, which also maintains the
+            <a href={externalLinks.iso639_3RA} class="text-blue dark:text-blue-bright underline">Ethnologue</a>
+            reference work. SIL processes change requests through a public
+            review cycle; proposed additions, modifications, and retirements
+            are published annually.
+          </p>
+          <div class="border-l-2 border-blue/50 dark:border-blue-bright/50 pl-5 space-y-1">
+            <p class="text-sm"><strong class="text-ink">Registration Authority:</strong> <a href={externalLinks.iso639_3RA} class="text-blue dark:text-blue-bright underline">SIL International</a></p>
+            <p class="text-sm"><strong class="text-ink">Standard:</strong> <a href={externalLinks.iso639_3Standard} class="text-blue dark:text-blue-bright underline">ISO 639-3 on iso.org</a></p>
+            <p class="text-sm"><strong class="text-ink">Code format:</strong> three lowercase letters (e.g. <code class="font-mono">amh</code>, <code class="font-mono">bel</code>, <code class="font-mono">udm</code>)</p>
+            <p class="text-sm"><strong class="text-ink">Coverage:</strong> ~7 929 codes (living, extinct, ancient, historic)</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Part 5 ────────────────────────────────────────────── */}
+      <section id="part-5" class="rule-section mb-12">
+        <SectionHead eyebrow="ISO 639-5" title="Alpha-3 code — language families and groups." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            Collective codes for language families and groups — not
+            individual languages. For example,
+            <code class="font-mono text-blue dark:text-blue-bright">afa</code> covers
+            Afro-Asiatic languages, <code class="font-mono text-blue dark:text-blue-bright">ira</code> covers
+            Iranian languages, and <code class="font-mono text-blue dark:text-blue-bright">iro</code> covers
+            Iroquoian languages.
+          </p>
+          <div class="border-l-2 border-blue/50 dark:border-blue-bright/50 pl-5 space-y-1">
+            <p class="text-sm"><strong class="text-ink">Registration Authority:</strong> <a href={externalLinks.iso639_5RA} class="text-blue dark:text-blue-bright underline">Library of Congress — ISO 639-5 RA</a></p>
+            <p class="text-sm"><strong class="text-ink">Standard:</strong> <a href={externalLinks.iso639_5Standard} class="text-blue dark:text-blue-bright underline">ISO 639-5 on iso.org</a></p>
+            <p class="text-sm"><strong class="text-ink">Code format:</strong> three lowercase letters (e.g. <code class="font-mono">afa</code>, <code class="font-mono">ira</code>, <code class="font-mono">alg</code>)</p>
+            <p class="text-sm"><strong class="text-ink">Coverage:</strong> ~115 collective codes</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Code format ───────────────────────────────────────── */}
+      <section id="format" class="rule-section mb-12">
+        <SectionHead eyebrow="Code format" title="How ISO 639 codes are constructed." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            ISO 639 codes consist of lowercase Latin letters only:
+          </p>
+          <ul class="list-disc pl-6 space-y-1.5">
+            <li><strong>Part 1</strong> — exactly 2 letters (e.g. <code class="font-mono">en</code>, <code class="font-mono">zh</code>)</li>
+            <li><strong>Parts 2, 3, 5</strong> — exactly 3 letters (e.g. <code class="font-mono">eng</code>, <code class="font-mono">zho</code>, <code class="font-mono">afa</code>)</li>
+          </ul>
+          <p>
+            Within Parts 2 and 3, a single language may appear under multiple
+            codes. ISO 639-2 distinguishes bibliographic (B) and terminological
+            (T) variants — the terminological form is preferred in computing
+            contexts, including ISO 24229.
+          </p>
+          <p>
+            For Chinese: <code class="font-mono">chi</code> is the bibliographic
+            form, <code class="font-mono">zho</code> is the terminological form.
+            ISO 24229 uses <code class="font-mono">zho</code>.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Relationship to ISO 24229 ─────────────────────────── */}
+      <section id="relationship" class="rule-section mb-12">
+        <SectionHead eyebrow="Relationship to ISO 24229" title="Where language codes appear in ISO 24229." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            In an ISO 24229 code like
+            <code class="font-mono text-gold-deep dark:text-gold-bright">UN</code>:<code class="font-mono text-blue dark:text-blue-bright">ara-Arab</code>:<code class="font-mono text-blue dark:text-blue-bright">Latn</code>:<code class="font-mono">2017</code>,
+            the <code class="font-mono text-blue dark:text-blue-bright">ara</code> segment
+            is an ISO 639-3 code (Arabic). Combined with the ISO 15924 script
+            code <code class="font-mono text-blue dark:text-blue-bright">Arab</code>,
+            it forms the source spelling system <code class="font-mono">ara-Arab</code> —
+            "Arabic written in the Arabic script."
+          </p>
+          <p>
+            The language code is optional in the spelling-system segment.
+            When the source is any language in a given script (e.g.
+            <code class="font-mono">ISO:Cyrl:Latn:9-1995</code> applies to ALL
+            Cyrillic-script languages), the language code is omitted. When
+            the system is language-specific, the ISO 639 code is mandatory.
+          </p>
+        </div>
+
+        <p class="mt-6">
+          <ArrowLink href="/learn/code-structure">Full code structure</ArrowLink>
+        </p>
+        <p class="mt-2">
+          <ArrowLink href="/learn/iso15924">ISO 15924 (script codes)</ArrowLink>
+        </p>
+      </section>
+
+    </div>
+  </div>
+</Layout>

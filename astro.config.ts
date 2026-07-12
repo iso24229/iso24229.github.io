@@ -3,6 +3,7 @@ import tailwindcss from '@tailwindcss/vite';
 import partytown from "@astrojs/partytown";
 import robotsTxt from "astro-robots-txt";
 import mdx from '@astrojs/mdx';
+import vue from '@astrojs/vue';
 import { siteUrl } from "./src/config";
 
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
   },
   integrations: [
     mdx(),
+    vue(),
     partytown({
       config: {
         forward: ['dataLayer.push'],

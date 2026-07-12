@@ -1,0 +1,195 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import ArrowLink from '../../components/ArrowLink.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { externalLinks } from '../../config';
+
+const tocItems = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'format', label: 'Code format' },
+  { id: 'ra', label: 'Registration Authority' },
+  { id: 'examples', label: 'Common scripts' },
+  { id: 'relationship', label: 'Relationship to 24229' },
+];
+---
+
+<Layout title="ISO 15924 — Script Codes">
+  <p class="text-sm text-ink-subtle mb-2"><a href="/learn" class="hover:text-gold-deep dark:hover:text-gold-bright">← Learn</a></p>
+  <p class="eyebrow mb-3">Companion standard</p>
+  <h1 class="text-4xl font-semibold tracking-tight mb-4">ISO 15924 — Script Codes</h1>
+  <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
+    ISO 15924 assigns a unique four-letter code to every writing system
+    (script) used in the world. ISO 24229 references these codes in the
+    source and target spelling-system segments.
+  </p>
+
+  <div class="lg:grid lg:grid-cols-[180px_1fr] lg:gap-12">
+    <TableOfContents items={tocItems} />
+    <div>
+
+      {/* ── Overview ──────────────────────────────────────────── */}
+      <section id="overview" class="mb-12">
+        <SectionHead eyebrow="Overview" title="One code per writing system — not per language." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            A <em>script</em> is a set of graphic symbols used to write one or
+            more languages. ISO 15924 assigns a four-letter code to each
+            distinct script: <code class="font-mono text-blue dark:text-blue-bright">Latn</code> for
+            Latin, <code class="font-mono text-blue dark:text-blue-bright">Cyrl</code> for
+            Cyrillic, <code class="font-mono text-blue dark:text-blue-bright">Arab</code> for
+            Arabic, <code class="font-mono text-blue dark:text-blue-bright">Hans</code> for
+            Han (Simplified), and so on. The standard currently defines 226
+            script codes, covering living, historic, and synthetic writing
+            systems.
+          </p>
+          <p>
+            Scripts are distinct from languages: the Arabic script
+            (<code class="font-mono">Arab</code>) is used to write Arabic,
+            Persian, Urdu, and many other languages. The Latin script
+            (<code class="font-mono">Latn</code>) is used for English, French,
+            Vietnamese, Indonesian, and hundreds of others.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Code format ───────────────────────────────────────── */}
+      <section id="format" class="rule-section mb-12">
+        <SectionHead eyebrow="Code format" title="Four letters, title-case, Latin alphabet." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <ul class="list-disc pl-6 space-y-1.5">
+            <li>Exactly 4 Latin letters</li>
+            <li>First letter uppercase, remaining three lowercase (e.g. <code class="font-mono">Latn</code>, not <code class="font-mono">LATN</code> or <code class="font-mono">latn</code>)</li>
+            <li>Each code also has a numeric identifier (e.g. <code class="font-mono">Latn</code> = 215)</li>
+            <li>Case is not semantically significant: <code class="font-mono">latn</code> and <code class="font-mono">LATN</code> are equivalent</li>
+          </ul>
+          <p>
+            ISO 24229 follows ISO 15924's title-case convention in its
+            code structure: <code class="font-mono">ara-Arab</code> (language
+            lowercase, script title-case) makes the distinction between the
+            two standards visually clear.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Registration Authority ────────────────────────────── */}
+      <section id="ra" class="rule-section mb-12">
+        <SectionHead eyebrow="Registration Authority" title="Maintained by the Unicode Consortium." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            The Unicode Consortium serves as the ISO 15924 Registration
+            Authority, appointed by ISO. The Consortium receives proposals
+            for new script codes, reviews them through a public process,
+            and publishes the authoritative code table at
+            <a href={externalLinks.iso15924Standard} class="text-blue dark:text-blue-bright underline">unicode.org/iso15924</a>.
+            A Notice of Changes is issued whenever codes are added or modified.
+          </p>
+          <div class="border-l-2 border-blue/50 dark:border-blue-bright/50 pl-5 space-y-1">
+            <p class="text-sm"><strong class="text-ink">Registration Authority:</strong> <a href={externalLinks.iso15924Standard} class="text-blue dark:text-blue-bright underline">Unicode Consortium — ISO 15924 RA</a></p>
+            <p class="text-sm"><strong class="text-ink">Code table:</strong> Published quarterly at <a href="https://www.unicode.org/iso15924/iso15924.txt" class="text-blue dark:text-blue-bright underline">unicode.org/iso15924/iso15924.txt</a></p>
+            <p class="text-sm"><strong class="text-ink">Coverage:</strong> 226 script codes (as of 2026)</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Examples ──────────────────────────────────────────── */}
+      <section id="examples" class="rule-section mb-12">
+        <SectionHead eyebrow="Common scripts" title="Scripts you will encounter most often in the register." />
+        <div class="max-w-2xl">
+          <ul class="divide-y divide-rule border-y border-rule">
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Latn</code>
+              <span class="text-sm text-ink">Latin</span>
+              <span class="text-sm text-ink-muted">English, French, Vietnamese, Indonesian, …</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Cyrl</code>
+              <span class="text-sm text-ink">Cyrillic</span>
+              <span class="text-sm text-ink-muted">Russian, Belarusian, Bulgarian, Serbian, …</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Arab</code>
+              <span class="text-sm text-ink">Arabic</span>
+              <span class="text-sm text-ink-muted">Arabic, Persian, Urdu, Pashto, …</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Hans</code>
+              <span class="text-sm text-ink">Han (Simplified)</span>
+              <span class="text-sm text-ink-muted">Chinese (Simplified, Mainland China)</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Hant</code>
+              <span class="text-sm text-ink">Han (Traditional)</span>
+              <span class="text-sm text-ink-muted">Chinese (Traditional, Taiwan, Hong Kong)</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Hira</code>
+              <span class="text-sm text-ink">Hiragana</span>
+              <span class="text-sm text-ink-muted">Japanese (syllabary component)</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Hang</code>
+              <span class="text-sm text-ink">Hangul</span>
+              <span class="text-sm text-ink-muted">Korean</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Ethi</code>
+              <span class="text-sm text-ink">Ethiopic</span>
+              <span class="text-sm text-ink-muted">Amharic, Tigrinya, Ge'ez, …</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Hebr</code>
+              <span class="text-sm text-ink">Hebrew</span>
+              <span class="text-sm text-ink-muted">Hebrew, Yiddish, Ladino, …</span>
+            </li>
+            <li class="grid grid-cols-[5rem_1fr_1fr] gap-4 py-3 items-baseline">
+              <code class="font-mono text-blue dark:text-blue-bright text-sm">Mlym</code>
+              <span class="text-sm text-ink">Malayalam</span>
+              <span class="text-sm text-ink-muted">Malayalam, …</span>
+            </li>
+          </ul>
+          <p class="mt-4 text-sm text-ink-subtle">
+            <a href="/register/iso15924/Latn" class="text-blue dark:text-blue-bright underline">Browse systems by script →</a>
+          </p>
+        </div>
+      </section>
+
+      {/* ── Relationship to ISO 24229 ─────────────────────────── */}
+      <section id="relationship" class="rule-section mb-12">
+        <SectionHead eyebrow="Relationship to ISO 24229" title="Where script codes appear in ISO 24229." />
+        <div class="max-w-2xl space-y-4 text-ink-muted leading-relaxed">
+          <p>
+            In an ISO 24229 code like
+            <code class="font-mono text-gold-deep dark:text-gold-bright">UN</code>:<code class="font-mono text-blue dark:text-blue-bright">ara-Arab</code>:<code class="font-mono text-blue dark:text-blue-bright">Latn</code>:<code class="font-mono">2017</code>,
+            the <code class="font-mono text-blue dark:text-blue-bright">Arab</code> segment
+            is an ISO 15924 code (Arabic script) and the
+            <code class="font-mono text-blue dark:text-blue-bright">Latn</code> segment
+            is also ISO 15924 (Latin script). Together they describe the
+            conversion direction: <em>from Arabic script to Latin script</em>.
+          </p>
+          <p>
+            The script code is <strong class="text-ink">always mandatory</strong> in
+            a spelling-system segment — even when the language code is omitted.
+            For example, <code class="font-mono">ISO:Cyrl:Latn:9-1995</code> has
+            no language code, but both source (<code class="font-mono">Cyrl</code>)
+            and target (<code class="font-mono">Latn</code>) scripts are present.
+          </p>
+          <p>
+            <strong class="text-ink">Script codes are reference data, not
+            register entries.</strong> ISO 24229 does not create or maintain
+            script codes — it references the canonical ISO 15924 code table
+            maintained by the Unicode Consortium.
+          </p>
+        </div>
+
+        <p class="mt-6">
+          <ArrowLink href="/learn/code-structure">Full code structure</ArrowLink>
+        </p>
+        <p class="mt-2">
+          <ArrowLink href="/learn/iso639">ISO 639 (language codes)</ArrowLink>
+        </p>
+      </section>
+
+    </div>
+  </div>
+</Layout>
