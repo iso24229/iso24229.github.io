@@ -31,6 +31,7 @@ exclude_path = [
 # - github.com/iso24229/proposals/issues/new: requires GitHub auth to view
 # - iso639-3.sil.org: URLs are valid but the site is slow / rate-limits
 #   automated clients; lychee times out on every request.
+# - aai.uni-hamburg.de: valid but slow from US-based CI runners.
 exclude = [
   "^https?://localhost:4321",
   "^https?://127\\.0\\.0\\.1",
@@ -38,6 +39,7 @@ exclude = [
   "^https://github\\.com/iso24229/register",
   "^https://github\\.com/iso24229/proposals/issues/new",
   "^https://iso639-3\\.sil\\.org/",
+  "^https://www\\.aai\\.uni-hamburg\\.de/",
 ]
 
 exclude_loopback = true
