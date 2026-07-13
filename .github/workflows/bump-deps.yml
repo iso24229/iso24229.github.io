@@ -35,6 +35,7 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
+          # Pinned due to github.com/iso24229/iso24229.github.io/issues/92
           version: '11.1.0'
 
       - uses: actions/setup-node@v4
