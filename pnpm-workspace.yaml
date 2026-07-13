@@ -4,6 +4,17 @@ allowBuilds:
 onlyBuiltDependencies:
   - '@parcel/watcher'
   - esbuild
+overrides:
+  '@babel/traverse@<7.23.2': '>=7.23.2'
+  'braces@<3.0.3': '>=3.0.3'
+  'ejs@<3.1.10': '>=3.1.10'
+  'micromatch@<4.0.8': '>=4.0.8'
+  'zod@<=3.22.2': '>=3.22.3'
+  'dset@<3.1.4': '>=3.1.4'
+  'path-to-regexp@>=4.0.0 <6.3.0': '>=6.3.0'
+  'vite@>=5.2.0 <5.2.14': '>=5.2.14'
+  'rollup@<2.79.2': '>=2.79.2'
+  'rollup@>=4.0.0 <4.22.4': '>=4.22.4'
 # Exempt our own org's packages from pnpm's minimum-release-age supply-chain
 # check. They're freshly published and we vouch for them.
 minimumReleaseAgeExclude:
