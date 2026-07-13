@@ -138,7 +138,7 @@ const tocItems = [
         </ul>
       </div>
     </div>
-    <p class="eyebrow mt-6 mb-3">Examples from the standard</p>
+    <p class="eyebrow mt-6 mb-3">Examples from the standard <span class="normal-case font-normal text-ink-subtle/60">(§4.1.4, ISO 24229:2025)</span></p>
     <div class="max-w-2xl space-y-2">
       {spellingExamples.map((ex) => (
         <p class="text-sm"><span class="font-mono text-blue dark:text-blue-bright">{ex.code}</span> <span class="text-ink-muted">— {ex.desc}</span></p>
@@ -174,7 +174,7 @@ const tocItems = [
         If no elements can be used, <span class="font-mono">na</span> (not applicable) is the substitute.
       </p>
       <p class="text-sm">
-        Example: <span class="font-mono">2017</span> is the identifying segment of <span class="font-mono">UN:ara-Arab:Latn:2017</span>.
+        Example: <span class="font-mono">2017</span> is the identifying segment of <span class="font-mono">UN:ara-Arab:Latn:2017</span> <span class="text-ink-subtle/60">(EXAMPLE 1, §4.7, ISO 24229:2025)</span>.
       </p>
     </div>
   </section>
@@ -259,7 +259,7 @@ const tocItems = [
         return (
           <div class="border-l-2 border-rule pl-5">
             <p class="text-xs text-ink-subtle mb-1">
-              Example {ex.n}
+              Example {ex.n} <span class="text-ink-subtle/60">(§4.7, ISO 24229:2025)</span>
               {href && <span class="ml-2 text-gold-deep dark:text-gold-bright">· registered</span>}
             </p>
             <p class="font-mono text-base md:text-lg break-all">

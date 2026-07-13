@@ -81,13 +81,13 @@ function colorize(code: string): string {
   <h1 class="text-4xl font-semibold tracking-tight mb-6">Worked examples</h1>
 
   <p class="text-lg text-ink-muted max-w-2xl mb-10 leading-relaxed">
-    Nine real-world conversion systems, drawn from the examples in ISO 24229 §4. Each illustrates a different facet of the code structure — abbreviated forms, script-only segments, same-script conversions, and combined standard-number/year identifiers.
+    Nine real-world conversion systems, drawn from §4.7 of ISO 24229:2025. Each illustrates a different facet of the code structure — abbreviated forms, script-only segments, same-script conversions, and combined standard-number/year identifiers.
   </p>
 
   <div class="space-y-10 max-w-3xl">
     {examples.map((ex, i) => (
       <article class="border-t border-rule pt-6">
-        <p class="eyebrow mb-3">Example {i + 1}</p>
+        <p class="eyebrow mb-3">Example {i + 1} <span class="normal-case font-normal text-ink-subtle/60">(§4.7, ISO 24229:2025)</span></p>
 
         <p class="font-mono text-lg md:text-xl lg:text-2xl break-all leading-tight mb-3" set:html={colorize(ex.code)} />
 
