@@ -137,22 +137,27 @@ const segments = [
 /* ── Flip cell ────────────────────────────────────────────── */
 .ticker-cell {
   perspective: 800px;
+  transform-style: preserve-3d;
 }
 
 .ticker-card {
   position: relative;
   transform-style: preserve-3d;
+  transform: translateZ(0);
+  will-change: transform;
   transition: transform var(--flip-duration, 500ms) cubic-bezier(0.55, 0.085, 0.68, 0.53);
   padding: var(--cell-pad-y) var(--cell-pad-x);
 }
 
 .ticker-card.is-flipped {
-  transform: rotateX(180deg);
+  transform: rotateX(180deg) translateZ(0);
 }
 
 .ticker-face {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  transform: translateZ(0);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -165,7 +170,7 @@ const segments = [
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: rotateX(180deg);
+  transform: rotateX(180deg) translateZ(0);
   padding: var(--cell-pad-y) var(--cell-pad-x);
 }
 
